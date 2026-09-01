@@ -7,6 +7,7 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@tanstack/react-router": "^1.170.32"
+    "@tanstack/react-router": "^1.170.32",
+    "react": "^19.2.0"
   }
 }

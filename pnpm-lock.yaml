@@ -10,6 +10,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@inkink/routing':
+        specifier: workspace:*
+        version: link:../../packages/routing
       '@tailwindcss/vite':
         specifier: ^4.1.18
         version: 4.3.3(vite@8.2.2(@types/node@22.20.1)(jiti@2.7.0))
@@ -89,6 +92,9 @@ importers:
       '@tanstack/react-router':
         specifier: ^1.170.32
         version: 1.170.32(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      react:
+        specifier: ^19.2.0
+        version: 19.2.8
 
   packages/types: {}
 

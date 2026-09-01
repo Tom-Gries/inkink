@@ -1,20 +1,28 @@
-import {
-  createRootRoute,
-  createRoute,
-  createRouter,
-} from '@tanstack/react-router'
+import { createRoute, type AnyRoute } from '@tanstack/react-router'
+import { createElement } from 'react'
 
-const rootRoute = createRootRoute()
+export function createInkInkRoutes<TRootRoute extends AnyRoute>(
+  rootRoute: TRootRoute,
+) {
+  const indexRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: '/',
+    component: Home,
+  })
 
-const indexRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/',
-})
+  const errorRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: '/error',
+    component: ErrorPage,
+  })
 
-const routeTree = rootRoute.addChildren([
-  indexRoute,
-])
+  return [indexRoute, errorRoute]
+}
 
-export const router = createRouter({
-  routeTree,
-})
+function Home() {
+  return createElement('h1', null, 'InkInk')
+}
+
+function ErrorPage() {
+  return createElement('h1', null, 'Error')
+}

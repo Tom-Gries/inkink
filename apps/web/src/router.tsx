@@ -1,9 +1,10 @@
 import { createRouter as createTanStackRouter } from '@tanstack/react-router'
-import { routeTree } from './routeTree.gen'
+import { createInkInkRoutes } from '@inkink/routing'
+import { Route as rootRoute } from './routes/__root'
 
 export function getRouter() {
   const router = createTanStackRouter({
-    routeTree,
+    routeTree: rootRoute.addChildren(createInkInkRoutes(rootRoute)),
     scrollRestoration: true,
     defaultPreload: 'intent',
     defaultPreloadStaleTime: 0,
