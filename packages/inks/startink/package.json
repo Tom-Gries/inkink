@@ -10,6 +10,10 @@
     "@inkink/api": "workspace:*",
     "@inkink/i18n": "workspace:*",
     "@inkink/types": "workspace:*",
-    "@inkink/ui": "workspace:*"
+    "@inkink/ui": "workspace:*",
+    "react": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.0"
   }
 }

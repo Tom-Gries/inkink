@@ -7,7 +7,11 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
+    "@inkink/startink": "workspace:*",
     "@tanstack/react-router": "^1.170.32",
     "react": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.0"
   }
 }
