@@ -1,8 +1,10 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
+import { getAuth } from './auth'
 import { getDb } from './db'
 import { errorHandler } from './hooks/error-handler'
 import { realtimeRoutes } from './realtime/sse.routes'
+import { meRoutes } from './services/me/me.routes'
 import { testRoutes } from './services/test/test.routes'
 import { usersRoutes } from './services/users/users.routes'
 
@@ -26,6 +28,8 @@ const routes = app
       return c.json({ mongo: 'down' }, 503)
     }
   })
+  .all('/auth/*', (c) => getAuth().handler(c.req.raw))
+  .route('/me', meRoutes)
   .route('/test', testRoutes)
   .route('/users', usersRoutes)
   .route('/realtime', realtimeRoutes)
