@@ -9,6 +9,7 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.0.0",
     "api": "workspace:*",
     "hono": "^4.13.5"
   }

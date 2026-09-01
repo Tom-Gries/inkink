@@ -7,6 +7,10 @@ export const createTestMessageSchema = z.object({
     .max(200, 'Nachricht darf maximal 200 Zeichen lang sein.'),
 })
 
+export const testIdParamSchema = z.object({
+  id: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Ungültige Nachrichten-ID.'),
+})
+
 export type CreateTestMessage = z.infer<typeof createTestMessageSchema>
 
 /** Test-Nachricht-DTO, wie die API ihn ausliefert. */

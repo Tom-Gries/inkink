@@ -1,5 +1,6 @@
 import { createTranslations, I18nProvider } from '@inkink/i18n'
 import { translations as routingTranslations } from '@inkink/routing'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
@@ -8,6 +9,9 @@ import { inkTranslations } from '../inks'
 import appCss from '../styles.css?url'
 
 const translations = createTranslations(routingTranslations, inkTranslations)
+
+// Modulweit genau EIN QueryClient (stabil über Render-Zyklen).
+const queryClient = new QueryClient()
 
 export const Route = createRootRoute({
   head: () => ({
@@ -41,7 +45,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <I18nProvider locale="de" translations={translations}>
-          {children}
+          <QueryClientProvider client={queryClient}>
+            {children}
+          </QueryClientProvider>
         </I18nProvider>
         <TanStackDevtools
           config={{

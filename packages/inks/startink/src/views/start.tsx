@@ -1,29 +1,13 @@
-import { createTestMessage, getApi } from '@inkink/api'
+import { useCreateTestMessage } from '@inkink/api'
 import { useTranslations } from '@inkink/i18n'
 import { linkVariants, Link, Page, PageTitle } from '@inkink/ui'
-import { useState } from 'react'
 
 export function StartView() {
   const t = useTranslations()
-  const [feedback, setFeedback] = useState<string | null>(null)
-  const [pending, setPending] = useState(false)
+  const create = useCreateTestMessage()
 
-  async function sendTestMessage() {
-    setPending(true)
-
-    try {
-      const message = await createTestMessage(getApi(), 'Test-Nachricht aus startink')
-
-      setFeedback(`${t('startink.testSuccess')} (#…${message.id.slice(-6)})`)
-    } catch (error) {
-      setFeedback(
-        error instanceof Error
-          ? `${t('startink.testError')}: ${error.message}`
-          : t('startink.testError'),
-      )
-    } finally {
-      setPending(false)
-    }
+  function handleSend() {
+    create.mutate('Test-Nachricht aus startink')
   }
 
   return (
@@ -31,13 +15,23 @@ export function StartView() {
       <PageTitle>{t('startink.start')}</PageTitle>
       <button
         type="button"
-        onClick={sendTestMessage}
-        disabled={pending}
+        onClick={handleSend}
+        disabled={create.isPending}
         className={linkVariants({ variant: 'default' })}
       >
-        {pending ? '…' : t('startink.testButton')}
+        {create.isPending ? '…' : t('startink.testButton')}
       </button>
-      {feedback && <p>{feedback}</p>}
+      {create.isSuccess && (
+        <p className="text-green-700 dark:text-green-400">
+          {t('startink.testSuccess')} (#…{create.data.id.slice(-6)})
+        </p>
+      )}
+      {create.isError && (
+        <p className="text-red-600 dark:text-red-400">
+          {t('startink.testError')}:{' '}
+          {create.error instanceof Error ? create.error.message : ''}
+        </p>
+      )}
       <Link to="startink.ziel" type="next">
         {t('startink.ziel')}
       </Link>

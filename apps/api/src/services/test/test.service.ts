@@ -42,6 +42,18 @@ export async function listTestMessages(): Promise<TestMessageDto[]> {
   return documents.map(toDto)
 }
 
+export async function getTestMessage(id: string): Promise<TestMessageDto | null> {
+  const document = await testMessages().findOne({ _id: new ObjectId(id) })
+
+  return document ? toDto(document) : null
+}
+
+export async function deleteTestMessage(id: string): Promise<boolean> {
+  const { deletedCount } = await testMessages().deleteOne({ _id: new ObjectId(id) })
+
+  return deletedCount > 0
+}
+
 /** Change Stream für Realtime-Benachrichtigungen (SSE). */
 export function watchTestMessages(): ChangeStream {
   return testMessages().watch([], { fullDocument: 'updateLookup' })
