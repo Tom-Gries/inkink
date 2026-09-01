@@ -15,6 +15,7 @@
     "check": "biome check"
   },
   "dependencies": {
+    "@inkink/api": "workspace:*",
     "@inkink/core": "workspace:*",
     "@inkink/i18n": "workspace:*",
     "@inkink/routing": "workspace:*",

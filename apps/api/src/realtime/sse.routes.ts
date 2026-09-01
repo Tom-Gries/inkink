@@ -1,18 +1,16 @@
 import { Hono } from 'hono'
 import { streamSSE } from 'hono/streaming'
 import type { ChangeStream } from 'mongodb'
-import { watchProjects } from '../services/projects/projects.service'
+import { watchTestMessages } from '../services/test/test.service'
 
 const HEARTBEAT_INTERVAL_MS = 25_000
 
-export const realtimeRoutes = new Hono()
-
 /**
  * SSE-Stream für Echtzeit-Updates – läuft auf Vercel (Streaming-Response).
- * Mit Datenbank werden Änderungen an Projekten als „project:changed"
- * gepusht (Mongo Change Stream); ohne Datenbank nur Heartbeats.
+ * Mit Datenbank werden neue Test-Nachrichten als „test:created" gepusht
+ * (Mongo Change Stream); ohne Datenbank nur Heartbeats.
  */
-realtimeRoutes.get('/events', (c) =>
+export const realtimeRoutes = new Hono().get('/events', (c) =>
   streamSSE(
     c,
     async (stream) => {
@@ -20,7 +18,7 @@ realtimeRoutes.get('/events', (c) =>
       let changeStream: ChangeStream | null = null
 
       try {
-        changeStream = watchProjects()
+        changeStream = watchTestMessages()
       } catch {
         // Ohne Datenbank: Stream läuft trotzdem (nur Heartbeats).
       }
@@ -58,7 +56,7 @@ realtimeRoutes.get('/events', (c) =>
         if (next.result.done) break
 
         await stream.writeSSE({
-          event: 'project:changed',
+          event: 'test:created',
           data: serializeChange(next.result.value),
           id: String(eventId++),
         })
@@ -80,6 +78,6 @@ interface ChangeDocument {
 function serializeChange(change: ChangeDocument): string {
   return JSON.stringify({
     operationType: change.operationType,
-    projectId: change.documentKey?._id?.toString() ?? null,
+    messageId: change.documentKey?._id?.toString() ?? null,
   })
 }

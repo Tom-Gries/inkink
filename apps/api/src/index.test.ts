@@ -38,11 +38,11 @@ describe('GET /api/ping', () => {
   })
 })
 
-describe('GET /api/projects ohne Datenbank', () => {
+describe('GET /api/test ohne Datenbank', () => {
   it('liefert 503 mit einheitlichem Fehlerformat über den globalen Error-Handler', async () => {
     delete process.env.MONGODB_URI
 
-    const res = await app.request('/api/projects')
+    const res = await app.request('/api/test')
 
     expect(res.status).toBe(503)
 
