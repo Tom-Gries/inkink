@@ -1,4 +1,4 @@
-{
+﻿{
   "name": "@inkink/startink",
   "version": "0.0.0",
   "private": true,
@@ -7,6 +7,7 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
+    "@inkink/routing": "workspace:*",
     "@inkink/api": "workspace:*",
     "@inkink/i18n": "workspace:*",
     "@inkink/types": "workspace:*",

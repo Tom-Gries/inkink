@@ -91,6 +91,9 @@ importers:
       '@inkink/i18n':
         specifier: workspace:*
         version: link:../../i18n
+      '@inkink/routing':
+        specifier: workspace:*
+        version: link:../../routing
       '@inkink/types':
         specifier: workspace:*
         version: link:../../types
@@ -110,9 +113,6 @@ importers:
       '@inkink/i18n':
         specifier: workspace:*
         version: link:../i18n
-      '@inkink/startink':
-        specifier: workspace:*
-        version: link:../inks/startink
       '@tanstack/react-router':
         specifier: ^1.170.32
         version: 1.170.32(react-dom@19.2.8(react@19.2.8))(react@19.2.8)

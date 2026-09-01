@@ -1,2 +1,19 @@
-export { routes } from './routes'
-export { translations } from './translations'
+﻿import { defineInk } from '@inkink/routing'
+import { StartView } from './views/start'
+import { ZielView } from './views/ziel'
+import { translations } from './translations'
+
+export default defineInk({
+  name: 'startink',
+  routes: [
+    {
+      path: '/startink/Start',
+      component: StartView,
+    },
+    {
+      path: '/startink/ziel',
+      component: ZielView,
+    },
+  ],
+  translations,
+})

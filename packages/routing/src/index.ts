@@ -1,6 +1,4 @@
-import { routes as startInkRoutes } from '@inkink/startink'
-import { translations as startInkTranslations } from '@inkink/startink'
-import { createTranslations } from '@inkink/i18n'
+﻿import { createTranslations } from '@inkink/i18n'
 import {
   createRoute,
   createRouter,
@@ -9,15 +7,17 @@ import {
 import { ErrorView } from './views/error'
 import { HomeView } from './views/home'
 import { NotFoundView } from './views/not-found'
-import { translations as routingTranslations } from './translations'
+import { translations as shellTranslations } from './translations'
+import type { InkDefinition } from './types'
 
-export const translations = createTranslations(
-  routingTranslations,
-  startInkTranslations,
-)
+export { defineInk } from './defineInk'
+export type { InkDefinition, InkRoute } from './types'
 
-function createInkInkRoutes<TRootRoute extends AnyRoute>(
+export const translations = createTranslations(shellTranslations)
+
+function createInkRoutes<TRootRoute extends AnyRoute>(
   rootRoute: TRootRoute,
+  inks: Array<InkDefinition>,
 ) {
   const indexRoute = createRoute({
     getParentRoute: () => rootRoute,
@@ -34,21 +34,24 @@ function createInkInkRoutes<TRootRoute extends AnyRoute>(
   return [
     indexRoute,
     errorRoute,
-    ...startInkRoutes.map(({ path, component }) =>
-      createRoute({
-        getParentRoute: () => rootRoute,
-        path,
-        component,
-      }),
+    ...inks.flatMap((ink) =>
+      ink.routes.map(({ path, component }) =>
+        createRoute({
+          getParentRoute: () => rootRoute,
+          path,
+          component,
+        }),
+      ),
     ),
   ]
 }
 
 export function createInkInkRouter<TRootRoute extends AnyRoute>(
   rootRoute: TRootRoute,
+  inks: Array<InkDefinition>,
 ) {
   return createRouter({
-    routeTree: rootRoute.addChildren(createInkInkRoutes(rootRoute)),
+    routeTree: rootRoute.addChildren(createInkRoutes(rootRoute, inks)),
     scrollRestoration: true,
     defaultPreload: 'intent',
     defaultPreloadStaleTime: 0,
