@@ -1,4 +1,4 @@
-﻿import { createTranslations } from '@inkink/i18n'
+import { createTranslations } from '@inkink/i18n'
 import {
   createRoute,
   createRouter,
@@ -8,10 +8,7 @@ import { ErrorView } from './views/error'
 import { HomeView } from './views/home'
 import { NotFoundView } from './views/not-found'
 import { translations as shellTranslations } from './translations'
-import type { InkDefinition } from './types'
-
-export { defineInk } from './defineInk'
-export type { InkDefinition, InkRoute } from './types'
+import type { InkDefinition } from '@inkink/core'
 
 export const translations = createTranslations(shellTranslations)
 

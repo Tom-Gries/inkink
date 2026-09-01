@@ -1,5 +1,5 @@
 {
-  "name": "@inkink/startink",
+  "name": "@inkink/core",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -9,13 +9,9 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@inkink/api": "workspace:*",
-    "@inkink/core": "workspace:*",
-    "@inkink/i18n": "workspace:*",
-    "@inkink/types": "workspace:*",
-    "@inkink/ui": "workspace:*",
-    "react": "^19.2.0"
-  },
+    "react": "^19.2.0",
+    "@inkink/i18n": "workspace:*"
+    },
   "devDependencies": {
     "@types/react": "^19.2.0"
   }

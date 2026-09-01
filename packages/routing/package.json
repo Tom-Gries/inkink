@@ -1,12 +1,15 @@
-﻿{
+{
   "name": "@inkink/routing",
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts"
   },
   "dependencies": {
+    "@inkink/core": "workspace:*",
     "@inkink/i18n": "workspace:*",
     "@tanstack/react-router": "^1.170.32",
     "react": "^19.2.0"

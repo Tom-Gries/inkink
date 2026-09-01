@@ -1,4 +1,4 @@
-﻿import type { InkDefinition } from './types'
+import type { InkDefinition } from './types'
 
 export function defineInk(definition: InkDefinition): InkDefinition {
   return definition

@@ -1,4 +1,4 @@
-﻿import { defineInk } from '@inkink/routing'
+import { defineInk } from '@inkink/core'
 import { StartView } from './views/start'
 import { ZielView } from './views/ziel'
 import { translations } from './translations'

@@ -1,4 +1,4 @@
-﻿import { createInkInkRouter } from '@inkink/routing'
+import { createInkInkRouter } from '@inkink/routing'
 import { inks } from './inks'
 import { Route as rootRoute } from './routes/__root'
 

@@ -1,9 +1,9 @@
-import type { ComponentType } from 'react'
+import type { FunctionComponent } from 'react'
 import type { Translations } from '@inkink/i18n'
 
 export interface InkRoute {
   path: string
-  component: ComponentType
+  component: FunctionComponent
 }
 
 export interface InkDefinition {

@@ -1,4 +1,4 @@
-﻿import { createTranslations, I18nProvider } from '@inkink/i18n'
+import { createTranslations, I18nProvider } from '@inkink/i18n'
 import { translations as routingTranslations } from '@inkink/routing'
 import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
