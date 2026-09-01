@@ -1,3 +1,7 @@
+import { useTranslations } from '@inkink/i18n'
+
 export function HomeView() {
-  return <h1>InkInk</h1>
+  const t = useTranslations()
+
+  return <h1>{t('routing.home')}</h1>
 }

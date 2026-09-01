@@ -1,5 +1,7 @@
-import { createElement } from 'react'
+import { useTranslations } from '@inkink/i18n'
 
 export function StartView() {
-  return createElement('h1', null, 'Start')
+  const t = useTranslations()
+
+  return <h1>{t('startink.start')}</h1>
 }

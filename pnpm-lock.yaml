@@ -10,6 +10,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@inkink/i18n':
+        specifier: workspace:*
+        version: link:../../packages/i18n
       '@inkink/routing':
         specifier: workspace:*
         version: link:../../packages/routing
@@ -70,7 +73,15 @@ importers:
 
   packages/auth: {}
 
-  packages/i18n: {}
+  packages/i18n:
+    dependencies:
+      react:
+        specifier: ^19.2.0
+        version: 19.2.8
+    devDependencies:
+      '@types/react':
+        specifier: ^19.2.0
+        version: 19.2.18
 
   packages/inks/startink:
     dependencies:
@@ -96,6 +107,9 @@ importers:
 
   packages/routing:
     dependencies:
+      '@inkink/i18n':
+        specifier: workspace:*
+        version: link:../i18n
       '@inkink/startink':
         specifier: workspace:*
         version: link:../inks/startink

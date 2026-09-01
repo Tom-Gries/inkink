@@ -1,5 +1,7 @@
-import { createElement } from 'react'
+import { useTranslations } from '@inkink/i18n'
 
 export function ZielView() {
-  return createElement('h1', null, 'Ziel')
+  const t = useTranslations()
+
+  return <h1>{t('startink.ziel')}</h1>
 }

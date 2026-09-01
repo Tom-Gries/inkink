@@ -1,3 +1,7 @@
+import { useTranslations } from '@inkink/i18n'
+
 export function ErrorView() {
-  return <h1>Error</h1>
+  const t = useTranslations()
+
+  return <h1>{t('routing.error')}</h1>
 }

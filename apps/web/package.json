@@ -15,6 +15,7 @@
     "check": "biome check"
   },
   "dependencies": {
+    "@inkink/i18n": "workspace:*",
     "@inkink/routing": "workspace:*",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-devtools": "latest",

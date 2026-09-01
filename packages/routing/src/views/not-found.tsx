@@ -1,3 +1,7 @@
+import { useTranslations } from '@inkink/i18n'
+
 export function NotFoundView() {
-  return <h1>Not Found</h1>
+  const t = useTranslations()
+
+  return <h1>{t('routing.notFound')}</h1>
 }

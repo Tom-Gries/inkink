@@ -1,4 +1,6 @@
 import { routes as startInkRoutes } from '@inkink/startink'
+import { translations as startInkTranslations } from '@inkink/startink'
+import { createTranslations } from '@inkink/i18n'
 import {
   createRoute,
   createRouter,
@@ -7,6 +9,12 @@ import {
 import { ErrorView } from './views/error'
 import { HomeView } from './views/home'
 import { NotFoundView } from './views/not-found'
+import { translations as routingTranslations } from './translations'
+
+export const translations = createTranslations(
+  routingTranslations,
+  startInkTranslations,
+)
 
 function createInkInkRoutes<TRootRoute extends AnyRoute>(
   rootRoute: TRootRoute,

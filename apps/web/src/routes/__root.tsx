@@ -1,3 +1,5 @@
+import { translations } from '@inkink/routing'
+import { I18nProvider } from '@inkink/i18n'
 import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
@@ -35,7 +37,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        {children}
+        <I18nProvider locale="de" translations={translations}>
+          {children}
+        </I18nProvider>
         <TanStackDevtools
           config={{
             position: 'bottom-right',
