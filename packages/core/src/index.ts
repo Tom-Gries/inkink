@@ -1,2 +1,3 @@
 export { defineInk } from './defineInk'
-export type { InkDefinition, InkRoute } from './types'
+export { resolveInkRoute } from './registry'
+export type { InkDefinition, InkRoute, InkRouteRef, InkRouteRegistry } from './types'
