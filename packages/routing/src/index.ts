@@ -1,20 +1,26 @@
 import { routes as startInkRoutes } from '@inkink/startink'
-import { createRoute, type AnyRoute } from '@tanstack/react-router'
-import { createElement } from 'react'
+import {
+  createRoute,
+  createRouter,
+  type AnyRoute,
+} from '@tanstack/react-router'
+import { ErrorView } from './views/error'
+import { HomeView } from './views/home'
+import { NotFoundView } from './views/not-found'
 
-export function createInkInkRoutes<TRootRoute extends AnyRoute>(
+function createInkInkRoutes<TRootRoute extends AnyRoute>(
   rootRoute: TRootRoute,
 ) {
   const indexRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: '/',
-    component: Home,
+    component: HomeView,
   })
 
   const errorRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: '/error',
-    component: ErrorPage,
+    component: ErrorView,
   })
 
   return [
@@ -30,10 +36,14 @@ export function createInkInkRoutes<TRootRoute extends AnyRoute>(
   ]
 }
 
-function Home() {
-  return createElement('h1', null, 'InkInk')
-}
-
-function ErrorPage() {
-  return createElement('h1', null, 'Error')
+export function createInkInkRouter<TRootRoute extends AnyRoute>(
+  rootRoute: TRootRoute,
+) {
+  return createRouter({
+    routeTree: rootRoute.addChildren(createInkInkRoutes(rootRoute)),
+    scrollRestoration: true,
+    defaultPreload: 'intent',
+    defaultPreloadStaleTime: 0,
+    defaultNotFoundComponent: NotFoundView,
+  })
 }
