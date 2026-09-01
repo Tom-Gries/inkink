@@ -3,6 +3,6 @@ packages:
   - "packages/*"
   - "packages/inks/*"
 
-onlyBuiltDependencies:
-  - esbuild
-  - lightningcss
+allowBuilds:
+  esbuild: true
+  lightningcss: true
