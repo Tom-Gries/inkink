@@ -1,0 +1,15 @@
+{
+  "name": "@inkink/startink",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@inkink/api": "workspace:*",
+    "@inkink/i18n": "workspace:*",
+    "@inkink/types": "workspace:*",
+    "@inkink/ui": "workspace:*"
+  }
+}

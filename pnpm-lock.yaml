@@ -67,9 +67,28 @@ importers:
 
   packages/auth: {}
 
-  packages/core: {}
-
   packages/i18n: {}
+
+  packages/inks/startink:
+    dependencies:
+      '@inkink/api':
+        specifier: workspace:*
+        version: link:../../api
+      '@inkink/i18n':
+        specifier: workspace:*
+        version: link:../../i18n
+      '@inkink/types':
+        specifier: workspace:*
+        version: link:../../types
+      '@inkink/ui':
+        specifier: workspace:*
+        version: link:../../ui
+
+  packages/routing:
+    dependencies:
+      '@tanstack/react-router':
+        specifier: ^1.170.32
+        version: 1.170.32(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
 
   packages/types: {}
 
