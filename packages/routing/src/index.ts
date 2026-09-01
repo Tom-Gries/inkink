@@ -1,3 +1,4 @@
+import type { Definition } from '@inkink/core'
 import {
   createRoute,
   createRouter,
@@ -6,13 +7,12 @@ import {
 import { ErrorView } from './views/error'
 import { HomeView } from './views/home'
 import { NotFoundView } from './views/not-found'
-import type { InkDefinition } from '@inkink/core'
 
 export { translations } from './translations'
 
 function createInkRoutes<TRootRoute extends AnyRoute>(
   rootRoute: TRootRoute,
-  inks: Array<InkDefinition>,
+  inks: Array<Definition>,
 ) {
   const indexRoute = createRoute({
     getParentRoute: () => rootRoute,
@@ -41,9 +41,9 @@ function createInkRoutes<TRootRoute extends AnyRoute>(
   ]
 }
 
-export function createInkInkRouter<TRootRoute extends AnyRoute>(
+export function createInkRouter<TRootRoute extends AnyRoute>(
   rootRoute: TRootRoute,
-  inks: Array<InkDefinition>,
+  inks: Array<Definition>,
 ) {
   return createRouter({
     routeTree: rootRoute.addChildren(createInkRoutes(rootRoute, inks)),

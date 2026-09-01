@@ -1,5 +1,5 @@
 import { useRender } from '@base-ui-components/react/use-render'
-import { resolveInkRoute, type InkRouteRef } from '@inkink/core'
+import { resolveInkRoute, type RouteRef } from '@inkink/core'
 import {
   Link as TanStackLink,
   type LinkProps as TanStackLinkProps,
@@ -48,7 +48,7 @@ export type LinkProps = Omit<TanStackLinkProps, 'to'> &
     render?: ReactElement
     type?: LinkType
     /** Typsichere Referenz auf eine registrierte Ink-Route, z.B. "startink.ziel". */
-    to?: InkRouteRef
+    to?: RouteRef
   }
 
 export function Link({ className, variant, size, render, type, children, to, ...props }: LinkProps) {

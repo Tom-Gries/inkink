@@ -1,9 +1,9 @@
-import { createInkInkRouter } from '@inkink/routing'
+import { createInkRouter } from '@inkink/routing'
 import { inks } from './inks'
 import { Route as rootRoute } from './routes/__root'
 
 export function getRouter() {
-  return createInkInkRouter(rootRoute, inks)
+  return createInkRouter(rootRoute, inks)
 }
 
 declare module '@tanstack/react-router' {

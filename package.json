@@ -1,8 +1,19 @@
 {
   "name": "inkink",
+  "type": "module",
   "private": true,
   "scripts": {
-    "dev": "pnpm --filter web dev"
+    "dev": "pnpm --filter web dev",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
-  "packageManager": "pnpm@11.25.0+sha512.5cde925b4f075f725eb71fbae18a42ffe784524789f19b61c731cb8721ec28aaee160e01a8d5af4fedb2a42cdbf300efe23db356b0d4a17b4d63e11f8ab7c956"
+  "packageManager": "pnpm@11.25.0+sha512.5cde925b4f075f725eb71fbae18a42ffe784524789f19b61c731cb8721ec28aaee160e01a8d5af4fedb2a42cdbf300efe23db356b0d4a17b4d63e11f8ab7c956",
+  "devDependencies": {
+    "@testing-library/dom": "latest",
+    "@testing-library/react": "latest",
+    "jsdom": "latest",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "vitest": "latest"
+  }
 }

@@ -9,10 +9,8 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@inkink/api": "workspace:*",
     "@inkink/core": "workspace:*",
     "@inkink/i18n": "workspace:*",
-    "@inkink/types": "workspace:*",
     "@inkink/ui": "workspace:*",
     "react": "^19.2.0"
   },

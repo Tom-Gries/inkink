@@ -1,16 +1,16 @@
 import type { FunctionComponent } from 'react'
 import type { Translations } from '@inkink/i18n'
 
-export interface InkRoute {
+export interface Route {
   /** Name der Route innerhalb des Inks, z.B. "ziel". */
   name: string
   path: string
   component: FunctionComponent
 }
 
-export interface InkDefinition {
+export interface Definition {
   name: string
-  routes: Array<InkRoute>
+  routes: Array<Route>
   translations: Translations
 }
 
@@ -20,7 +20,7 @@ export interface InkDefinition {
  * Link.to beim Schreiben autocomplettet und Tippfehler bereits
  * zur Compile-Zeit auffallen.
  */
-export interface InkRouteRegistry {}
+export interface RouteRegistry {}
 
-/** Typsichere Referenz auf eine registrierte Ink-Route, z.B. "startink.ziel". */
-export type InkRouteRef = keyof InkRouteRegistry & string
+/** Typsichere Referenz auf eine registrierte Route eines Inks, z.B. "startink.ziel". */
+export type RouteRef = keyof RouteRegistry & string

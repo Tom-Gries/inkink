@@ -1,7 +1,7 @@
 import { registerInkRoutes } from './registry'
-import type { InkDefinition } from './types'
+import type { Definition } from './types'
 
-export function defineInk(definition: InkDefinition): InkDefinition {
+export function defineInk(definition: Definition): Definition {
   registerInkRoutes(definition.name, definition.routes)
   return definition
 }

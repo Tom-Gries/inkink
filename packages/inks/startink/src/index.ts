@@ -4,7 +4,7 @@ import { ZielView } from './views/ziel'
 import { translations } from './translations'
 
 declare module '@inkink/core' {
-  interface InkRouteRegistry {
+  interface RouteRegistry {
     'startink.start': '/startink/Start'
     'startink.ziel': '/startink/ziel'
   }

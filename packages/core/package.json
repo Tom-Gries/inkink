@@ -9,9 +9,9 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "react": "^19.2.0",
-    "@inkink/i18n": "workspace:*"
-    },
+    "@inkink/i18n": "workspace:*",
+    "react": "^19.2.0"
+  },
   "devDependencies": {
     "@types/react": "^19.2.0"
   }
