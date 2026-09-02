@@ -12,10 +12,12 @@ declare module '@inkink/core' {
 
 export default defineInk({
   name: 'startink',
+  guard: 'auth',
   routes: [
     {
       name: 'start',
       path: '/startink/Start',
+      guard: 'none',
       component: StartView,
     },
     {
