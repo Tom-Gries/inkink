@@ -33,3 +33,5 @@ Thumbs.db
 
 # Local files
 *.local
+
+.vscode/
