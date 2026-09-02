@@ -7,14 +7,8 @@ export {
 export { ApiError, assertOk } from './errors'
 export {
   authClient,
-  authTranslations,
-  AuthProvider,
   isAuthenticated,
-  LoginGate,
-  useAuthStore,
   type AuthClient,
-  type AuthStatus,
-  type AuthUser,
 } from './auth'
 export {
   createTestMessage,

@@ -8,10 +8,7 @@ const authClient = vi.hoisted(() => ({
   signOut: vi.fn(),
 }))
 
-vi.mock('./client', () => ({ authClient }))
-vi.mock('better-auth/react', () => ({
-  createAuthClient: vi.fn(() => authClient),
-}))
+vi.mock('@inkink/api', () => ({ authClient }))
 
 import { AuthProvider } from './auth-provider'
 import { useAuthStore } from './store'

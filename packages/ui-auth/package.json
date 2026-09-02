@@ -1,5 +1,5 @@
 {
-  "name": "@inkink/api",
+  "name": "@inkink/ui-auth",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -9,13 +9,13 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.0.0",
-    "api": "workspace:*",
-    "better-auth": "^1.7.2",
-    "hono": "^4.13.5",
-    "react": "^19.2.8"
+    "@inkink/api": "workspace:*",
+    "@inkink/i18n": "workspace:*",
+    "@inkink/ui": "workspace:*",
+    "react": "^19.2.0",
+    "zustand": "^5.0.15"
   },
   "devDependencies": {
-    "@types/react": "^19.2.18"
+    "@types/react": "^19.2.0"
   }
 }

@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { authClient } from './client'
+import { authClient } from '@inkink/api'
 
 /** Schlanker Benutzer-Stand aus der Better-Auth-Session. */
 export interface AuthUser {

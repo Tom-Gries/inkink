@@ -81,6 +81,9 @@ importers:
       '@inkink/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@inkink/ui-auth':
+        specifier: workspace:*
+        version: link:../../packages/ui-auth
       '@tailwindcss/vite':
         specifier: ^4.1.18
         version: 4.3.3(vite@8.2.2(@types/node@22.20.1)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.13))
@@ -139,18 +142,9 @@ importers:
 
   packages/api:
     dependencies:
-      '@inkink/i18n':
-        specifier: workspace:*
-        version: link:../i18n
-      '@inkink/ui':
-        specifier: workspace:*
-        version: link:../ui
       '@tanstack/react-query':
         specifier: ^5.0.0
         version: 5.102.8(react@19.2.8)
-      '@tanstack/react-router':
-        specifier: ^1.170.32
-        version: 1.170.32(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       api:
         specifier: workspace:*
         version: link:../../apps/api
@@ -163,9 +157,6 @@ importers:
       react:
         specifier: ^19.2.8
         version: 19.2.8
-      zustand:
-        specifier: ^5.0.15
-        version: 5.0.15(@types/react@19.2.18)(react@19.2.8)(use-sync-external-store@1.6.0(react@19.2.8))
     devDependencies:
       '@types/react':
         specifier: ^19.2.18
@@ -267,6 +258,28 @@ importers:
       react:
         specifier: ^19.2.0
         version: 19.2.8
+    devDependencies:
+      '@types/react':
+        specifier: ^19.2.0
+        version: 19.2.18
+
+  packages/ui-auth:
+    dependencies:
+      '@inkink/api':
+        specifier: workspace:*
+        version: link:../api
+      '@inkink/i18n':
+        specifier: workspace:*
+        version: link:../i18n
+      '@inkink/ui':
+        specifier: workspace:*
+        version: link:../ui
+      react:
+        specifier: ^19.2.0
+        version: 19.2.8
+      zustand:
+        specifier: ^5.0.15
+        version: 5.0.15(@types/react@19.2.18)(react@19.2.8)(use-sync-external-store@1.6.0(react@19.2.8))
     devDependencies:
       '@types/react':
         specifier: ^19.2.0

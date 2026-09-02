@@ -1,6 +1,6 @@
-import { AuthProvider, authTranslations } from '@inkink/api'
 import { createTranslations, I18nProvider } from '@inkink/i18n'
 import { translations as routingTranslations } from '@inkink/routing'
+import { AuthProvider, authTranslations } from '@inkink/ui-auth'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createRootRoute, HeadContent, Scripts } from '@tanstack/react-router'

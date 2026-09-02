@@ -1,5 +1,6 @@
-import { isAuthenticated, useAuthStore } from '@inkink/api'
+import { isAuthenticated } from '@inkink/api'
 import { createInkRouter } from '@inkink/routing'
+import { useAuthStore } from '@inkink/ui-auth'
 import { inks } from './inks'
 import { Route as rootRoute } from './routes/__root'
 
@@ -14,7 +15,7 @@ export function getRouter() {
     isAuthenticated,
 
     // Der Auth-Guard meldet geschützte Routen ohne gültige Session;
-    // der AuthProvider (@inkink/api) zeigt dann das LoginGate – die
+    // der AuthProvider (@inkink/ui-auth) zeigt dann das LoginGate – die
     // URL bleibt unverändert.
     onAuthRequired: (targetHref) => {
       useAuthStore.getState().requireLogin(targetHref)

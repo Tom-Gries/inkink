@@ -8,7 +8,7 @@ const authClient = vi.hoisted(() => ({
   signOut: vi.fn(),
 }))
 
-vi.mock('./client', () => ({ authClient }))
+vi.mock('@inkink/api', () => ({ authClient }))
 
 import { LoginGate } from './login-gate'
 import { useAuthStore } from './store'

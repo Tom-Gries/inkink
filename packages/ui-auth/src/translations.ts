@@ -1,6 +1,6 @@
 import type { Translations } from '@inkink/i18n'
 
-/** Übersetzungen des Auth-Moduls (z. B. LoginGate). */
+/** Übersetzungen des React-Auth-UI-Packages (z. B. LoginGate). */
 export const authTranslations = {
   de: {
     'auth.login.title': 'Anmelden',

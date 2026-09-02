@@ -1,6 +1,2 @@
 export { authClient, type AuthClient } from './client'
 export { isAuthenticated } from './guard'
-export { useAuthStore, type AuthStatus, type AuthUser } from './store'
-export { AuthProvider } from './auth-provider'
-export { LoginGate } from './login-gate'
-export { authTranslations } from './translations'
