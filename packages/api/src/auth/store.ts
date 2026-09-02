@@ -12,7 +12,7 @@ export interface AuthUser {
 /** Lade-/Anmeldestatus der Session im Store. */
 export type AuthStatus = 'idle' | 'loading' | 'authenticated' | 'unauthenticated'
 
-/** Name des SSR-Scripts, das den Auth-Gate-Zustand an den Client übergibt. */
+/** ID des unsichtbaren <template>-Elements, das den Auth-Gate-Zustand an den Client überträgt. */
 export const AUTH_REQUEST_STATE_ID = 'inkink-auth-request-state'
 
 type SessionUser = NonNullable<
@@ -150,16 +150,19 @@ export const useAuthStore = create<AuthState>()((set) => ({
   resetRequestState: () => set({ loginRequired: false, pendingTarget: null }),
 }))
 
-// Client-seitig: Der Server hinterlegt beim SSR den Gate-Zustand in
-// einem JSON-Script (siehe AuthProvider). Der Client übernimmt ihn beim
-// Laden, damit er beim Hydrieren sofort dasselbe rendert wie der Server
-// (kein kurzer Einblick in geschützten Inhalt, keine URL-Änderung).
+// Client-seitig: Der Server hinterlegt beim SSR den Gate-Zustand als
+// JSON in einem unsichtbaren <template data-state> (siehe AuthProvider).
+// Der Client übernimmt ihn beim Laden, damit er beim Hydrieren sofort
+// dasselbe rendert wie der Server (kein kurzer Einblick in geschützten
+// Inhalt, keine URL-Änderung).
 if (typeof document !== 'undefined') {
   const element = document.getElementById(AUTH_REQUEST_STATE_ID)
 
   if (element) {
     try {
-      const parsed = JSON.parse(element.textContent ?? 'null') as {
+      const parsed = JSON.parse(
+        element.getAttribute('data-state') ?? 'null',
+      ) as {
         loginRequired?: boolean
         pendingTarget?: string | null
       } | null

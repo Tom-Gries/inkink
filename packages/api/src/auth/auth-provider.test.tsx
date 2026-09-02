@@ -61,4 +61,23 @@ describe('AuthProvider', () => {
 
     expect(await screen.findByText('geschützter Inhalt')).toBeTruthy()
   })
+
+  it('übergibt den Gate-Zustand per <template data-state> (valides JSON) an den Client', () => {
+    useAuthStore.setState({ pendingTarget: '/startink/ziel' })
+
+    renderProvider('geschützter Inhalt')
+
+    const template = document.getElementById('inkink-auth-request-state')
+    expect(template).toBeTruthy()
+    expect(template?.tagName.toLowerCase()).toBe('template')
+
+    // JSON aus dem data-state-Attribut lesbar (kein dangerouslySetInnerHTML).
+    const state = template?.getAttribute('data-state')
+    expect(state).toBeTruthy()
+    const parsed = JSON.parse(state ?? '{}')
+    expect(parsed).toEqual({
+      loginRequired: true,
+      pendingTarget: '/startink/ziel',
+    })
+  })
 })

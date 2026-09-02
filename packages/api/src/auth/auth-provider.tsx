@@ -9,10 +9,11 @@ import { AUTH_REQUEST_STATE_ID, useAuthStore } from './store'
  * - Rendert bei geschützten Routen (Auth-Guard) ohne gültige Session
  *   das LoginGate statt des Inhalts – die URL bleibt unverändert.
  *
- * SSR-Handoff: Der Server hinterlegt den Gate-Zustand als JSON-Script
- * in der Seite; der Client übernimmt ihn beim Laden (siehe store.ts).
- * Dadurch rendern Server und Client beim Hydrieren dasselbe – ohne
- * kurzen Einblick in geschützten Inhalt.
+ * SSR-Handoff: Der Server hinterlegt den Gate-Zustand als JSON in
+ * einem unsichtbaren <template data-state>-Element; der Client
+ * übernimmt ihn beim Laden (siehe store.ts). Dadurch rendern Server
+ * und Client beim Hydrieren dasselbe – ohne kurzen Einblick in
+ * geschützten Inhalt.
  */
 export function AuthProvider({ children }: { children: ReactNode }) {
   const user = useAuthStore((state) => state.user)
@@ -46,17 +47,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return (
     <>
       {locked && (
-        <script
-          type="application/json"
+        <template
           id={AUTH_REQUEST_STATE_ID}
-          // JSON sicher inline einbetten (kein Vorkommen von
-          // "</script>" möglich).
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              loginRequired: currentLoginRequired,
-              pendingTarget: currentPendingTarget,
-            }).replace(/</g, '\\u003c'),
-          }}
+          data-state={JSON.stringify({
+            loginRequired: currentLoginRequired,
+            pendingTarget: currentPendingTarget,
+          })}
         />
       )}
       {locked ? <LoginGate /> : children}
