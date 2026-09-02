@@ -7,3 +7,9 @@ export const authClient = createAuthClient({
 })
 
 export type AuthClient = typeof authClient
+
+export async function isAuthenticated(): Promise<boolean> {
+  const { data } = await authClient.getSession()
+
+  return Boolean(data?.user)
+}

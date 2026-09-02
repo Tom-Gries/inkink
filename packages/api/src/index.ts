@@ -5,7 +5,7 @@ export {
   type ApiClient,
 } from './client'
 export { ApiError, assertOk } from './errors'
-export { authClient, type AuthClient } from './auth'
+export { authClient, isAuthenticated, type AuthClient } from './auth'
 export {
   createTestMessage,
   deleteTestMessage,
