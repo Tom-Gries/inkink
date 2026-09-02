@@ -1,10 +1,5 @@
 import type { Definition, RouteGuard } from '@inkink/core'
-import {
-  createRoute,
-  createRouter,
-  redirect,
-  type AnyRoute,
-} from '@tanstack/react-router'
+import { createRoute, createRouter, type AnyRoute } from '@tanstack/react-router'
 import { ErrorView } from './views/error'
 import { HomeView } from './views/home'
 import { NotFoundView } from './views/not-found'
@@ -18,11 +13,14 @@ export interface InkRouterOptions {
   isAuthenticated: () => boolean | Promise<boolean>
 
   /**
-   * Route, zu der nicht authentifizierte Benutzer weitergeleitet werden.
+   * Wird aufgerufen, wenn ein geschützter Route-Guard ('auth') den
+   * Zugriff verweigert. Die App zeigt darüber ihre Login-UI (z. B.
+   * einen Provider mit LoginGate) – die URL bleibt unverändert.
    *
-   * Standard: '/login'
+   * Das Routing weiß nicht, WIE authentifiziert wird; es meldet nur,
+   * dass eine Authentifizierung fehlt.
    */
-  loginPath?: string
+  onAuthRequired?: (targetHref: string) => void
 }
 
 function getRouteGuard(
@@ -71,17 +69,15 @@ function createInkRoutes<TRootRoute extends AnyRoute>(
             const authenticated = await options.isAuthenticated()
 
             if (!authenticated) {
-              throw redirect({
-                to: options.loginPath ?? '/login',
-                search: {
-                  redirect: location.href,
-                },
-              })
+              // Kein Redirect und keine URL-Veränderung: Die App hört
+              // über onAuthRequired und zeigt ihre Login-UI.
+              options.onAuthRequired?.(location.href)
             }
           },
         })
       }),
     ),
+
   ]
 }
 

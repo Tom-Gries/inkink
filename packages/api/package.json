@@ -9,9 +9,17 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
+    "@inkink/i18n": "workspace:*",
+    "@inkink/ui": "workspace:*",
     "@tanstack/react-query": "^5.0.0",
+    "@tanstack/react-router": "^1.170.32",
     "api": "workspace:*",
     "better-auth": "^1.7.2",
-    "hono": "^4.13.5"
+    "hono": "^4.13.5",
+    "react": "^19.2.8",
+    "zustand": "^5.0.15"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.18"
   }
 }

@@ -1,20 +1,18 @@
 // @vitest-environment node
-import { config } from 'dotenv'
-import { fileURLToPath } from 'node:url'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import app from '../../index'
 
-// Lädt apps/api/.env, damit der Auth-Test gegen die Dev-Datenbank + Auth-Config läuft.
-config({ path: fileURLToPath(new URL('../../../.env', import.meta.url)) })
+// Better-Auth-Instanz mocken: Ohne Cookie liefert getSession null –
+// der Test läuft dadurch ohne echte Auth-Infrastruktur und Datenbank.
+vi.mock('../../auth', () => ({
+  getAuth: () => ({
+    api: {
+      getSession: async () => null,
+    },
+  }),
+}))
 
-const hasAuthEnv = Boolean(
-  process.env.MONGODB_URI &&
-    process.env.BETTER_AUTH_SECRET &&
-    process.env.GOOGLE_CLIENT_ID &&
-    process.env.GOOGLE_CLIENT_SECRET,
-)
-
-describe.skipIf(!hasAuthEnv)('GET /api/me', () => {
+describe('GET /api/me', () => {
   it('liefert 401 ohne gültige Session', async () => {
     const res = await app.request('/api/me')
 

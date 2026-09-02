@@ -1,6 +1,6 @@
 import type { Definition, RouteGuard } from '@inkink/core'
 import { createRootRoute } from '@tanstack/react-router'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { createInkRouter } from './index'
 
 const testInk: Definition = {
@@ -11,17 +11,17 @@ const testInk: Definition = {
   translations: { de: {}, en: {} },
 }
 
+function throwingIsAuthenticated(): boolean {
+  throw new Error(
+    'isAuthenticated darf ohne Route-Guard nicht aufgerufen werden',
+  )
+}
+
 describe('createInkRouter', () => {
   it('erstellt einen Router, der Home- und Ink-Routen auflöst', async () => {
     const rootRoute = createRootRoute({ component: () => null })
     const router = createInkRouter(rootRoute, [testInk], {
-      // testInk hat keinen Route-Guard – isAuthenticated darf nie
-      // aufgerufen werden und schlägt sonst bewusst fehl.
-      isAuthenticated: () => {
-        throw new Error(
-          'isAuthenticated darf ohne Route-Guard nicht aufgerufen werden',
-        )
-      },
+      isAuthenticated: throwingIsAuthenticated,
     })
 
     await router.navigate({ to: '/' })
@@ -34,13 +34,7 @@ describe('createInkRouter', () => {
   it('konfiguriert Preloading und Scroll-Restoration', () => {
     const rootRoute = createRootRoute({ component: () => null })
     const router = createInkRouter(rootRoute, [testInk], {
-      // testInk hat keinen Route-Guard – isAuthenticated darf nie
-      // aufgerufen werden und schlägt sonst bewusst fehl.
-      isAuthenticated: () => {
-        throw new Error(
-          'isAuthenticated darf ohne Route-Guard nicht aufgerufen werden',
-        )
-      },
+      isAuthenticated: throwingIsAuthenticated,
     })
 
     expect(router.options.scrollRestoration).toBe(true)
@@ -65,58 +59,76 @@ describe('Route Guards', () => {
     }
   }
 
-  function createGuardRouter(ink: Definition, authenticated: boolean) {
+  function createGuardRouter(
+    ink: Definition,
+    authenticated: boolean,
+    onAuthRequired = vi.fn(),
+  ) {
     return createInkRouter(createRootRoute({ component: () => null }), [ink], {
       isAuthenticated: () => authenticated,
-      loginPath: '/',
+      onAuthRequired,
     })
   }
 
-  it('leitet nicht authentifizierte Benutzer bei guard: auth zum Login-/Startziel weiter', async () => {
-    const router = createGuardRouter(guardInk('auth'), false)
-
-    await router.navigate({ to: '/guard-test/seite' })
-
-    expect(router.state.location.pathname).toBe('/')
-  })
-
-  it('blockiert guard: none den Zugriff nicht, wenn der Benutzer nicht authentifiziert ist', async () => {
-    const router = createGuardRouter(guardInk(undefined, 'none'), false)
-
-    await router.navigate({ to: '/guard-test/seite' })
-
-    expect(router.state.location.pathname).toBe('/guard-test/seite')
-  })
-
-  it('erlaubt authentifizierten Benutzern den Zugriff auf guard: auth', async () => {
-    const router = createGuardRouter(guardInk('auth'), true)
-
-    await router.navigate({ to: '/guard-test/seite' })
-
-    expect(router.state.location.pathname).toBe('/guard-test/seite')
-  })
-
-  it('erbt die Route den Auth-Guard des Inks, wenn sie keinen eigenen Guard besitzt', async () => {
-    // Ink hat guard: 'auth', Route ohne eigenen Guard – async-Fall (Promise).
+  it('ruft onAuthRequired bei nicht authentifiziertem Zugriff auf eine geschützte Route auf und lässt die URL unverändert', async () => {
+    // Ink hat guard: 'auth', Route ohne eigenen Guard → erbt den Guard.
+    // isAuthenticated ist async (Promise) – wie in der echten App.
+    const onAuthRequired = vi.fn()
     const router = createInkRouter(
       createRootRoute({ component: () => null }),
       [guardInk('auth')],
       {
         isAuthenticated: async () => false,
-        loginPath: '/',
+        onAuthRequired,
       },
     )
 
     await router.navigate({ to: '/guard-test/seite' })
 
-    expect(router.state.location.pathname).toBe('/')
+    // Kein Redirect: URL bleibt unverändert.
+    expect(router.state.location.pathname).toBe('/guard-test/seite')
+
+    expect(onAuthRequired).toHaveBeenCalledOnce()
+    expect(String(onAuthRequired.mock.calls[0]?.[0])).toContain(
+      '/guard-test/seite',
+    )
   })
 
-  it('überschreibt der Routen-Guard den Ink-Guard (guard: none → öffentlich)', async () => {
-    const router = createGuardRouter(guardInk('auth', 'none'), false)
+  it('ruft onAuthRequired nicht bei authentifiziertem Zugriff auf', async () => {
+    const onAuthRequired = vi.fn()
+    const router = createGuardRouter(guardInk('auth'), true, onAuthRequired)
 
     await router.navigate({ to: '/guard-test/seite' })
 
     expect(router.state.location.pathname).toBe('/guard-test/seite')
+    expect(onAuthRequired).not.toHaveBeenCalled()
+  })
+
+  it('ruft onAuthRequired nicht bei guard: none auf', async () => {
+    const onAuthRequired = vi.fn()
+    const router = createGuardRouter(
+      guardInk(undefined, 'none'),
+      false,
+      onAuthRequired,
+    )
+
+    await router.navigate({ to: '/guard-test/seite' })
+
+    expect(router.state.location.pathname).toBe('/guard-test/seite')
+    expect(onAuthRequired).not.toHaveBeenCalled()
+  })
+
+  it('überschreibt der Routen-Guard den Ink-Guard (guard: none → öffentlich)', async () => {
+    const onAuthRequired = vi.fn()
+    const router = createGuardRouter(
+      guardInk('auth', 'none'),
+      false,
+      onAuthRequired,
+    )
+
+    await router.navigate({ to: '/guard-test/seite' })
+
+    expect(router.state.location.pathname).toBe('/guard-test/seite')
+    expect(onAuthRequired).not.toHaveBeenCalled()
   })
 })

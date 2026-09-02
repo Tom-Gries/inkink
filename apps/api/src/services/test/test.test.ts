@@ -1,15 +1,20 @@
 // @vitest-environment node
-import { config } from 'dotenv'
-import { fileURLToPath } from 'node:url'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import app from '../../index'
 
-// Lädt apps/api/.env, damit Integrationstests gegen die Dev-Datenbank laufen.
-config({ path: fileURLToPath(new URL('../../../.env', import.meta.url)) })
+// In-Memory-Datenbank statt echter MongoDB – die Vertragstests laufen
+// dadurch ohne Server und ohne Umgebungsvariablen. Das Mock-Singleton
+// gilt für alle getDb()-Aufrufe innerhalb dieser Testdatei.
+vi.mock('../../db', async () => {
+  const { createInMemoryDb } = await import('../../testing/in-memory-db')
+  const db = createInMemoryDb()
+
+  return { getDb: () => db }
+})
 
 const createdIds: string[] = []
 
-describe.skipIf(!process.env.MONGODB_URI)('Test-Nachrichten (Integration)', () => {
+describe('Test-Nachrichten (Vertragstests)', () => {
   it('schreibt eine Test-Nachricht in die Datenbank (201)', async () => {
     const res = await app.request('/api/test', {
       method: 'POST',

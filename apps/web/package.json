@@ -19,6 +19,7 @@
     "@inkink/core": "workspace:*",
     "@inkink/i18n": "workspace:*",
     "@inkink/routing": "workspace:*",
+    "@inkink/ui": "workspace:*",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-devtools": "latest",
     "@tanstack/react-query": "^5.102.8",

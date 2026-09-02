@@ -5,7 +5,17 @@ export {
   type ApiClient,
 } from './client'
 export { ApiError, assertOk } from './errors'
-export { authClient, isAuthenticated, type AuthClient } from './auth'
+export {
+  authClient,
+  authTranslations,
+  AuthProvider,
+  isAuthenticated,
+  LoginGate,
+  useAuthStore,
+  type AuthClient,
+  type AuthStatus,
+  type AuthUser,
+} from './auth'
 export {
   createTestMessage,
   deleteTestMessage,

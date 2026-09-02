@@ -1,11 +1,15 @@
 // @vitest-environment node
-import { config } from 'dotenv'
-import { fileURLToPath } from 'node:url'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import app from '../../index'
 
-// Lädt apps/api/.env, damit der List-Endpoint gegen die Dev-Datenbank läuft.
-config({ path: fileURLToPath(new URL('../../../.env', import.meta.url)) })
+// In-Memory-Datenbank statt echter MongoDB – die Vertragstests laufen
+// dadurch ohne Server und ohne Umgebungsvariablen.
+vi.mock('../../db', async () => {
+  const { createInMemoryDb } = await import('../../testing/in-memory-db')
+  const db = createInMemoryDb()
+
+  return { getDb: () => db }
+})
 
 describe('GET /api/users/:id', () => {
   it('liefert 400 bei ungültiger ID (ohne Datenbankzugriff)', async () => {
@@ -15,7 +19,7 @@ describe('GET /api/users/:id', () => {
   })
 })
 
-describe.skipIf(!process.env.MONGODB_URI)('GET /api/users', () => {
+describe('GET /api/users', () => {
   it('liefert eine Benutzerliste – auch leer, solange kein Login erfolgte (200)', async () => {
     const res = await app.request('/api/users')
 

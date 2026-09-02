@@ -1,12 +1,24 @@
-import { isAuthenticated } from '@inkink/api'
+import { isAuthenticated, useAuthStore } from '@inkink/api'
 import { createInkRouter } from '@inkink/routing'
 import { inks } from './inks'
 import { Route as rootRoute } from './routes/__root'
 
 export function getRouter() {
+  // Auf dem Server: Request-relevante Auth-Flags zurücksetzen, damit
+  // kein Zustand zwischen SSR-Requests leakt.
+  if (typeof document === 'undefined') {
+    useAuthStore.getState().resetRequestState()
+  }
+
   return createInkRouter(rootRoute, inks, {
     isAuthenticated,
-    loginPath: '/',
+
+    // Der Auth-Guard meldet geschützte Routen ohne gültige Session;
+    // der AuthProvider (@inkink/api) zeigt dann das LoginGate – die
+    // URL bleibt unverändert.
+    onAuthRequired: (targetHref) => {
+      useAuthStore.getState().requireLogin(targetHref)
+    },
   })
 }
 
