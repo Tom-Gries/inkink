@@ -19,7 +19,7 @@ export default defineInk({
   routes: [
     {
       name: 'start',
-      path: '/startink/Start',
+      path: '/startink/start',
       guard: 'none',
       component: StartView,
       nav: {
