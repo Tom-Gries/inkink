@@ -8,6 +8,7 @@ export const authTranslations = {
     'auth.login.google': 'Mit Google anmelden',
     'auth.login.checking': 'Anmeldestatus wird geprüft …',
     'auth.login.error': 'Anmeldestatus konnte nicht geladen werden',
+    'auth.signOut': 'Abmelden',
   },
   en: {
     'auth.login.title': 'Sign in',
@@ -15,5 +16,6 @@ export const authTranslations = {
     'auth.login.google': 'Sign in with Google',
     'auth.login.checking': 'Checking sign-in status …',
     'auth.login.error': 'Could not load sign-in status',
+    'auth.signOut': 'Sign out',
   },
 } satisfies Translations

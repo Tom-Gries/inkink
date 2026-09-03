@@ -11,6 +11,16 @@ const testInk: Definition = {
   translations: { de: {}, en: {} },
 }
 
+/**
+ * Der Router kennt die dynamisch über createInkRouter eingefügten
+ * Test-Routen nicht als statische Pfad-Union. Für den Preload-Test wird
+ * der Aufruf deshalb auf einen minimalen Signature-Typ gecastet
+ * (bewusst schmal, ohne Gas – nur für die Guard-Cause-Verifikation).
+ */
+interface PreloadableRouter {
+  preloadRoute: (opts: { to: string }) => Promise<unknown>
+}
+
 function throwingIsAuthenticated(): boolean {
   throw new Error(
     'isAuthenticated darf ohne Route-Guard nicht aufgerufen werden',
@@ -43,7 +53,10 @@ describe('createInkRouter', () => {
 })
 
 describe('Route Guards', () => {
-  function guardInk(inkGuard?: RouteGuard, routeGuard?: RouteGuard): Definition {
+  function guardInk(
+    inkGuard?: RouteGuard,
+    routeGuard?: RouteGuard,
+  ): Definition {
     return {
       name: 'guard-test',
       guard: inkGuard,
@@ -116,6 +129,92 @@ describe('Route Guards', () => {
 
     expect(router.state.location.pathname).toBe('/guard-test/seite')
     expect(onAuthRequired).not.toHaveBeenCalled()
+  })
+
+  it('ruft onAuthRequired nicht beim PRELOAD einer geschützten Route auf (Gate blitzt nicht beim Hover auf)', async () => {
+    const onAuthRequired = vi.fn()
+    const router = createInkRouter(
+      createRootRoute({ component: () => null }),
+      [guardInk('auth')],
+      {
+        isAuthenticated: async () => false,
+        onAuthRequired,
+      },
+    )
+
+    // Preload simulieren (defaultPreload: 'intent', Hover/Fokus) –
+    // cause 'preload' darf KEIN LoginGate auslösen, erst ein echter Klick.
+    await (router as unknown as PreloadableRouter).preloadRoute({
+      to: '/guard-test/seite',
+    })
+
+    expect(onAuthRequired).not.toHaveBeenCalled()
+  })
+
+  it('ruft onPublicRoute bei Navigation auf eine öffentliche Ink-Route auf', async () => {
+    const onPublicRoute = vi.fn()
+    const router = createInkRouter(
+      createRootRoute({ component: () => null }),
+      [guardInk('none')],
+      {
+        isAuthenticated: () => true,
+        onPublicRoute,
+      },
+    )
+
+    await router.navigate({ to: '/guard-test/seite' })
+
+    expect(onPublicRoute).toHaveBeenCalledOnce()
+  })
+
+  it('ruft onPublicRoute bei Navigation auf die Index-Route (/) auf', async () => {
+    const onPublicRoute = vi.fn()
+    const router = createInkRouter(
+      createRootRoute({ component: () => null }),
+      [],
+      {
+        isAuthenticated: () => true,
+        onPublicRoute,
+      },
+    )
+
+    await router.navigate({ to: '/' })
+
+    expect(onPublicRoute).toHaveBeenCalledOnce()
+  })
+
+  it('ruft onPublicRoute NICHT beim Preload einer öffentlichen Route auf', async () => {
+    const onPublicRoute = vi.fn()
+    const router = createInkRouter(
+      createRootRoute({ component: () => null }),
+      [guardInk('none')],
+      {
+        isAuthenticated: () => true,
+        onPublicRoute,
+      },
+    )
+
+    await (router as unknown as PreloadableRouter).preloadRoute({
+      to: '/guard-test/seite',
+    })
+
+    expect(onPublicRoute).not.toHaveBeenCalled()
+  })
+
+  it('ruft onPublicRoute nicht auf einer geschützten Route auf', async () => {
+    const onPublicRoute = vi.fn()
+    const router = createInkRouter(
+      createRootRoute({ component: () => null }),
+      [guardInk('auth')],
+      {
+        isAuthenticated: () => true,
+        onPublicRoute,
+      },
+    )
+
+    await router.navigate({ to: '/guard-test/seite' })
+
+    expect(onPublicRoute).not.toHaveBeenCalled()
   })
 
   it('überschreibt der Routen-Guard den Ink-Guard (guard: none → öffentlich)', async () => {

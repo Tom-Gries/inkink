@@ -1,10 +1,12 @@
 import type { ReactNode } from 'react'
-import type { Route, RouteNav } from './types'
+import type { Route, RouteGuard, RouteNav } from './types'
 
 interface RegisteredRoute {
   inkName: string
   routeName: string
   path: string
+  /** Effektiver Guard (`route.guard ?? ink.guard`). */
+  guard?: RouteGuard
   nav?: RouteNav
 }
 
@@ -12,13 +14,15 @@ const routes = new Map<string, RegisteredRoute>()
 
 export function registerInkRoutes(
   inkName: string,
-  inkRoutes: ReadonlyArray<Pick<Route, 'name' | 'path' | 'nav'>>,
+  inkGuard: RouteGuard | undefined,
+  inkRoutes: ReadonlyArray<Pick<Route, 'name' | 'path' | 'nav' | 'guard'>>,
 ): void {
   for (const route of inkRoutes) {
     routes.set(`${inkName}.${route.name}`, {
       inkName,
       routeName: route.name,
       path: route.path,
+      guard: route.guard ?? inkGuard,
       nav: route.nav,
     })
   }
@@ -40,6 +44,8 @@ export interface VisibleInkRoute {
   inkName: string
   routeName: string
   path: string
+  /** Effektiver Guard der Route (`route.guard ?? ink.guard`). */
+  guard?: RouteGuard
   /** Optionales Sidebar-Icon der Route (`nav.icon`). */
   icon?: ReactNode
 }
@@ -62,6 +68,7 @@ export function getVisibleInkRoutes(): Array<VisibleInkRoute> {
       inkName: route.inkName,
       routeName: route.routeName,
       path: route.path,
+      guard: route.guard,
       icon: route.nav?.icon,
     }))
 }

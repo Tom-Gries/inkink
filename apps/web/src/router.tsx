@@ -20,6 +20,12 @@ export function getRouter() {
     onAuthRequired: (targetHref) => {
       useAuthStore.getState().requireLogin(targetHref)
     },
+
+    // Öffentliche Route erreicht (z. B. "/" oder "/settink"): Das
+    // LoginGate-Flag zurücksetzen, damit es nicht hängen bleibt.
+    onPublicRoute: () => {
+      useAuthStore.getState().clearLoginRequired()
+    },
   })
 }
 

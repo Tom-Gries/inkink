@@ -1,5 +1,5 @@
 import { useRender } from '@base-ui-components/react/use-render'
-import { resolveInkRoute, type RouteRef } from '@inkink/core'
+import { type RouteRef, resolveInkRoute } from '@inkink/core'
 import {
   Link as TanStackLink,
   type LinkProps as TanStackLinkProps,
@@ -9,7 +9,7 @@ import { ArrowLeft, ArrowRight, ExternalLink } from 'lucide-react'
 import type { ComponentType, ReactElement, ReactNode } from 'react'
 
 export const linkVariants = cva(
-  'inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
+  'inline-flex cursor-pointer items-center justify-center gap-2 rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
   {
     variants: {
       variant: {
@@ -51,7 +51,16 @@ export type LinkProps = Omit<TanStackLinkProps, 'to'> &
     to?: RouteRef
   }
 
-export function Link({ className, variant, size, render, type, children, to, ...props }: LinkProps) {
+export function Link({
+  className,
+  variant,
+  size,
+  render,
+  type,
+  children,
+  to,
+  ...props
+}: LinkProps) {
   const Icon = type ? linkTypeIcons[type] : null
   const path = to !== undefined ? resolveInkRoute(to) : undefined
 
@@ -61,12 +70,16 @@ export function Link({ className, variant, size, render, type, children, to, ...
       {children}
       {(type === 'next' || type === 'external') && <Icon />}
     </>
-  ) : children
+  ) : (
+    children
+  )
 
   return useRender({
     render: render ?? <TanStackLink {...props} to={path} />,
     props: {
-      className: [linkVariants({ variant, size }), className].filter(Boolean).join(' '),
+      className: [linkVariants({ variant, size }), className]
+        .filter(Boolean)
+        .join(' '),
       children: renderedChildren,
     },
   })

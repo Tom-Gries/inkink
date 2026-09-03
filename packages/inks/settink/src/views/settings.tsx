@@ -15,6 +15,7 @@ import {
   SwitchControl,
   TextField,
 } from '@inkink/ui'
+import { SignOutButton } from '@inkink/ui-auth'
 import {
   Check,
   Copy,
@@ -349,9 +350,7 @@ export function SettingsView() {
                 {t('settink.account.password')}
               </Button>
               <Divider />
-              <Button variant="destructive" className="w-full">
-                {t('settink.signOut')}
-              </Button>
+              <SignOutButton className="w-full" />
             </CardContent>
           </Card>
         </div>

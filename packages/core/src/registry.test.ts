@@ -7,7 +7,7 @@ import {
 
 describe('registerInkRoutes', () => {
   it('registriert Routen als "<ink-name>.<route-name>"', () => {
-    registerInkRoutes('registry-test', [
+    registerInkRoutes('registry-test', undefined, [
       { name: 'a', path: '/registry-test/a' },
       { name: 'b', path: '/registry-test/b' },
     ])
@@ -17,15 +17,21 @@ describe('registerInkRoutes', () => {
   })
 
   it('ergänzt weitere Inks, ohne bestehende Einträge zu verlieren', () => {
-    registerInkRoutes('registry-test-2', [{ name: 'only', path: '/zwei' }])
+    registerInkRoutes('registry-test-2', undefined, [
+      { name: 'only', path: '/zwei' },
+    ])
 
     expect(resolveInkRoute('registry-test.a')).toBe('/registry-test/a')
     expect(resolveInkRoute('registry-test-2.only')).toBe('/zwei')
   })
 
   it('überschreibt dieselbe Referenz bei erneuter Registrierung', () => {
-    registerInkRoutes('registry-test-3', [{ name: 'r', path: '/alt' }])
-    registerInkRoutes('registry-test-3', [{ name: 'r', path: '/neu' }])
+    registerInkRoutes('registry-test-3', undefined, [
+      { name: 'r', path: '/alt' },
+    ])
+    registerInkRoutes('registry-test-3', undefined, [
+      { name: 'r', path: '/neu' },
+    ])
 
     expect(resolveInkRoute('registry-test-3.r')).toBe('/neu')
   })
@@ -44,7 +50,7 @@ describe('resolveInkRoute', () => {
 
 describe('getVisibleInkRoutes', () => {
   it('liefert nur Routen mit nav.visible: true', () => {
-    registerInkRoutes('visible-test', [
+    registerInkRoutes('visible-test', undefined, [
       { name: 'hidden', path: '/hidden', nav: { visible: false } },
       { name: 'shown', path: '/shown', nav: { visible: true } },
       { name: 'no-nav', path: '/no-nav' },
@@ -57,7 +63,7 @@ describe('getVisibleInkRoutes', () => {
   })
 
   it('sortiert aufsteigend nach weight – höhere Zahl weiter unten', () => {
-    registerInkRoutes('weight-test', [
+    registerInkRoutes('weight-test', undefined, [
       { name: 'a', path: '/a', nav: { visible: true, weight: 2 } },
       { name: 'b', path: '/b', nav: { visible: true, weight: 0 } },
       { name: 'c', path: '/c', nav: { visible: true, weight: 1 } },
@@ -70,7 +76,7 @@ describe('getVisibleInkRoutes', () => {
   })
 
   it('behält Registrierungsreihenfolge, wenn kein weight gesetzt ist', () => {
-    registerInkRoutes('weight-default-test', [
+    registerInkRoutes('weight-default-test', undefined, [
       { name: 'a', path: '/a', nav: { visible: true } },
       { name: 'b', path: '/b', nav: { visible: true } },
       { name: 'c', path: '/c', nav: { visible: true } },
@@ -86,8 +92,26 @@ describe('getVisibleInkRoutes', () => {
     ])
   })
 
+  it('liefert den effektiven Guard (route.guard ?? ink.guard)', () => {
+    registerInkRoutes('guard-collect-test', 'auth', [
+      {
+        name: 'public',
+        path: '/public',
+        guard: 'none',
+        nav: { visible: true },
+      },
+      { name: 'heir', path: '/heir', nav: { visible: true } },
+    ])
+
+    const byGuard = getVisibleInkRoutes().filter(
+      (route) => route.inkName === 'guard-collect-test',
+    )
+    expect(byGuard.find((r) => r.routeName === 'public')?.guard).toBe('none')
+    expect(byGuard.find((r) => r.routeName === 'heir')?.guard).toBe('auth')
+  })
+
   it('mischt negative Gewichte, ungewichtete und positive Gewichte', () => {
-    registerInkRoutes('weight-mixed-test', [
+    registerInkRoutes('weight-mixed-test', undefined, [
       { name: 'a', path: '/a', nav: { visible: true, weight: 1 } },
       { name: 'b', path: '/b', nav: { visible: true } },
       { name: 'c', path: '/c', nav: { visible: true, weight: -1 } },

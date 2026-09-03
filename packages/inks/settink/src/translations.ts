@@ -58,7 +58,6 @@ export const translations = {
     'settink.email.change': 'E-Mail-Adresse ändern',
     'settink.account': 'Account',
     'settink.account.password': 'Passwort ändern',
-    'settink.signOut': 'Abmelden',
   },
   en: {
     'settink.settings': 'Settings',
@@ -115,6 +114,5 @@ export const translations = {
     'settink.email.change': 'Change email address',
     'settink.account': 'Account',
     'settink.account.password': 'Change password',
-    'settink.signOut': 'Sign out',
   },
 } satisfies Translations

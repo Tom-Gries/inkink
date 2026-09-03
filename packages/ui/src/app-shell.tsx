@@ -42,6 +42,12 @@ export interface AppShellProps {
   footer?: ReactNode
   /** Profil für den Standard-Footer; Default ist ein Mock-Profil. */
   profile?: ShellProfile
+  /**
+   * `true`, wenn eine Sitzung besteht. Ohne Auth werden in der Sidebar
+   * nur öffentliche Links (guard !== 'auth') angezeigt und der
+   * Profil-Footer ist ausgeblendet. Default `true`.
+   */
+  authenticated?: boolean
   children: ReactNode
 }
 
@@ -52,16 +58,18 @@ const DEFAULT_PROFILE: ShellProfile = {
   xp: 1240,
 }
 
-/** Baut die Sidebar-Items automatisch aus allen sichtbaren Ink-Routen. */
-function useAutoNavItems() {
+/** Baut die Sidebar-Items automatisch aus den sichtbaren Ink-Routen. */
+function useAutoNavItems(showAuthLinks: boolean) {
   const t = useTranslations()
 
-  return getVisibleInkRoutes().map((route: VisibleInkRoute) => ({
-    key: route.routeName,
-    label: t(`${route.inkName}.nav.${route.routeName}`),
-    to: route.ref,
-    icon: route.icon ?? <Circle className="size-4" />,
-  }))
+  return getVisibleInkRoutes()
+    .filter((route) => showAuthLinks || route.guard !== 'auth')
+    .map((route: VisibleInkRoute) => ({
+      key: route.routeName,
+      label: t(`${route.inkName}.nav.${route.routeName}`),
+      to: route.ref,
+      icon: route.icon ?? <Circle className="size-4" />,
+    }))
 }
 
 function DefaultProfileFooter({ profile }: { profile: ShellProfile }) {
@@ -113,7 +121,7 @@ function SidebarItemLink({
         to={path}
         onClick={onNavigate}
         className={cn(
-          'flex items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium transition-colors',
+          'flex cursor-pointer items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium transition-colors',
           'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
           active && 'bg-accent text-accent-foreground',
@@ -133,7 +141,7 @@ function SidebarItemLink({
         onNavigate?.()
       }}
       className={cn(
-        'flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium transition-colors',
+        'flex w-full cursor-pointer items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium transition-colors',
         'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
       )}
@@ -182,9 +190,10 @@ export function AppShell({
   brand,
   footer,
   profile = DEFAULT_PROFILE,
+  authenticated = true,
   children,
 }: AppShellProps) {
-  const autoItems = useAutoNavItems()
+  const autoItems = useAutoNavItems(authenticated)
 
   const sidebarGroups: Array<SidebarGroup> = [
     { items: autoItems },
@@ -192,7 +201,13 @@ export function AppShell({
   ]
 
   const sidebarFooter =
-    footer === undefined ? <DefaultProfileFooter profile={profile} /> : footer
+    footer === undefined ? (
+      authenticated ? (
+        <DefaultProfileFooter profile={profile} />
+      ) : null
+    ) : (
+      footer
+    )
 
   return (
     <div className="flex min-h-dvh bg-background text-foreground">
@@ -215,7 +230,7 @@ export function AppShell({
           <Dialog.Root>
             <Dialog.Trigger
               aria-label="Menü öffnen"
-              className="inline-flex size-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="inline-flex size-9 cursor-pointer items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               <Menu className="size-5" />
             </Dialog.Trigger>
@@ -233,7 +248,7 @@ export function AppShell({
                   )}
                   <Dialog.Close
                     aria-label="Menü schließen"
-                    className="inline-flex size-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    className="inline-flex size-9 cursor-pointer items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
                     <X className="size-5" />
                   </Dialog.Close>

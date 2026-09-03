@@ -1,5 +1,9 @@
 import type { Definition, RouteGuard } from '@inkink/core'
-import { createRoute, createRouter, type AnyRoute } from '@tanstack/react-router'
+import {
+  type AnyRoute,
+  createRoute,
+  createRouter,
+} from '@tanstack/react-router'
 import { ErrorView } from './views/error'
 import { HomeView } from './views/home'
 import { NotFoundView } from './views/not-found'
@@ -21,6 +25,14 @@ export interface InkRouterOptions {
    * dass eine Authentifizierung fehlt.
    */
   onAuthRequired?: (targetHref: string) => void
+
+  /**
+   * Wird bei der Navigation auf eine ÖFFENTLICHE Route ('none'/kein
+   * Guard) aufgerufen (nicht beim Preload). Die App nutzt das z. B.,
+   * um das Login-Required-Flag der Auth-Logik zurückzusetzen, damit
+   * das LoginGate nicht auf öffentlichen Seiten hängen bleibt.
+   */
+  onPublicRoute?: () => void
 }
 
 function getRouteGuard(
@@ -40,12 +52,24 @@ function createInkRoutes<TRootRoute extends AnyRoute>(
     getParentRoute: () => rootRoute,
     path: '/',
     component: HomeView,
+    beforeLoad: ({ cause }) => {
+      // Öffentliche Route: Bei echter Navigation (nicht Preload) das
+      // Login-Required-Flag zurücksetzen, damit das Gate nicht kleben bleibt.
+      if (cause !== 'preload') {
+        options.onPublicRoute?.()
+      }
+    },
   })
 
   const errorRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: '/error',
     component: ErrorView,
+    beforeLoad: ({ cause }) => {
+      if (cause !== 'preload') {
+        options.onPublicRoute?.()
+      }
+    },
   })
 
   return [
@@ -61,23 +85,32 @@ function createInkRoutes<TRootRoute extends AnyRoute>(
           path: route.path,
           component: route.component,
 
-          beforeLoad: async ({ location }) => {
-            if (guard !== 'auth') {
+          beforeLoad: async ({ location, cause }) => {
+            // Beim Preload (Hover/Fokus) keine Auth-Prüfung und keinen
+            // Hook auslösen – das LoginGate soll nicht schon vor einem
+            // Klick aufblitzen.
+            if (cause === 'preload') {
               return
             }
 
-            const authenticated = await options.isAuthenticated()
+            if (guard === 'auth') {
+              const authenticated = await options.isAuthenticated()
 
-            if (!authenticated) {
-              // Kein Redirect und keine URL-Veränderung: Die App hört
-              // über onAuthRequired und zeigt ihre Login-UI.
-              options.onAuthRequired?.(location.href)
+              if (!authenticated) {
+                // Kein Redirect und keine URL-Veränderung: Die App hört
+                // über onAuthRequired und zeigt ihre Login-UI.
+                options.onAuthRequired?.(location.href)
+              }
+              return
             }
+
+            // Öffentliche Route: Login-Required-Flag zurücksetzen, damit
+            // das LoginGate auf öffentlichen Seiten nicht hängen bleibt.
+            options.onPublicRoute?.()
           },
         })
       }),
     ),
-
   ]
 }
 
@@ -87,9 +120,7 @@ export function createInkRouter<TRootRoute extends AnyRoute>(
   options: InkRouterOptions,
 ) {
   return createRouter({
-    routeTree: rootRoute.addChildren(
-      createInkRoutes(rootRoute, inks, options),
-    ),
+    routeTree: rootRoute.addChildren(createInkRoutes(rootRoute, inks, options)),
     scrollRestoration: true,
     defaultPreload: 'intent',
     defaultPreloadStaleTime: 0,

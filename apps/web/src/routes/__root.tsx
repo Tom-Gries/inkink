@@ -1,7 +1,7 @@
 import { createTranslations, I18nProvider } from '@inkink/i18n'
 import { translations as routingTranslations } from '@inkink/routing'
 import { AppShell } from '@inkink/ui'
-import { AuthProvider, authTranslations } from '@inkink/ui-auth'
+import { AuthProvider, authTranslations, useAuthStore } from '@inkink/ui-auth'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createRootRoute, HeadContent, Scripts } from '@tanstack/react-router'
@@ -43,6 +43,16 @@ export const Route = createRootRoute({
   shellComponent: RootDocument,
 })
 
+function RootLayout({ children }: { children: React.ReactNode }) {
+  const user = useAuthStore((state) => state.user)
+
+  return (
+    <AppShell authenticated={user !== null}>
+      <AuthProvider>{children}</AuthProvider>
+    </AppShell>
+  )
+}
+
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -52,9 +62,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body>
         <I18nProvider locale="de" translations={translations}>
           <QueryClientProvider client={queryClient}>
-            <AuthProvider>
-              <AppShell>{children}</AppShell>
-            </AuthProvider>
+            <RootLayout>{children}</RootLayout>
           </QueryClientProvider>
         </I18nProvider>
         <TanStackDevtools

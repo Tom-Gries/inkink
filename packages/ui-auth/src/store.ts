@@ -1,5 +1,5 @@
-import { create } from 'zustand'
 import { authClient } from '@inkink/api'
+import { create } from 'zustand'
 
 /** Schlanker Benutzer-Stand aus der Better-Auth-Session. */
 export interface AuthUser {
@@ -10,7 +10,11 @@ export interface AuthUser {
 }
 
 /** Lade-/Anmeldestatus der Session im Store. */
-export type AuthStatus = 'idle' | 'loading' | 'authenticated' | 'unauthenticated'
+export type AuthStatus =
+  | 'idle'
+  | 'loading'
+  | 'authenticated'
+  | 'unauthenticated'
 
 /** ID des unsichtbaren <template>-Elements, das den Auth-Gate-Zustand an den Client überträgt. */
 export const AUTH_REQUEST_STATE_ID = 'inkink-auth-request-state'
@@ -77,6 +81,14 @@ interface AuthState {
    * wurde (vom Router-Guard über onAuthRequired aufgerufen).
    */
   requireLogin: (targetHref: string) => void
+
+  /**
+   * Setzt das Login-Required-Flag zurück (z. B. wenn eine öffentliche
+   * Route ohne gültige Session geöffnet wird) – das LoginGate kann so
+   * nicht auf öffentlichen Seiten hängen bleiben. Bewusst schmal
+   * gehalten, anders als resetRequestState (Server-spezifisch).
+   */
+  clearLoginRequired: () => void
 
   /**
    * Setzt die request-relevanten Auth-Flags zurück (Server: Beginn
@@ -146,6 +158,8 @@ export const useAuthStore = create<AuthState>()((set) => ({
 
   requireLogin: (targetHref) =>
     set({ loginRequired: true, pendingTarget: targetHref }),
+
+  clearLoginRequired: () => set({ loginRequired: false, pendingTarget: null }),
 
   resetRequestState: () => set({ loginRequired: false, pendingTarget: null }),
 }))

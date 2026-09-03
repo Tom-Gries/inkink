@@ -214,6 +214,9 @@ importers:
       '@inkink/ui':
         specifier: workspace:*
         version: link:../../ui
+      '@inkink/ui-auth':
+        specifier: workspace:*
+        version: link:../../ui-auth
       lucide-react:
         specifier: latest
         version: 1.39.0(react@19.2.8)
@@ -311,6 +314,9 @@ importers:
       '@inkink/ui':
         specifier: workspace:*
         version: link:../ui
+      '@tanstack/react-router':
+        specifier: ^1.170.32
+        version: 1.170.32(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react:
         specifier: ^19.2.0
         version: 19.2.8

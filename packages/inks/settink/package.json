@@ -12,6 +12,7 @@
     "@inkink/core": "workspace:*",
     "@inkink/i18n": "workspace:*",
     "@inkink/ui": "workspace:*",
+    "@inkink/ui-auth": "workspace:*",
     "lucide-react": "latest",
     "react": "^19.2.0"
   },

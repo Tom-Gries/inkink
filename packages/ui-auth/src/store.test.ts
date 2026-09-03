@@ -106,13 +106,24 @@ describe('useAuthStore', () => {
   })
 
   it('requireLogin setzt loginRequired und das Ziel für den Login', () => {
-    useAuthStore
-      .getState()
-      .requireLogin('http://localhost:3000/startink/ziel')
+    useAuthStore.getState().requireLogin('http://localhost:3000/startink/ziel')
 
     const state = useAuthStore.getState()
     expect(state.loginRequired).toBe(true)
     expect(state.pendingTarget).toBe('http://localhost:3000/startink/ziel')
+  })
+
+  it('clearLoginRequired setzt loginRequired und pendingTarget zurück (öffentliche Route)', () => {
+    useAuthStore.setState({
+      loginRequired: true,
+      pendingTarget: 'http://localhost:3000/startink/ziel',
+    })
+
+    useAuthStore.getState().clearLoginRequired()
+
+    const state = useAuthStore.getState()
+    expect(state.loginRequired).toBe(false)
+    expect(state.pendingTarget).toBeNull()
   })
 
   it('resetRequestState setzt die request-relevanten Auth-Flags zurück', () => {
