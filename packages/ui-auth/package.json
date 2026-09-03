@@ -13,6 +13,7 @@
     "@inkink/i18n": "workspace:*",
     "@inkink/ui": "workspace:*",
     "@tanstack/react-router": "^1.170.32",
+    "lucide-react": "latest",
     "react": "^19.2.0",
     "zustand": "^5.0.15"
   },

@@ -1,4 +1,5 @@
 export { AuthProvider } from './auth-provider'
+export { LoginButton, type LoginButtonProps } from './login-button'
 export { LoginGate } from './login-gate'
 export { SignOutButton, type SignOutButtonProps } from './sign-out-button'
 export {

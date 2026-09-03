@@ -1,7 +1,12 @@
-import { createTranslations, I18nProvider } from '@inkink/i18n'
+import { createTranslations, I18nProvider, useTranslations } from '@inkink/i18n'
 import { translations as routingTranslations } from '@inkink/routing'
 import { AppShell } from '@inkink/ui'
-import { AuthProvider, authTranslations, useAuthStore } from '@inkink/ui-auth'
+import {
+  AuthProvider,
+  authTranslations,
+  LoginButton,
+  useAuthStore,
+} from '@inkink/ui-auth'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createRootRoute, HeadContent, Scripts } from '@tanstack/react-router'
@@ -45,9 +50,17 @@ export const Route = createRootRoute({
 
 function RootLayout({ children }: { children: React.ReactNode }) {
   const user = useAuthStore((state) => state.user)
+  const t = useTranslations()
+
+  // Ausgeloggt: Am Platz des Profils (Sidebar-/Drawer-Footer) den
+  // Login-Button zeigen; eingeloggt übernimmt AppShell das Standard-Profil.
+  const footer =
+    user === null ? (
+      <LoginButton className="w-full">{t('auth.login.footer')}</LoginButton>
+    ) : undefined
 
   return (
-    <AppShell authenticated={user !== null}>
+    <AppShell authenticated={user !== null} footer={footer}>
       <AuthProvider>{children}</AuthProvider>
     </AppShell>
   )
