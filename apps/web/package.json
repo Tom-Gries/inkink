@@ -19,6 +19,7 @@
     "@inkink/core": "workspace:*",
     "@inkink/i18n": "workspace:*",
     "@inkink/routing": "workspace:*",
+    "@inkink/settink": "workspace:*",
     "@inkink/ui": "workspace:*",
     "@inkink/ui-auth": "workspace:*",
     "@tailwindcss/vite": "^4.1.18",

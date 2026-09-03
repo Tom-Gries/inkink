@@ -42,7 +42,7 @@ const DEMO_PROFILE: ProfileMock = {
   xp: 1240,
 }
 
-export function EinstellungenView() {
+export function SettingsView() {
   const t = useTranslations()
   const [profile, setProfile] = useState<ProfileMock>(DEMO_PROFILE)
   const [visibility, setVisibility] = useState('public')
@@ -99,41 +99,41 @@ export function EinstellungenView() {
   }> = [
     {
       key: 'connections',
-      title: t('startink.notify.connections'),
-      description: t('startink.notify.connectionsDesc'),
+      title: t('settink.notify.connections'),
+      description: t('settink.notify.connectionsDesc'),
     },
     {
       key: 'routines',
-      title: t('startink.notify.routines'),
-      description: t('startink.notify.routinesDesc'),
+      title: t('settink.notify.routines'),
+      description: t('settink.notify.routinesDesc'),
     },
     {
       key: 'rewards',
-      title: t('startink.notify.rewards'),
-      description: t('startink.notify.rewardsDesc'),
+      title: t('settink.notify.rewards'),
+      description: t('settink.notify.rewardsDesc'),
     },
     {
       key: 'learning',
-      title: t('startink.notify.learning'),
-      description: t('startink.notify.learningDesc'),
+      title: t('settink.notify.learning'),
+      description: t('settink.notify.learningDesc'),
     },
     {
       key: 'dailies',
-      title: t('startink.notify.dailies'),
-      description: t('startink.notify.dailiesDesc'),
+      title: t('settink.notify.dailies'),
+      description: t('settink.notify.dailiesDesc'),
     },
     {
       key: 'reminders',
-      title: t('startink.notify.reminders'),
-      description: t('startink.notify.remindersDesc'),
+      title: t('settink.notify.reminders'),
+      description: t('settink.notify.remindersDesc'),
     },
   ]
 
   return (
     <PageContainer>
       <PageHeader
-        title={t('startink.einstellungen')}
-        description={t('startink.settingsSubtitle')}
+        title={t('settink.settings')}
+        description={t('settink.settingsSubtitle')}
       />
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
         {/* Linke Spalte */}
@@ -141,7 +141,7 @@ export function EinstellungenView() {
           {/* Profil */}
           <Card>
             <CardHeader>
-              <CardTitle>{t('startink.profile')}</CardTitle>
+              <CardTitle>{t('settink.profile')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-start gap-4">
@@ -156,36 +156,36 @@ export function EinstellungenView() {
                   </p>
                   <div className="mt-1 flex gap-2 text-xs text-muted-foreground">
                     <span>
-                      {t('startink.sidebar.level')} {profile.level}
+                      {t('settink.sidebar.level')} {profile.level}
                     </span>
                     <span>·</span>
                     <span>
                       {profile.xp.toLocaleString('de-DE')}{' '}
-                      {t('startink.sidebar.xp')}
+                      {t('settink.sidebar.xp')}
                     </span>
                   </div>
                 </div>
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => showToast(t('startink.profileCode.copied'))}
+                  onClick={() => showToast(t('settink.profileCode.copied'))}
                 >
-                  {t('startink.profile.avatarChange')}
+                  {t('settink.profile.avatarChange')}
                 </Button>
               </div>
 
               <form onSubmit={handleSaveProfile} className="mt-6 space-y-4">
                 <TextField
-                  label={t('startink.profile.name')}
-                  description={t('startink.profile.nameHint')}
+                  label={t('settink.profile.name')}
+                  description={t('settink.profile.nameHint')}
                   value={profile.name}
                   onChange={(event) =>
                     setProfile((p) => ({ ...p, name: event.target.value }))
                   }
                 />
                 <TextField
-                  label={t('startink.profile.username')}
-                  description={t('startink.profile.usernameHint')}
+                  label={t('settink.profile.username')}
+                  description={t('settink.profile.usernameHint')}
                   value={profile.username}
                   onChange={(event) =>
                     setProfile((p) => ({ ...p, username: event.target.value }))
@@ -196,12 +196,12 @@ export function EinstellungenView() {
                     className="text-sm font-medium text-foreground"
                     htmlFor="profile-bio"
                   >
-                    {t('startink.profile.bio')}
+                    {t('settink.profile.bio')}
                   </label>
                   <textarea
                     id="profile-bio"
                     className="min-h-24 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-xs placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
-                    placeholder={t('startink.profile.bioPlaceholder')}
+                    placeholder={t('settink.profile.bioPlaceholder')}
                     value={profile.bio}
                     onChange={(event) =>
                       setProfile((p) => ({ ...p, bio: event.target.value }))
@@ -212,8 +212,8 @@ export function EinstellungenView() {
                   <Button type="submit" disabled={saved}>
                     {saved ? <Check className="size-4" /> : null}
                     {saved
-                      ? t('startink.profile.saved')
-                      : t('startink.profile.save')}
+                      ? t('settink.profile.saved')
+                      : t('settink.profile.save')}
                   </Button>
                 </div>
               </form>
@@ -223,7 +223,7 @@ export function EinstellungenView() {
           {/* Sichtbarkeit */}
           <Card>
             <CardHeader>
-              <CardTitle>{t('startink.visibility')}</CardTitle>
+              <CardTitle>{t('settink.visibility')}</CardTitle>
             </CardHeader>
             <CardContent>
               <RadioGroupControl
@@ -233,13 +233,13 @@ export function EinstellungenView() {
               >
                 <RadioOption
                   value="public"
-                  label={t('startink.visibility.visible')}
-                  description={t('startink.visibility.visibleDesc')}
+                  label={t('settink.visibility.visible')}
+                  description={t('settink.visibility.visibleDesc')}
                 />
                 <RadioOption
                   value="private"
-                  label={t('startink.visibility.private')}
-                  description={t('startink.visibility.privateDesc')}
+                  label={t('settink.visibility.private')}
+                  description={t('settink.visibility.privateDesc')}
                 />
               </RadioGroupControl>
             </CardContent>
@@ -248,14 +248,14 @@ export function EinstellungenView() {
           {/* Benachrichtigungen */}
           <Card>
             <CardHeader className="flex-row items-center justify-between">
-              <CardTitle>{t('startink.notifications')}</CardTitle>
+              <CardTitle>{t('settink.notifications')}</CardTitle>
               <Button variant="ghost" size="sm" onClick={disableAll}>
-                {t('startink.notifications.disableAll')}
+                {t('settink.notifications.disableAll')}
               </Button>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
               <CardDescription>
-                {t('startink.notificationsHint')}
+                {t('settink.notificationsHint')}
               </CardDescription>
               {notificationRows.map((row) => (
                 <div
@@ -285,9 +285,9 @@ export function EinstellungenView() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <QrCode className="size-4 text-muted-foreground" />
-                {t('startink.profileCode')}
+                {t('settink.profileCode')}
               </CardTitle>
-              <CardDescription>{t('startink.profileCodeDesc')}</CardDescription>
+              <CardDescription>{t('settink.profileCodeDesc')}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="rounded-lg border border-border bg-muted p-4">
@@ -297,10 +297,10 @@ export function EinstellungenView() {
               </div>
               <Button
                 className="mt-4 w-full"
-                onClick={() => showToast(t('startink.profileCode.download'))}
+                onClick={() => showToast(t('settink.profileCode.download'))}
               >
                 <Download className="size-4" />
-                {t('startink.profileCode.download')}
+                {t('settink.profileCode.download')}
               </Button>
               <Button
                 variant="outline"
@@ -313,8 +313,8 @@ export function EinstellungenView() {
                   <Copy className="size-4" />
                 )}
                 {copied
-                  ? t('startink.profileCode.copied')
-                  : t('startink.profileCode.copy')}
+                  ? t('settink.profileCode.copied')
+                  : t('settink.profileCode.copy')}
               </Button>
             </CardContent>
           </Card>
@@ -324,13 +324,13 @@ export function EinstellungenView() {
             <CardHeader className="flex-row items-center justify-between">
               <CardTitle className="flex items-center gap-2">
                 <Mail className="size-4 text-muted-foreground" />
-                {t('startink.email')}
+                {t('settink.email')}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <Button variant="outline" className="w-full justify-start">
                 <Mail className="size-4 text-muted-foreground" />
-                {t('startink.email.change')}
+                {t('settink.email.change')}
               </Button>
             </CardContent>
           </Card>
@@ -340,17 +340,17 @@ export function EinstellungenView() {
             <CardHeader className="flex-row items-center justify-between">
               <CardTitle className="flex items-center gap-2">
                 <UserIcon className="size-4 text-muted-foreground" />
-                {t('startink.account')}
+                {t('settink.account')}
               </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col gap-2">
               <Button variant="outline" className="w-full justify-start">
                 <KeyRound className="size-4 text-muted-foreground" />
-                {t('startink.account.password')}
+                {t('settink.account.password')}
               </Button>
               <Divider />
               <Button variant="destructive" className="w-full">
-                {t('startink.signOut')}
+                {t('settink.signOut')}
               </Button>
             </CardContent>
           </Card>

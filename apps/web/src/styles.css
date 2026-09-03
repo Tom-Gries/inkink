@@ -2,6 +2,7 @@
 @source "../../../packages/ui/src";
 @source "../../../packages/ui-auth/src";
 @source "../../../packages/inks/startink/src";
+@source "../../../packages/inks/settink/src";
 
 /*
  * Design-Tokens (InkInk)

@@ -14,8 +14,8 @@ export function StartView() {
         <Link to="startink.ziel" type="next">
           {t('startink.ziel')}
         </Link>
-        <Link to="startink.einstellungen" variant="outline" type="next">
-          {t('startink.einstellungen')}
+        <Link to="settink.settings" variant="outline" type="next">
+          {t('settink.settings')}
         </Link>
       </div>
     </PageContainer>
