@@ -45,6 +45,7 @@ export default defineInk({
       nav: {
         visible: true,
         icon: <Settings className="size-4" />,
+        weight: 10,
       },
     },
   ],

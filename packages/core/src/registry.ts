@@ -46,12 +46,17 @@ export interface VisibleInkRoute {
 
 /**
  * Liefert alle Routen aller registrierten Inks, die mit
- * `nav: { visible: true }` für die Sidebar markiert sind – in
- * Registrierungsreihenfolge (per Ink-Route-Definition).
+ * `nav: { visible: true }` für die Sidebar markiert sind.
+ *
+ * Sortierung: aufsteigend nach `nav.weight` (fehlendes Gewicht ≡ 0).
+ * Höhere Zahl → weiter unten. Gleichgewichtete Items behalten ihre
+ * Registrierungsreihenfolge (stabile Sortierung) – ohne Gewichte ist
+ * das exakt die bisherige Reihenfolge.
  */
 export function getVisibleInkRoutes(): Array<VisibleInkRoute> {
   return [...routes.entries()]
     .filter(([, route]) => route.nav?.visible === true)
+    .sort(([, a], [, b]) => (a.nav?.weight ?? 0) - (b.nav?.weight ?? 0))
     .map(([ref, route]) => ({
       ref,
       inkName: route.inkName,

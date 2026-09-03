@@ -13,6 +13,12 @@ export interface RouteNav {
   visible?: boolean
   /** Icon neben dem Label; ohne Angabe nutzt die Shell ein Default-Icon. */
   icon?: ReactNode
+  /**
+   * Sortiergewicht für die Sidebar: Je höher die Zahl, desto weiter unten
+   * erscheint der Link. Ohne Angabe (≡ 0) bleibt die Registrierungsreihenfolge
+   * erhalten. Negative Werte heben den Link weiter nach oben.
+   */
+  weight?: number
 }
 
 export interface Route {
