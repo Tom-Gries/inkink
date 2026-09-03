@@ -1,10 +1,21 @@
 @import "tailwindcss";
 @source "../../../packages/ui/src";
 @source "../../../packages/ui-auth/src";
+@source "../../../packages/inks/startink/src";
+
+/*
+ * Design-Tokens (InkInk)
+ * ----------------------------------------
+ * Zentrale Skalen für Farbe, Abstand, Radius und Schatten.
+ * Komponenten verwenden ausschließlich diese Werte – keine
+ * zufälligen Einzelwerte im Markup.
+ */
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-foreground: var(--surface-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
@@ -14,26 +25,63 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive-soft: var(--destructive-soft);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
 }
 
+@theme {
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+  --shadow-md: 0 4px 12px -2px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+}
+
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  /* Flächen */
+  --background: #ffffff;
+  --foreground: oklch(0.208 0.014 286);
+  --surface: #ffffff;
+  --surface-foreground: oklch(0.208 0.014 286);
+
+  /* Primär (Indigo-Violett, aus Mockup) */
+  --primary: #6738e4;
+  --primary-foreground: #ffffff;
+
+  /* Sekundär / Muted */
+  --secondary: oklch(0.967 0.005 286);
+  --secondary-foreground: oklch(0.3 0.024 286);
+  --muted: oklch(0.967 0.005 286);
+  --muted-foreground: oklch(0.551 0.018 286);
+
+  /* Akzent (aktive Navigation / Hover) */
+  --accent: #f3effc;
+  --accent-foreground: #6738e4;
+
+  /* Status */
+  --destructive: oklch(0.51 0.178 18);
+  --destructive-foreground: #ffffff;
+  --destructive-soft: #f9e7ee;
+  --success: #28b458;
+  --success-foreground: #ffffff;
+  --warning: oklch(0.79 0.14 78);
+  --warning-foreground: oklch(0.42 0.1 60);
+
+  /* Linien & Fokus */
+  --border: oklch(0.912 0.006 286);
+  --input: oklch(0.912 0.006 286);
+  --ring: #6738e4;
 }
 
 * {
@@ -50,4 +98,6 @@ body {
   margin: 0;
   background: var(--background);
   color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }

@@ -1,5 +1,6 @@
 import { createTranslations, I18nProvider } from '@inkink/i18n'
 import { translations as routingTranslations } from '@inkink/routing'
+import { AppShell } from '@inkink/ui'
 import { AuthProvider, authTranslations } from '@inkink/ui-auth'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -51,7 +52,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body>
         <I18nProvider locale="de" translations={translations}>
           <QueryClientProvider client={queryClient}>
-            <AuthProvider>{children}</AuthProvider>
+            <AuthProvider>
+              <AppShell>{children}</AppShell>
+            </AuthProvider>
           </QueryClientProvider>
         </I18nProvider>
         <TanStackDevtools

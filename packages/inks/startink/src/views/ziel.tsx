@@ -1,15 +1,18 @@
 import { useTranslations } from '@inkink/i18n'
-import { Link, Page, PageTitle } from '@inkink/ui'
+import { Link, PageContainer, PageHeader } from '@inkink/ui'
 
 export function ZielView() {
   const t = useTranslations()
 
   return (
-    <Page>
-      <PageTitle>{t('startink.ziel')}</PageTitle>
+    <PageContainer>
+      <PageHeader
+        title={t('startink.ziel')}
+        description={t('startink.zielSubtitle')}
+      />
       <Link to="startink.start" variant="outline" type="back">
         {t('startink.start')}
       </Link>
-    </Page>
+    </PageContainer>
   )
 }

@@ -102,6 +102,9 @@ importers:
       '@tanstack/react-start':
         specifier: latest
         version: 1.168.49(esbuild@0.28.2)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(rolldown@1.2.6)(vite@8.2.2(@types/node@22.20.1)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.13))
+      lucide-react:
+        specifier: latest
+        version: 1.39.0(react@19.2.8)
       react:
         specifier: ^19.2.0
         version: 19.2.8
@@ -211,6 +214,12 @@ importers:
       '@inkink/ui':
         specifier: workspace:*
         version: link:../../ui
+      '@tanstack/react-router':
+        specifier: ^1.170.32
+        version: 1.170.32(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      lucide-react:
+        specifier: latest
+        version: 1.39.0(react@19.2.8)
       react:
         specifier: ^19.2.0
         version: 19.2.8
@@ -246,6 +255,9 @@ importers:
       '@inkink/core':
         specifier: workspace:*
         version: link:../core
+      '@inkink/i18n':
+        specifier: workspace:*
+        version: link:../i18n
       '@tanstack/react-router':
         specifier: ^1.170.32
         version: 1.170.32(react-dom@19.2.8(react@19.2.8))(react@19.2.8)

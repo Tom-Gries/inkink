@@ -11,6 +11,7 @@
   "dependencies": {
     "@base-ui-components/react": "latest",
     "@inkink/core": "workspace:*",
+    "@inkink/i18n": "workspace:*",
     "@tanstack/react-router": "^1.170.32",
     "class-variance-authority": "^0.7.1",
     "lucide-react": "latest",

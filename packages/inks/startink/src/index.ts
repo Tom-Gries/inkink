@@ -1,30 +1,4 @@
-import { defineInk } from '@inkink/core'
-import { StartView } from './views/start'
-import { ZielView } from './views/ziel'
-import { translations } from './translations'
-
-declare module '@inkink/core' {
-  interface RouteRegistry {
-    'startink.start': '/startink/Start'
-    'startink.ziel': '/startink/ziel'
-  }
-}
-
-export default defineInk({
-  name: 'startink',
-  guard: 'auth',
-  routes: [
-    {
-      name: 'start',
-      path: '/startink/Start',
-      guard: 'none',
-      component: StartView,
-    },
-    {
-      name: 'ziel',
-      path: '/startink/ziel',
-      component: ZielView,
-    },
-  ],
-  translations,
-})
+// Einstiegspunkt des Inks (wird von der Auto-Discovery via
+// import.meta.glob unter packages/inks/*/src/index.ts gefunden).
+// Die eigentliche Definition mit JSX (nav-Icons) liegt in ./definition.tsx.
+export { default } from './definition'
