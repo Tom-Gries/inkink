@@ -5,9 +5,21 @@
  *  1. Die komplette API (src/index.ts + alle importierten lokalen Module)
  *     sowie das Workspace-Package @inkink/auth werden mit esbuild in EINE
  *     selbstständige ESM-Datei gebündelt.
- *  2. Das Ergebnis landet als Catch-all-Function in
- *     .vercel/output/functions/index.func/ – dort liest Vercel es beim
- *     Deployment aus (Framework Preset "Other", Build Command `pnpm build`).
+ *  2. Das Ergebnis landet als einzige Serverless Function in
+ *     .vercel/output/functions/__server.func/ – dort liest Vercel es beim
+ *     Deployment aus (Framework Preset "Other", Root Directory apps/api,
+ *     Build Command `pnpm build`).
+ *  3. config.json definiert das Routing (Vercel Build Output API v3):
+ *     - Funktionen im `.vercel/output/functions`-Verzeichnis werden per
+ *       Ordnerpfad auf URL-Pfade geroutet. `index.func` wäre also NUR `/` –
+ *       `/api/health` käme dort nie an (Vercel-404). Deshalb heißt der Ordner
+ *       `__server.func` → Route `/__server`.
+ *     - `routes: [{ "handle": "filesystem" }, { "src": "/api/(.*)", "dest":
+ *       "/__server" }]` fängt jeden Request unter `/api/*` ab und rewritet ihn
+ *       auf die Function (gleiches Muster wie der Nitro-Vercel-Preset, den
+ *       Nuxt auf Vercel produktiv nutzt). Die Function bekommt dabei den
+ *       ORIGINAL-Pfad (z. B. `/api/health`), sodass Hono mit
+ *       `new Hono().basePath('/api')` wie gewohnt routet.
  *
  * Warum Bundling?
  *  - Unter Node.js-ESM (type: "module") müssen relative Imports eine explizite
@@ -29,7 +41,8 @@ import { fileURLToPath } from 'node:url'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const outputDir = join(root, '.vercel', 'output')
-const functionDir = join(outputDir, 'functions', 'index.func')
+const functionDir = join(outputDir, 'functions', '__server.func')
+const functionRoute = '/__server'
 
 // Altes Build-Artefakt entfernen (sonst landen verwaiste Dateien im Deploy).
 rmSync(outputDir, { recursive: true, force: true })
@@ -87,11 +100,33 @@ writeFileSync(
   )}\n`,
 )
 
-// Minimales Build-Output-API-Metadaten-File (Pflicht).
+// Build-Output-API-Metadaten-File (Pflicht) inkl. Routing.
+//
+// Vercel-Build-Output-API-v3-Routing:
+//  - Jede `.func`-Directory unter `.vercel/output/functions` ist eine Function,
+//    deren Ordnerpfad den URL-Pfad bestimmt (`functions/index.func` -> `/`,
+//    `functions/__server.func` -> `/__server`). `/api/health` würde also von
+//    keinem Dateisystem-Pfad getroffen -> ohne Route unten kam der Vercel-404.
+//  - `{ "handle": "filesystem" }` prüft zuerst statische Dateien/Functions;
+//    danach rewritten das Regex `/api/(.*)` sämtliche API-Pfade auf die
+//    `__server`-Function (Battle-tested-Muster des Nitro/Nuxt-Presets).
+//    Die Function erhält den Original-Pfad (`/api/health`) und Hono routet
+//    über `basePath('/api')` wie lokal.
 writeFileSync(
   join(outputDir, 'config.json'),
-  `${JSON.stringify({ version: 3 }, null, 2)}\n`,
+  `${JSON.stringify(
+    {
+      version: 3,
+      routes: [
+        { handle: 'filesystem' },
+        { src: '/api/(.*)', dest: functionRoute },
+      ],
+    },
+    null,
+    2,
+  )}\n`,
 )
 
 console.log('[build-vercel] Funktion geschrieben nach:')
 console.log(`  ${functionDir}`)
+console.log(`[build-vercel] Route: "${functionRoute}" via config.json (${outputDir}/config.json)`)
