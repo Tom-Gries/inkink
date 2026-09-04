@@ -13,7 +13,9 @@ export default defineConfig({
     devtools(),
     tailwindcss(),
     tanstackStart(),
-    nitro(),
+    nitro({
+      traceDeps: ['react', 'react-dom'],
+    }),
     viteReact(),
   ],
 })
