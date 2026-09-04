@@ -1,4 +1,4 @@
-import { useTranslations } from '@inkink/i18n'
+import { useLocaleStore, useTranslations } from '@inkink/i18n'
 import {
   Button,
   Card,
@@ -7,10 +7,12 @@ import {
   CardTitle,
   PageContainer,
   PageHeader,
+  RadioGroupControl,
+  RadioOption,
   TextField,
 } from '@inkink/ui'
 import { LoginButton, SignOutButton, useAuthStore } from '@inkink/ui-auth'
-import { Check, Save, User as UserIcon } from 'lucide-react'
+import { Check, Languages, Save, User as UserIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error'
@@ -19,6 +21,8 @@ export function SettingsView() {
   const t = useTranslations()
   const user = useAuthStore((state) => state.user)
   const updateUsername = useAuthStore((state) => state.updateUsername)
+  const locale = useLocaleStore((state) => state.locale)
+  const setLocale = useLocaleStore((state) => state.setLocale)
 
   // Nicht eingeloggt → kein Bearbeitungs-Formular, sondern Login-Button.
   const [username, setUsername] = useState(user?.username ?? '')
@@ -123,6 +127,29 @@ export function SettingsView() {
               </CardContent>
             </Card>
           )}
+
+          {/* Sprache */}
+          <Card>
+            <CardHeader className="flex-row items-center justify-between">
+              <CardTitle className="flex items-center gap-2">
+                <Languages className="size-4 text-muted-foreground" />
+                {t('settink.language')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <RadioGroupControl
+                value={locale}
+                onValueChange={(value) => {
+                  if (value === 'de' || value === 'en') {
+                    setLocale(value)
+                  }
+                }}
+              >
+                <RadioOption label={t('settink.language.de')} value="de" />
+                <RadioOption label={t('settink.language.en')} value="en" />
+              </RadioGroupControl>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </PageContainer>

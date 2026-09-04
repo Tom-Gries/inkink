@@ -1,11 +1,7 @@
-import {
-  createElement,
-  createContext,
-  useContext,
-  type ReactNode,
-} from 'react'
+import { createContext, createElement, type ReactNode, useContext } from 'react'
 import type { Locale, Translations } from './types'
 
+export { useLocaleStore } from './store'
 export type { Locale, TranslationMessages, Translations } from './types'
 
 export const locales = ['de', 'en'] as const satisfies ReadonlyArray<Locale>

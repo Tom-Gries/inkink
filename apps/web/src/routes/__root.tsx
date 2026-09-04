@@ -1,4 +1,4 @@
-import { createTranslations, I18nProvider, useTranslations } from '@inkink/i18n'
+import { createTranslations, I18nProvider, useLocaleStore } from '@inkink/i18n'
 import { translations as routingTranslations } from '@inkink/routing'
 import { AppShell } from '@inkink/ui'
 import {
@@ -11,6 +11,7 @@ import { TanStackDevtools } from '@tanstack/react-devtools'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createRootRoute, HeadContent, Scripts } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
+import { useEffect } from 'react'
 
 import { inkTranslations } from '../inks'
 import appCss from '../styles.css?url'
@@ -50,30 +51,44 @@ export const Route = createRootRoute({
 
 function RootLayout({ children }: { children: React.ReactNode }) {
   const user = useAuthStore((state) => state.user)
-  const t = useTranslations()
+  const locale = useLocaleStore((state) => state.locale)
 
   // Ausgeloggt: Am Platz des Profils (Sidebar-/Drawer-Footer) den
   // Login-Button zeigen; eingeloggt übernimmt AppShell das Standard-Profil.
-  const footer =
-    user === null ? (
-      <LoginButton className="w-full">{t('auth.login.footer')}</LoginButton>
-    ) : undefined
+  const isAuthenticated = user !== null
 
   return (
-    <AppShell authenticated={user !== null} footer={footer}>
+    <AppShell
+      authenticated={isAuthenticated}
+      footer={
+        !isAuthenticated ? (
+          <LoginButton className="w-full">
+            {locale === 'de' ? 'Anmelden' : 'Sign in'}
+          </LoginButton>
+        ) : undefined
+      }
+    >
       <AuthProvider>{children}</AuthProvider>
     </AppShell>
   )
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const locale = useLocaleStore((state) => state.locale)
+
+  // Client-seitig die gespeicherte Sprache laden (nach Mount, um
+  // SSR-Hydrations-Mismatches zu vermeiden).
+  useEffect(() => {
+    useLocaleStore.getState().hydrate()
+  }, [])
+
   return (
-    <html lang="en">
+    <html lang={locale}>
       <head>
         <HeadContent />
       </head>
       <body>
-        <I18nProvider locale="de" translations={translations}>
+        <I18nProvider locale={locale} translations={translations}>
           <QueryClientProvider client={queryClient}>
             <RootLayout>{children}</RootLayout>
           </QueryClientProvider>
