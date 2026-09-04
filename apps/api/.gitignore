@@ -1,0 +1,5 @@
+# Vercel-Build-Output (wird von `pnpm build` erzeugt)
+.vercel/
+
+# Lokale Test-Artefakte
+.prod-build-test/

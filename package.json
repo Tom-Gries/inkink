@@ -6,6 +6,7 @@
     "dev": "pnpm --filter web dev",
     "dev:all": "pnpm --parallel --filter web --filter api dev",
     "dev:api": "pnpm --filter api dev",
+    "build:api": "pnpm --filter api build",
     "test": "vitest run",
     "test:watch": "vitest"
   },

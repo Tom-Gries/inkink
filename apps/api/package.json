@@ -7,7 +7,8 @@
   },
   "scripts": {
     "dev": "tsx watch src/dev.ts",
-    "start": "tsx src/dev.ts"
+    "start": "tsx src/dev.ts",
+    "build": "tsc --noEmit && node scripts/build-vercel.mjs"
   },
   "dependencies": {
     "@hono/node-server": "^2.1.1",
@@ -20,6 +21,7 @@
   "devDependencies": {
     "@types/node": "^22.20.1",
     "dotenv": "^17.4.2",
+    "esbuild": "^0.28.2",
     "tsx": "^4.23.13",
     "typescript": "^6.0.3"
   }
