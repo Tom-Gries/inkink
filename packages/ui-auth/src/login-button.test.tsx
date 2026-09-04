@@ -8,7 +8,12 @@ const authClient = vi.hoisted(() => ({
   signOut: vi.fn(),
 }))
 
-vi.mock('@inkink/api', () => ({ authClient }))
+vi.mock('@inkink/api', () => ({
+  authClient,
+  authLog: vi.fn(),
+  authWarn: vi.fn(),
+  authError: vi.fn(),
+}))
 
 import { LoginButton } from './login-button'
 import { useAuthStore } from './store'

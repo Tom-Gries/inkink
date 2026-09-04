@@ -1,4 +1,5 @@
 import { authClient } from './client'
+import { authError, authLog, authWarn } from './logger'
 
 /**
  * Prüft browserseitig, ob der aktuelle Benutzer authentifiziert ist.
@@ -15,11 +16,34 @@ import { authClient } from './client'
  * einem Fehler true geliefert.
  */
 export async function isAuthenticated(): Promise<boolean> {
-  try {
-    const { data } = await authClient.getSession()
+  authLog('guard', 'isAuthenticated: Session-Check gestartet')
 
-    return Boolean(data?.user)
-  } catch {
+  try {
+    const { data, error } = await authClient.getSession()
+
+    if (error) {
+      // Better Auth liefert im Fehlerfall data=null, error gesetzt.
+      authWarn(
+        'guard',
+        'isAuthenticated: getSession meldet einen Fehler (wird als „nicht authentifiziert" gewertet)',
+        error,
+      )
+      return false
+    }
+
+    if (data?.user) {
+      authLog('guard', `isAuthenticated: authentifiziert (user=${data.user.id})`)
+      return true
+    }
+
+    authLog('guard', 'isAuthenticated: keine gültige Session → false')
+    return false
+  } catch (error) {
+    authError(
+      'guard',
+      'isAuthenticated: Session-Request fehlgeschlagen (fail-closed → false)',
+      error,
+    )
     return false
   }
 }

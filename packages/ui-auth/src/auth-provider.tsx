@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { useEffect } from 'react'
+import { authLog } from '@inkink/api'
 import { LoginGate } from './login-gate'
 import { AUTH_REQUEST_STATE_ID, useAuthStore } from './store'
 
@@ -24,6 +25,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Session beim Mounten prüfen – auch direkt nach der Rückkehr vom
   // Google-OAuth-Redirect (vollständiger Seitenwechsel).
   useEffect(() => {
+    authLog(
+      'auth-provider',
+      'AuthProvider gemountet – Session wird geladen (refresh)',
+    )
     void refresh()
   }, [refresh])
 
@@ -43,6 +48,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     ? useAuthStore.getState().pendingTarget
     : pendingTarget
   const locked = currentLoginRequired && !currentUser
+
+  // Client-seitige Auth-Spur: Wann zeigt/versteckt der Provider das
+  // LoginGate? (Auf dem Server loggt der Router-Guard den Gate-Zustand.)
+  useEffect(() => {
+    authLog(
+      'auth-provider',
+      locked
+        ? `LoginGate aktiv – geschützte Route ohne Session (Ziel=${currentPendingTarget ?? '(keins)'})`
+        : currentLoginRequired
+          ? 'LoginGate inaktiv – Session vorhanden'
+          : 'LoginGate inaktiv – öffentliche Route / gespeicherte Session',
+    )
+  }, [locked, currentLoginRequired, currentPendingTarget])
 
   return (
     <>

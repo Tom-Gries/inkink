@@ -10,6 +10,15 @@ import { NotFoundView } from './views/not-found'
 
 export { translations } from './translations'
 
+/**
+ * Diagnose-Logs des Auth-Guards (Präfix [auth:routing]). Bewusst ohne
+ * Abhängigkeit zu @inkink/api – das Routing kennt nur isAuthenticated
+ * und onAuthRequired, nicht die konkrete Auth-Implementierung.
+ */
+function guardLog(message: string, ...details: unknown[]): void {
+  console.log('[auth:routing]', message, ...details)
+}
+
 export interface InkRouterOptions {
   /**
    * Prüft, ob der aktuelle Benutzer authentifiziert ist.
@@ -56,6 +65,7 @@ function createInkRoutes<TRootRoute extends AnyRoute>(
       // Öffentliche Route: Bei echter Navigation (nicht Preload) das
       // Login-Required-Flag zurücksetzen, damit das Gate nicht kleben bleibt.
       if (cause !== 'preload') {
+        guardLog('Index-Route "/": onPublicRoute() → Login-Required-Flag zurücksetzen')
         options.onPublicRoute?.()
       }
     },
@@ -67,6 +77,7 @@ function createInkRoutes<TRootRoute extends AnyRoute>(
     component: ErrorView,
     beforeLoad: ({ cause }) => {
       if (cause !== 'preload') {
+        guardLog('Fehler-Route "/error": onPublicRoute() → Login-Required-Flag zurücksetzen')
         options.onPublicRoute?.()
       }
     },
@@ -94,18 +105,29 @@ function createInkRoutes<TRootRoute extends AnyRoute>(
             }
 
             if (guard === 'auth') {
+              guardLog(
+                `Guard "auth": prüfe geschützte Route "${route.path}" (location=${location.href})`,
+              )
               const authenticated = await options.isAuthenticated()
 
               if (!authenticated) {
                 // Kein Redirect und keine URL-Veränderung: Die App hört
                 // über onAuthRequired und zeigt ihre Login-UI.
+                guardLog(
+                  `Guard "auth": NICHT authentifiziert → onAuthRequired("${location.href}")`,
+                )
                 options.onAuthRequired?.(location.href)
+              } else {
+                guardLog(
+                  `Guard "auth": authentifiziert → Zugriff erlaubt ("${route.path}")`,
+                )
               }
               return
             }
 
             // Öffentliche Route: Login-Required-Flag zurücksetzen, damit
             // das LoginGate auf öffentlichen Seiten nicht hängen bleibt.
+            guardLog(`Öffentliche Route "${route.path}": onPublicRoute() ausgelöst`)
             options.onPublicRoute?.()
           },
         })

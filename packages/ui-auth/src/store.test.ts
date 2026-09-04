@@ -9,6 +9,9 @@ const api = vi.hoisted(() => ({
   getApiClient: vi.fn(() => ({})),
   getProfile: vi.fn(async () => null),
   updateProfileUsername: vi.fn(async () => ({ userId: 'u1', username: 'Tom' })),
+  authLog: vi.fn(),
+  authWarn: vi.fn(),
+  authError: vi.fn(),
 }))
 
 vi.mock('@inkink/api', () => api)

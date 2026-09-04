@@ -2,6 +2,7 @@ import { useTranslations } from '@inkink/i18n'
 import { Button } from '@inkink/ui'
 import { LogIn } from 'lucide-react'
 import type { ReactNode } from 'react'
+import { authError, authLog } from '@inkink/api'
 import { useAuthStore } from './store'
 
 export interface LoginButtonProps {
@@ -38,7 +39,14 @@ export function LoginButton({ className, children }: LoginButtonProps) {
       window.location.origin,
     ).toString()
 
-    await signInWithGoogle(target)
+    authLog('login-button', `Google-Sign-In gestartet (Ziel=${target})`)
+
+    try {
+      await signInWithGoogle(target)
+      authLog('login-button', 'Google-Sign-In: Redirect ausgelöst')
+    } catch (error) {
+      authError('login-button', 'Google-Sign-In fehlgeschlagen', error)
+    }
   }
 
   return (

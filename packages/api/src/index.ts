@@ -1,7 +1,12 @@
 export {
   type AuthClient,
   authClient,
+  authError,
+  authInfo,
+  authLog,
+  authWarn,
   isAuthenticated,
+  type AuthLogLevel,
 } from './auth'
 export {
   type ApiClient,

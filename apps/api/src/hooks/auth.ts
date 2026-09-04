@@ -12,11 +12,34 @@ export interface AuthVariables {
 /** Stellt die aktuelle Session aus dem Cookie in c.get('session') bereit. */
 export const sessionMiddleware = createMiddleware<{ Variables: AuthVariables }>(
   async (c, next) => {
-    const session = await getAuth().api.getSession({
-      headers: c.req.raw.headers,
-    })
+    console.log(
+      `[auth:server] sessionMiddleware: Session-Check für ${c.req.method} ${c.req.url}`,
+    )
 
-    c.set('session', session)
+    try {
+      const session = await getAuth().api.getSession({
+        headers: c.req.raw.headers,
+      })
+
+      if (session?.user) {
+        console.log(
+          `[auth:server] sessionMiddleware: Session gültig (user=${session.user.id})`,
+        )
+      } else {
+        console.log(
+          '[auth:server] sessionMiddleware: Keine gültige Session → session=null',
+        )
+      }
+
+      c.set('session', session)
+    } catch (error) {
+      console.error(
+        '[auth:server] sessionMiddleware: getSession() warf einen Fehler',
+        error,
+      )
+      throw error
+    }
+
     await next()
   },
 )

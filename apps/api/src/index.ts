@@ -30,7 +30,31 @@ const routes = app
       return c.json({ mongo: 'down' }, 503)
     }
   })
-  .all('/auth/*', (c) => getAuth().handler(c.req.raw))
+  .all('/auth/*', async (c) => {
+    const url = new URL(c.req.url)
+    const cookieHeader = c.req.raw.headers.get('cookie')
+    const origin = c.req.header('origin')
+
+    console.log(
+      `[auth:server] → ${c.req.method} ${url.pathname}${url.search} origin=${origin ?? '(keine)'} cookie=${cookieHeader ? 'ja' : 'nein'}`,
+    )
+
+    try {
+      const res = await getAuth().handler(c.req.raw)
+
+      console.log(
+        `[auth:server] ← ${c.req.method} ${url.pathname}${url.search} status=${res.status}`,
+      )
+
+      return res
+    } catch (error) {
+      console.error(
+        `[auth:server] ✗ ${c.req.method} ${url.pathname}: Fehler im Better-Auth-Handler`,
+        error,
+      )
+      throw error
+    }
+  })
   .route('/me', meRoutes)
   .route('/profile', profileRoutes)
   .route('/stacks', stacksRoutes)
