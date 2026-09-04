@@ -20,16 +20,19 @@ export interface CreateAuthOptions {
  */
 function nameFromUser(name: string | null | undefined): string | null {
   const fullName = name?.trim()
+
   return fullName && fullName.length > 0 ? fullName : null
 }
 
 /**
  * Erstellt die Better-Auth-Instanz für eine Hono-API.
+ *
  * Bewusst als Factory gebaut, damit die Instanz lazy erzeugt wird
  * (Serverless-freundlich, test-/importierbar ohne gesetzte Env-Variablen).
  */
 export function createAuth(options: CreateAuthOptions) {
   const { db, mongoClient, baseURL, secret } = options
+
   const hasGoogleCredentials = Boolean(
     options.googleClientId && options.googleClientSecret,
   )
@@ -37,22 +40,31 @@ export function createAuth(options: CreateAuthOptions) {
   return betterAuth({
     baseURL,
     secret,
+
+    account: {
+      storeStateStrategy: 'cookie',
+    },
+
     database: mongodbAdapter(db, {
       client: mongoClient,
+
       // MongoDB Atlas Free/Shared Cluster (M0) unterstützen keine
       // Multi-Document-Transaktionen – daher deaktiviert. Für Login
       // + Sessions (Einzel-Inserts) nicht benötigt.
       transaction: false,
     }),
+
     trustedOrigins: options.trustedOrigins,
+
     socialProviders: hasGoogleCredentials
       ? {
-          google: {
-            clientId: options.googleClientId!,
-            clientSecret: options.googleClientSecret!,
-          },
-        }
+        google: {
+          clientId: options.googleClientId!,
+          clientSecret: options.googleClientSecret!,
+        },
+      }
       : {},
+
     databaseHooks: {
       user: {
         create: {
@@ -83,15 +95,16 @@ export function createAuth(options: CreateAuthOptions) {
         },
       },
     },
+
     ...(options.cookieDomain
       ? {
-          advanced: {
-            crossSubDomainCookies: {
-              enabled: true,
-              domain: options.cookieDomain,
-            },
+        advanced: {
+          crossSubDomainCookies: {
+            enabled: true,
+            domain: options.cookieDomain,
           },
-        }
+        },
+      }
       : {}),
   })
 }
