@@ -18,6 +18,7 @@
     "@inkink/api": "workspace:*",
     "@inkink/core": "workspace:*",
     "@inkink/i18n": "workspace:*",
+    "@inkink/learnink": "workspace:*",
     "@inkink/routing": "workspace:*",
     "@inkink/settink": "workspace:*",
     "@inkink/ui": "workspace:*",

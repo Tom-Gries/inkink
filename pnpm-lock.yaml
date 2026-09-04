@@ -75,6 +75,9 @@ importers:
       '@inkink/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
+      '@inkink/learnink':
+        specifier: workspace:*
+        version: link:../../packages/inks/learnink
       '@inkink/routing':
         specifier: workspace:*
         version: link:../../packages/routing
@@ -201,6 +204,37 @@ importers:
       zustand:
         specifier: ^5.0.15
         version: 5.0.15(@types/react@19.2.18)(react@19.2.8)(use-sync-external-store@1.6.0(react@19.2.8))
+    devDependencies:
+      '@types/react':
+        specifier: ^19.2.0
+        version: 19.2.18
+
+  packages/inks/learnink:
+    dependencies:
+      '@base-ui-components/react':
+        specifier: latest
+        version: 1.0.0-rc.0(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@inkink/api':
+        specifier: workspace:*
+        version: link:../../api
+      '@inkink/core':
+        specifier: workspace:*
+        version: link:../../core
+      '@inkink/i18n':
+        specifier: workspace:*
+        version: link:../../i18n
+      '@inkink/ui':
+        specifier: workspace:*
+        version: link:../../ui
+      '@inkink/ui-auth':
+        specifier: workspace:*
+        version: link:../../ui-auth
+      lucide-react:
+        specifier: latest
+        version: 1.40.0(react@19.2.8)
+      react:
+        specifier: ^19.2.0
+        version: 19.2.8
     devDependencies:
       '@types/react':
         specifier: ^19.2.0

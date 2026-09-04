@@ -49,6 +49,8 @@ export type LinkProps = Omit<TanStackLinkProps, 'to'> &
     type?: LinkType
     /** Typsichere Referenz auf eine registrierte Ink-Route, z.B. "startink.ziel". */
     to?: RouteRef
+    /** Pfadparameter für Routen mit dynamischen Segmenten, z.B. { id: "123" }. */
+    params?: Record<string, string>
   }
 
 export function Link({
@@ -59,6 +61,7 @@ export function Link({
   type,
   children,
   to,
+  params,
   ...props
 }: LinkProps) {
   const Icon = type ? linkTypeIcons[type] : null
@@ -75,7 +78,7 @@ export function Link({
   )
 
   return useRender({
-    render: render ?? <TanStackLink {...props} to={path} />,
+    render: render ?? <TanStackLink {...props} to={path} params={params} />,
     props: {
       className: [linkVariants({ variant, size }), className]
         .filter(Boolean)
