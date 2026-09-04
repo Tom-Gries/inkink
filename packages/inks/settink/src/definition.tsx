@@ -16,7 +16,7 @@ export default defineInk({
     {
       name: 'settings',
       path: '/settink',
-      guard: 'auth',
+      guard: 'none',
       component: SettingsView,
       nav: {
         visible: true,

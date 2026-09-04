@@ -1,4 +1,9 @@
-import { authClient } from '@inkink/api'
+import {
+  authClient,
+  getApiClient,
+  getProfile,
+  updateProfileUsername,
+} from '@inkink/api'
 import { create } from 'zustand'
 
 /** Schlanker Benutzer-Stand aus der Better-Auth-Session. */
@@ -7,6 +12,8 @@ export interface AuthUser {
   name: string | null
   email: string | null
   image?: string | null
+  /** Eigener Benutzername aus der App-"profile"-Collection (nullable). */
+  username: string | null
 }
 
 /** Lade-/Anmeldestatus der Session im Store. */
@@ -29,6 +36,7 @@ function toAuthUser(user: SessionUser): AuthUser {
     name: user.name ?? null,
     email: user.email ?? null,
     image: user.image ?? null,
+    username: null,
   }
 }
 
@@ -70,6 +78,13 @@ interface AuthState {
   /** Startet den Google-OAuth-Flow (Browser-Redirect). */
   signInWithGoogle: (callbackURL?: string) => Promise<void>
 
+  /**
+   * Setzt den Benutzernamen des angemeldeten Nutzers (PATCH an die
+   * Profil-API). Aktualisiert den Store bei Erfolg; wirft bei
+   * Konflikt (vergebener Name).
+   */
+  updateUsername: (username: string) => Promise<void>
+
   /** Meldet den Benutzer ab und leert den Store. */
   signOut: () => Promise<void>
 
@@ -97,7 +112,7 @@ interface AuthState {
   resetRequestState: () => void
 }
 
-export const useAuthStore = create<AuthState>()((set) => ({
+export const useAuthStore = create<AuthState>()((set, get) => ({
   user: null,
   status: 'idle',
   error: null,
@@ -112,6 +127,32 @@ export const useAuthStore = create<AuthState>()((set) => ({
       const user = data?.user ? toAuthUser(data.user) : null
 
       if (user) {
+        // Profil (eigenes Benutzername-Feld) best effort nachladen;
+        // ein Profil-Fehler darf die Session nicht als ungültig werten.
+        try {
+          const profile = await getProfile(getApiClient())
+          user.username = profile?.username ?? null
+        } catch {
+          user.username = null
+        }
+
+        // Fallback „Name als Benutzername" (erster Google-Login):
+        // Solange noch KEIN eigener Benutzername vergeben ist, wird der
+        // vollständige Anzeigename (bei Google z. B. "Tom Gries") einmalig
+        // über die Profil-API gespeichert. Fehler sind hier nicht
+        // kritisch – der Nutzer kann ihn später ändern.
+        if (!user.username) {
+          const fullName = user.name?.trim()
+          if (fullName) {
+            try {
+              await updateProfileUsername(getApiClient(), fullName)
+              user.username = fullName
+            } catch {
+              // Speicher-Fehler – Session trotzdem gültig.
+            }
+          }
+        }
+
         set({ user, status: 'authenticated', loginRequired: false })
       } else {
         set({ user: null, status: 'unauthenticated' })
@@ -140,6 +181,15 @@ export const useAuthStore = create<AuthState>()((set) => ({
       // Better Auth den callbackURL sonst auf der API-Base-URL auf.
       callbackURL: callbackURL ?? window.location.origin,
     })
+  },
+
+  updateUsername: async (username) => {
+    await updateProfileUsername(getApiClient(), username)
+
+    const current = get().user
+    if (current) {
+      set({ user: { ...current, username } })
+    }
   },
 
   signOut: async () => {

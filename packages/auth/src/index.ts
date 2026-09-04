@@ -14,6 +14,16 @@ export interface CreateAuthOptions {
 }
 
 /**
+ * Normalisiert den Namen, den der Social-Provider liefert (bei Google
+ * der vollständige Anzeigename, z. B. "Tom Gries"). Leerzeichen bleiben
+ * erhalten – der komplette Name wird als Benutzername hinterlegt.
+ */
+function nameFromUser(name: string | null | undefined): string | null {
+  const fullName = name?.trim()
+  return fullName && fullName.length > 0 ? fullName : null
+}
+
+/**
  * Erstellt die Better-Auth-Instanz für eine Hono-API.
  * Bewusst als Factory gebaut, damit die Instanz lazy erzeugt wird
  * (Serverless-freundlich, test-/importierbar ohne gesetzte Env-Variablen).
@@ -43,6 +53,36 @@ export function createAuth(options: CreateAuthOptions) {
           },
         }
       : {},
+    databaseHooks: {
+      user: {
+        create: {
+          // Beim ersten Login (neuer User, z. B. über Google) den
+          // vollständigen Namen als Username in der App-eigenen
+          // "profile"-Collection hinterlegen. $setOnInsert überschreibt
+          // kein vorhandenes Profil.
+          after: async (user) => {
+            const fullName = nameFromUser(user.name)
+
+            if (!fullName) {
+              return
+            }
+
+            try {
+              await db
+                .collection('profile')
+                .updateOne(
+                  { userId: user.id },
+                  { $setOnInsert: { userId: user.id, username: fullName } },
+                  { upsert: true },
+                )
+            } catch {
+              // Profil-Fehler ist kein Grund, den Login fehlschlagen zu
+              // lassen – der Nutzer kann den Namen später anpassen.
+            }
+          },
+        },
+      },
+    },
     ...(options.cookieDomain
       ? {
           advanced: {

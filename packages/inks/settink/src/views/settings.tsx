@@ -1,134 +1,54 @@
 import { useTranslations } from '@inkink/i18n'
 import {
-  AvatarControl,
   Button,
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
-  Divider,
   PageContainer,
   PageHeader,
-  RadioGroupControl,
-  RadioOption,
-  SwitchControl,
   TextField,
 } from '@inkink/ui'
-import { SignOutButton } from '@inkink/ui-auth'
-import {
-  Check,
-  Copy,
-  Download,
-  KeyRound,
-  Mail,
-  QrCode,
-  User as UserIcon,
-} from 'lucide-react'
-import { useState } from 'react'
+import { LoginButton, SignOutButton, useAuthStore } from '@inkink/ui-auth'
+import { Check, Save, User as UserIcon } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
-interface ProfileMock {
-  name: string
-  username: string
-  bio: string
-  level: number
-  xp: number
-}
-
-const DEMO_PROFILE: ProfileMock = {
-  name: 'Tom Gries',
-  username: '@tommylein',
-  bio: 'Neugierig unterwegs – überall ein bisschen zu Hause.',
-  level: 12,
-  xp: 1240,
-}
+type SaveStatus = 'idle' | 'saving' | 'saved' | 'error'
 
 export function SettingsView() {
   const t = useTranslations()
-  const [profile, setProfile] = useState<ProfileMock>(DEMO_PROFILE)
-  const [visibility, setVisibility] = useState('public')
-  const [notifications, setNotifications] = useState({
-    connections: true,
-    routines: true,
-    rewards: true,
-    learning: true,
-    dailies: true,
-    reminders: false,
-  })
-  const [saved, setSaved] = useState(false)
-  const [copied, setCopied] = useState(false)
-  const [toast, setToast] = useState<string | null>(null)
+  const user = useAuthStore((state) => state.user)
+  const updateUsername = useAuthStore((state) => state.updateUsername)
 
-  function showToast(text: string) {
-    setToast(text)
-    window.setTimeout(() => setToast(null), 2200)
-  }
+  // Nicht eingeloggt → kein Bearbeitungs-Formular, sondern Login-Button.
+  const [username, setUsername] = useState(user?.username ?? '')
+  const [status, setStatus] = useState<SaveStatus>('idle')
+  const [error, setError] = useState<string | null>(null)
+  const isAuthenticated = user !== null
 
-  function handleSaveProfile(event: React.FormEvent) {
+  // Feld mit aktuellem Benutzernamen synchronisieren, sobald ein User
+  // verfügbar ist (z. B. nach dem Login auf dieser Seite).
+  useEffect(() => {
+    if (user) {
+      setUsername(user.username ?? '')
+    }
+  }, [user])
+
+  async function handleSaveUsername(event: React.FormEvent) {
     event.preventDefault()
-    setSaved(true)
-    window.setTimeout(() => setSaved(false), 2000)
-  }
+    setStatus('saving')
+    setError(null)
 
-  function toggleNotification(key: keyof typeof notifications) {
-    setNotifications((current) => ({ ...current, [key]: !current[key] }))
+    try {
+      await updateUsername(username.trim())
+      setStatus('saved')
+    } catch (error) {
+      setStatus('error')
+      setError(
+        error instanceof Error ? error.message : t('settink.profile.saveError'),
+      )
+    }
   }
-
-  function disableAll() {
-    setNotifications({
-      connections: false,
-      routines: false,
-      rewards: false,
-      learning: false,
-      dailies: false,
-      reminders: false,
-    })
-  }
-
-  function copyProfileLink() {
-    void navigator.clipboard?.writeText(
-      `https://inkink.example/${profile.username}`,
-    )
-    setCopied(true)
-    window.setTimeout(() => setCopied(false), 2000)
-  }
-
-  const notificationRows: Array<{
-    key: keyof typeof notifications
-    title: string
-    description: string
-  }> = [
-      {
-        key: 'connections',
-        title: t('settink.notify.connections'),
-        description: t('settink.notify.connectionsDesc'),
-      },
-      {
-        key: 'routines',
-        title: t('settink.notify.routines'),
-        description: t('settink.notify.routinesDesc'),
-      },
-      {
-        key: 'rewards',
-        title: t('settink.notify.rewards'),
-        description: t('settink.notify.rewardsDesc'),
-      },
-      {
-        key: 'learning',
-        title: t('settink.notify.learning'),
-        description: t('settink.notify.learningDesc'),
-      },
-      {
-        key: 'dailies',
-        title: t('settink.notify.dailies'),
-        description: t('settink.notify.dailiesDesc'),
-      },
-      {
-        key: 'reminders',
-        title: t('settink.notify.reminders'),
-        description: t('settink.notify.remindersDesc'),
-      },
-    ]
 
   return (
     <PageContainer>
@@ -139,18 +59,70 @@ export function SettingsView() {
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
         {/* Linke Spalte */}
         <div className="flex flex-col gap-6">
-          {/* Account */}
+          {/* Profil */}
           <Card>
-            <CardHeader className="flex-row items-center justify-between">
-              <CardTitle className="flex items-center gap-2">
-                <UserIcon className="size-4 text-muted-foreground" />
-                {t('settink.account')}
-              </CardTitle>
+            <CardHeader>
+              <CardTitle>{t('settink.profile')}</CardTitle>
             </CardHeader>
-            <CardContent className="flex flex-col gap-2">
-              <SignOutButton className="w-full" />
+            <CardContent>
+              {!isAuthenticated ? (
+                <div className="flex flex-col gap-3">
+                  <p className="text-sm text-muted-foreground">
+                    {t('settink.profile.loginPrompt')}
+                  </p>
+                  <LoginButton className="w-full">
+                    {t('auth.login.footer')}
+                  </LoginButton>
+                </div>
+              ) : (
+                <form
+                  onSubmit={handleSaveUsername}
+                  className="flex flex-col gap-4"
+                >
+                  <TextField
+                    label={t('settink.profile.username')}
+                    description={t('settink.profile.usernameHint')}
+                    value={username}
+                    placeholder={user?.username ?? undefined}
+                    onChange={(event) => setUsername(event.target.value)}
+                  />
+                  {status === 'error' && error && (
+                    <p className="text-sm text-destructive">{error}</p>
+                  )}
+                  <Button
+                    type="submit"
+                    variant="default"
+                    disabled={status === 'saving'}
+                    className="w-fit"
+                  >
+                    {status === 'saved' ? (
+                      <Check className="size-4" />
+                    ) : (
+                      <Save className="size-4" />
+                    )}
+                    {status === 'saved'
+                      ? t('settink.profile.saved')
+                      : t('settink.profile.save')}
+                  </Button>
+                </form>
+              )}
             </CardContent>
           </Card>
+
+          {/* Account (nur eingeloggt) */}
+          {isAuthenticated && (
+            <Card>
+              <CardHeader className="flex-row items-center justify-between">
+                <CardTitle className="flex items-center gap-2">
+                  <UserIcon className="size-4 text-muted-foreground" />
+                  {t('settink.account')}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <SignOutButton className="w-full" />
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </PageContainer>

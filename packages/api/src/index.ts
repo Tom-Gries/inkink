@@ -1,15 +1,27 @@
 export {
-  getApiClient,
-  getApiBaseUrl,
-  createApiClient,
-  type ApiClient,
-} from './client'
-export { ApiError, assertOk } from './errors'
-export {
+  type AuthClient,
   authClient,
   isAuthenticated,
-  type AuthClient,
 } from './auth'
+export {
+  type ApiClient,
+  createApiClient,
+  getApiBaseUrl,
+  getApiClient,
+} from './client'
+export { ApiError, assertOk } from './errors'
+export { useMe } from './hooks/use-me'
+export {
+  useCreateTestMessage,
+  useTestMessages,
+} from './hooks/use-test-messages'
+export { getMe, type MeResponse } from './resources/me'
+export {
+  getProfile,
+  type ProfileDto,
+  type ProfileResponse,
+  updateProfileUsername,
+} from './resources/profile'
 export {
   createTestMessage,
   deleteTestMessage,
@@ -17,7 +29,3 @@ export {
   listTestMessages,
   type TestMessageDto,
 } from './resources/test'
-export { getMe, type MeResponse } from './resources/me'
-export { useCreateTestMessage, useTestMessages } from './hooks/use-test-messages'
-export { useMe } from './hooks/use-me'
-

@@ -1,12 +1,17 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-const authClient = vi.hoisted(() => ({
-  getSession: vi.fn(),
-  signIn: { social: vi.fn() },
-  signOut: vi.fn(),
+const api = vi.hoisted(() => ({
+  authClient: {
+    getSession: vi.fn(),
+    signIn: { social: vi.fn() },
+    signOut: vi.fn(),
+  },
+  getApiClient: vi.fn(() => ({})),
+  getProfile: vi.fn(async () => null),
+  updateProfileUsername: vi.fn(async () => ({ userId: 'u1', username: 'Tom' })),
 }))
 
-vi.mock('@inkink/api', () => ({ authClient }))
+vi.mock('@inkink/api', () => api)
 
 import { useAuthStore } from './store'
 
@@ -23,7 +28,7 @@ describe('useAuthStore', () => {
   })
 
   it('refresh setzt authenticated und den Benutzer bei gültiger Session und leert das LoginGate-Flag', async () => {
-    authClient.getSession.mockResolvedValue({
+    api.authClient.getSession.mockResolvedValue({
       data: {
         session: { id: 's1' },
         user: {
@@ -51,13 +56,87 @@ describe('useAuthStore', () => {
       name: 'Tom',
       email: 'tom@example.com',
       image: null,
+      // Kein eigenes Profil vorhanden → Fallback speichert den Vornamen.
+      username: 'Tom',
     })
     expect(state.error).toBeNull()
     expect(state.loginRequired).toBe(false)
   })
 
+  it('refresh lädt bei gültiger Session den Benutzernamen aus dem Profil', async () => {
+    api.authClient.getSession.mockResolvedValue({
+      data: {
+        session: { id: 's1' },
+        user: {
+          id: 'u1',
+          name: 'Tom Gries',
+          email: 'tom@example.com',
+          image: null,
+        },
+      },
+      error: null,
+    })
+    api.getProfile.mockResolvedValue({ userId: 'u1', username: 'Tom' } as never)
+
+    await useAuthStore.getState().refresh()
+
+    expect(api.getProfile).toHaveBeenCalledWith({})
+    expect(useAuthStore.getState().user?.username).toBe('Tom')
+  })
+
+  it('refresh übernimmt beim ersten Login den vollen Namen als Benutzername, wenn noch keiner vergeben ist', async () => {
+    api.authClient.getSession.mockResolvedValue({
+      data: {
+        session: { id: 'u1' },
+        user: {
+          id: 'u1',
+          name: 'Tom Gries',
+          email: 'tom@example.com',
+          image: null,
+        },
+      },
+      error: null,
+    })
+    // Noch kein Profil vorhanden → getProfile null.
+    api.getProfile.mockResolvedValue(null)
+    api.updateProfileUsername.mockResolvedValue({
+      userId: 'u1',
+      username: 'Tom Gries',
+    } as never)
+
+    await useAuthStore.getState().refresh()
+
+    // Voller Name automatisch als Benutzername gespeichert.
+    expect(api.updateProfileUsername).toHaveBeenCalledWith({}, 'Tom Gries')
+    expect(useAuthStore.getState().user?.username).toBe('Tom Gries')
+  })
+
+  it('refresh überschreibt einen bereits vergebenen Benutzernamen NICHT', async () => {
+    api.authClient.getSession.mockResolvedValue({
+      data: {
+        session: { id: 'u1' },
+        user: {
+          id: 'u1',
+          name: 'Tom Gries',
+          email: 'tom@example.com',
+          image: null,
+        },
+      },
+      error: null,
+    })
+    api.getProfile.mockResolvedValue({
+      userId: 'u1',
+      username: 'tommylein',
+    } as never)
+
+    await useAuthStore.getState().refresh()
+
+    expect(api.updateProfileUsername).not.toHaveBeenCalled()
+    expect(useAuthStore.getState().user?.username).toBe('tommylein')
+  })
+
   it('refresh setzt unauthenticated ohne Session', async () => {
-    authClient.getSession.mockResolvedValue({ data: null, error: null })
+    api.authClient.getSession.mockResolvedValue({ data: null, error: null })
 
     await expect(useAuthStore.getState().refresh()).resolves.toBe(false)
 
@@ -67,7 +146,9 @@ describe('useAuthStore', () => {
   })
 
   it('refresh ist fail-closed, wenn der Session-Request fehlschlägt', async () => {
-    authClient.getSession.mockRejectedValue(new Error('API nicht erreichbar'))
+    api.authClient.getSession.mockRejectedValue(
+      new Error('API nicht erreichbar'),
+    )
 
     await expect(useAuthStore.getState().refresh()).resolves.toBe(false)
 
@@ -82,8 +163,8 @@ describe('useAuthStore', () => {
       .getState()
       .signInWithGoogle('http://localhost:3000/startink/ziel')
 
-    expect(authClient.signIn.social).toHaveBeenCalledOnce()
-    expect(authClient.signIn.social).toHaveBeenCalledWith({
+    expect(api.authClient.signIn.social).toHaveBeenCalledOnce()
+    expect(api.authClient.signIn.social).toHaveBeenCalledWith({
       provider: 'google',
       callbackURL: 'http://localhost:3000/startink/ziel',
     })
@@ -91,18 +172,46 @@ describe('useAuthStore', () => {
 
   it('signOut meldet ab und leert den Store', async () => {
     useAuthStore.setState({
-      user: { id: 'u1', name: null, email: null },
+      user: { id: 'u1', name: null, email: null, username: null },
       status: 'authenticated',
     })
-    authClient.signOut.mockResolvedValue(undefined)
+    api.authClient.signOut.mockResolvedValue(undefined)
 
     await useAuthStore.getState().signOut()
 
-    expect(authClient.signOut).toHaveBeenCalledOnce()
+    expect(api.authClient.signOut).toHaveBeenCalledOnce()
 
     const state = useAuthStore.getState()
     expect(state.user).toBeNull()
     expect(state.status).toBe('unauthenticated')
+  })
+
+  it('updateUsername ruft die Profil-API auf und aktualisiert den Benutzer', async () => {
+    useAuthStore.setState({
+      user: { id: 'u1', name: 'Tom', email: null, username: 'Old' },
+      status: 'authenticated',
+    })
+    api.updateProfileUsername.mockResolvedValue({
+      userId: 'u1',
+      username: 'Neu',
+    } as never)
+
+    await useAuthStore.getState().updateUsername('Neu')
+
+    expect(api.updateProfileUsername).toHaveBeenCalledWith({}, 'Neu')
+    expect(useAuthStore.getState().user?.username).toBe('Neu')
+  })
+
+  it('updateUsername reicht einen Konflikt (API-Fehler) nach oben weiter', async () => {
+    useAuthStore.setState({
+      user: { id: 'u1', name: 'Tom', email: null, username: 'Tom' },
+      status: 'authenticated',
+    })
+    api.updateProfileUsername.mockRejectedValue(new Error('vergeben'))
+
+    await expect(
+      useAuthStore.getState().updateUsername('Tom2'),
+    ).rejects.toThrow('vergeben')
   })
 
   it('requireLogin setzt loginRequired und das Ziel für den Login', () => {

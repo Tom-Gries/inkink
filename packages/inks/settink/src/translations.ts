@@ -10,10 +10,15 @@ export const translations = {
     'settink.sidebar.xp': 'XP',
     /* Profil */
     'settink.profile': 'Profil',
+    'settink.profile.loginPrompt':
+      'Melde dich an, um deinen Benutzernamen zu verwalten.',
     'settink.profile.name': 'Anzeigename',
     'settink.profile.nameHint': 'So erscheinst du in der App.',
     'settink.profile.username': 'Benutzername',
-    'settink.profile.usernameHint': 'Dein eindeutiger Handle.',
+    'settink.profile.saveError':
+      'Speichern fehlgeschlagen. Bitte erneut versuchen.',
+    'settink.profile.usernameHint':
+      'Dein Name, so wie er auch von Google übernommen wird.',
     'settink.profile.bio': 'Über dich',
     'settink.profile.bioPlaceholder': 'Ein paar Sätze über dich …',
     'settink.profile.avatar': 'Profilbild',
@@ -68,10 +73,12 @@ export const translations = {
     'settink.sidebar.xp': 'XP',
     /* Profile */
     'settink.profile': 'Profile',
+    'settink.profile.loginPrompt': 'Sign in to manage your username.',
     'settink.profile.name': 'Display name',
     'settink.profile.nameHint': 'This is how you appear in the app.',
     'settink.profile.username': 'Username',
-    'settink.profile.usernameHint': 'Your unique handle.',
+    'settink.profile.saveError': 'Saving failed. Please try again.',
+    'settink.profile.usernameHint': 'Your name, as taken from Google.',
     'settink.profile.bio': 'About you',
     'settink.profile.bioPlaceholder': 'A few words about yourself …',
     'settink.profile.avatar': 'Profile picture',
