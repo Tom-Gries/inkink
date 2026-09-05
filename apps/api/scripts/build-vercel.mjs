@@ -65,7 +65,7 @@ const external = [
 ]
 
 await build({
-  entryPoints: [join(root, 'src', 'index.ts')],
+  entryPoints: [join(root, 'src', 'server.ts')],
   outfile: join(functionDir, 'index.mjs'),
   bundle: true,
   platform: 'node',

@@ -3,3 +3,6 @@
 
 # Lokale Test-Artefakte
 .prod-build-test/
+
+# Lokale Logs
+*.log

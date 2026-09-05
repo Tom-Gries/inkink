@@ -22,7 +22,10 @@ export function getRouter() {
     // der AuthProvider (@inkink/ui-auth) zeigt dann das LoginGate – die
     // URL bleibt unverändert.
     onAuthRequired: (targetHref) => {
-      authLog('router', `onAuthRequired: Login erforderlich für "${targetHref}"`)
+      authLog(
+        'router',
+        `onAuthRequired: Login erforderlich für "${targetHref}"`,
+      )
       useAuthStore.getState().requireLogin(targetHref)
     },
 

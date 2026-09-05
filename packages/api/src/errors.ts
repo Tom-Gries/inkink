@@ -23,7 +23,9 @@ export async function assertOk<T>(res: Response): Promise<T> {
   let message = `HTTP ${res.status}`
 
   try {
-    const body = (await res.json()) as { error?: { code?: string; message?: string } }
+    const body = (await res.json()) as {
+      error?: { code?: string; message?: string }
+    }
 
     if (body.error) {
       code = body.error.code ?? code

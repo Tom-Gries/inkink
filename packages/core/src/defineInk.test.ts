@@ -7,9 +7,7 @@ describe('defineInk', () => {
     const component = () => null
     const definition = defineInk({
       name: 'defineink-test',
-      routes: [
-        { name: 'seite', path: '/defineink-test/seite', component },
-      ],
+      routes: [{ name: 'seite', path: '/defineink-test/seite', component }],
       translations: { de: {}, en: {} },
     })
 

@@ -1,5 +1,5 @@
-import { assertOk } from '../errors'
 import type { ApiClient } from '../client'
+import { assertOk } from '../errors'
 
 export interface TestMessageDto {
   id: string
@@ -25,7 +25,9 @@ export async function getTestMessage(
   return assertOk<TestMessageDto>(res)
 }
 
-export async function listTestMessages(client: ApiClient): Promise<TestMessageDto[]> {
+export async function listTestMessages(
+  client: ApiClient,
+): Promise<TestMessageDto[]> {
   const res = await client.api.test.$get()
 
   return assertOk<TestMessageDto[]>(res)

@@ -12,14 +12,17 @@
  * gesetzt ist. Ohne Flag verhält sich die App exakt wie vorher.
  */
 
-import type { Context } from 'hono'
 import { createHash } from 'node:crypto'
+import type { Context } from 'hono'
 import { getAuth } from '../auth'
 
 const OAUTH_STATE_COOKIE_NAMES = [
   '__Secure-better-auth.oauth_state',
   'better-auth.oauth_state',
-]
+] as const
+
+/** Cookie-Name für die oauth_state-Konfiguration in Better-Auth-Options. */
+const COOKIE_KEY_OAUTH_STATE = 'oauth_state'
 
 const OAUTH_OTHER_COOKIE_NAMES = [
   '__Secure-better-auth.session_token',
@@ -95,9 +98,12 @@ const DIAG_HEADERS = [
   'x-forwarded-host',
 ]
 
-function buildCookieReport(
-  cookieHeader: string | null,
-): Array<{ name: string; present: boolean; length: number; sha256: string }> {
+function buildCookieReport(cookieHeader: string | null): Array<{
+  name: string
+  present: boolean
+  length: number
+  sha256: string
+}> {
   const cookieMap = parseCookies(cookieHeader)
   const names = [...OAUTH_STATE_COOKIE_NAMES, ...OAUTH_OTHER_COOKIE_NAMES]
   const report = names.map((name) => cookieSummary(cookieMap, name))
@@ -122,7 +128,6 @@ interface AuthDebugConfig {
 
 /** Liest die tatsächlich wirksame Cookie-Konfiguration aus der Better-Auth-Instanz (getAuth().options) – OHNE Secrets/Token-Werte. */
 export function getAuthDebugConfig(): AuthDebugConfig {
-
   let baseURL = '(nicht initialisiert)'
   let cookiePrefix = 'better-auth'
   let useSecureCookies = false
@@ -152,7 +157,13 @@ export function getAuthDebugConfig(): AuthDebugConfig {
             }
             cookies?: Record<
               string,
-              { attributes?: { sameSite?: string; path?: string; httpOnly?: boolean } }
+              {
+                attributes?: {
+                  sameSite?: string
+                  path?: string
+                  httpOnly?: boolean
+                }
+              }
             >
           }
         }
@@ -164,15 +175,15 @@ export function getAuthDebugConfig(): AuthDebugConfig {
       opts?.advanced?.useSecureCookies ?? /^https:\/\//.test(baseURL)
     sameSite =
       opts?.advanced?.defaultCookieAttributes?.sameSite ??
-      opts?.advanced?.cookies?.['oauth_state']?.attributes?.sameSite ??
+      opts?.advanced?.cookies?.[COOKIE_KEY_OAUTH_STATE]?.attributes?.sameSite ??
       'lax'
     path =
       opts?.advanced?.defaultCookieAttributes?.path ??
-      opts?.advanced?.cookies?.['oauth_state']?.attributes?.path ??
+      opts?.advanced?.cookies?.[COOKIE_KEY_OAUTH_STATE]?.attributes?.path ??
       '/'
     httpOnly =
       opts?.advanced?.defaultCookieAttributes?.httpOnly ??
-      opts?.advanced?.cookies?.['oauth_state']?.attributes?.httpOnly ??
+      opts?.advanced?.cookies?.[COOKIE_KEY_OAUTH_STATE]?.attributes?.httpOnly ??
       true
     crossSubDomainCookiesEnabled =
       opts?.advanced?.crossSubDomainCookies?.enabled ?? false
@@ -327,9 +338,7 @@ export function authDebugPage(
     })
     .join('\n')
 
-  const headerRows = DIAG_HEADERS.map((h) =>
-    safeHeaderPresence(req.headers, h),
-  )
+  const headerRows = DIAG_HEADERS.map((h) => safeHeaderPresence(req.headers, h))
     .map(
       (h) =>
         `<tr><td>${escapeHtml(h.name)}</td><td>${h.present ? 'ja' : 'nein'}</td></tr>`,
@@ -403,11 +412,12 @@ interface DiagnosePageData {
 }
 
 function renderDiagnoseHtml(data: DiagnosePageData): string {
-  const testCookieLink = data.action === 'set-cookie-test'
-    ? `<p><strong>Test-Cookie wurde gesetzt</strong> – unten prüfen, ob er jetzt
+  const testCookieLink =
+    data.action === 'set-cookie-test'
+      ? `<p><strong>Test-Cookie wurde gesetzt</strong> – unten prüfen, ob er jetzt
        in <code>Relevante Cookies</code> auftaucht (sonst blockiert der Browser
        bzw. die Domain-Konfiguration Cookies).</p>`
-    : `<p><a href="?action=set-cookie-test">Test-Cookie setzen</a> – setzt einen
+      : `<p><a href="?action=set-cookie-test">Test-Cookie setzen</a> – setzt einen
        harmlosen Nonce-Cookie mit denselben Attributen wie der echte
        <code>oauth_state</code> und lädt die Seite neu (zeigt, ob der Browser
        auf dieser Domain Cookies über Navigationen behält).</p>`

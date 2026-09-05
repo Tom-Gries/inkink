@@ -1,13 +1,13 @@
 import { render, renderHook, screen } from '@testing-library/react'
 import type { ReactNode } from 'react'
 import { describe, expect, it } from 'vitest'
+import type { Locale, Translations } from './index'
 import {
   createTranslations,
   I18nProvider,
   locales,
   useTranslations,
 } from './index'
-import type { Locale, Translations } from './index'
 
 const translations: Translations = {
   de: { begrueszung: 'Hallo', nurDeutsch: 'Nur Deutsch' },

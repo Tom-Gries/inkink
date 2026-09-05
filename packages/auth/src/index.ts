@@ -119,8 +119,8 @@ export function createAuth(options: CreateAuthOptions) {
     socialProviders: hasGoogleCredentials
       ? {
           google: {
-            clientId: options.googleClientId!,
-            clientSecret: options.googleClientSecret!,
+            clientId: options.googleClientId as string,
+            clientSecret: options.googleClientSecret as string,
           },
         }
       : {},

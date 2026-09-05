@@ -65,7 +65,9 @@ function createInkRoutes<TRootRoute extends AnyRoute>(
       // Öffentliche Route: Bei echter Navigation (nicht Preload) das
       // Login-Required-Flag zurücksetzen, damit das Gate nicht kleben bleibt.
       if (cause !== 'preload') {
-        guardLog('Index-Route "/": onPublicRoute() → Login-Required-Flag zurücksetzen')
+        guardLog(
+          'Index-Route "/": onPublicRoute() → Login-Required-Flag zurücksetzen',
+        )
         options.onPublicRoute?.()
       }
     },
@@ -77,7 +79,9 @@ function createInkRoutes<TRootRoute extends AnyRoute>(
     component: ErrorView,
     beforeLoad: ({ cause }) => {
       if (cause !== 'preload') {
-        guardLog('Fehler-Route "/error": onPublicRoute() → Login-Required-Flag zurücksetzen')
+        guardLog(
+          'Fehler-Route "/error": onPublicRoute() → Login-Required-Flag zurücksetzen',
+        )
         options.onPublicRoute?.()
       }
     },
@@ -127,7 +131,9 @@ function createInkRoutes<TRootRoute extends AnyRoute>(
 
             // Öffentliche Route: Login-Required-Flag zurücksetzen, damit
             // das LoginGate auf öffentlichen Seiten nicht hängen bleibt.
-            guardLog(`Öffentliche Route "${route.path}": onPublicRoute() ausgelöst`)
+            guardLog(
+              `Öffentliche Route "${route.path}": onPublicRoute() ausgelöst`,
+            )
             options.onPublicRoute?.()
           },
         })

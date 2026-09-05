@@ -2,7 +2,6 @@ import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { getAuth } from './auth'
 import { getDb } from './db'
-import { errorHandler } from './hooks/error-handler'
 import {
   authDebugPage,
   computeOAuthStateSummary,
@@ -10,6 +9,7 @@ import {
   logOAuthCallbackMetadata,
   logOAuthCallbackOutcome,
 } from './hooks/auth-debug'
+import { errorHandler } from './hooks/error-handler'
 import { realtimeRoutes } from './realtime/sse.routes'
 import { meRoutes } from './services/me/me.routes'
 import { profileRoutes } from './services/profile/profile.routes'
@@ -100,30 +100,4 @@ const routes = app
 
 export type AppType = typeof routes
 
-// ── TEMPORÄR: Root-Level-Wrapper ────────────────────────────────────────────
-// Verhindert, dass `/` und `/error` auf der API-Domain (inkink-api.vercel.app)
-// im Vercel-404 landen und leitet sie – nur bei AUTH_DEBUG=1 – zur
-// Diagnose-Route weiter. Ohne Debug-Flag: Hono-404 wie bisher.
-const serverApp = new Hono()
-
-serverApp.get('/', (c) => {
-  if (!isAuthDebugEnabled()) {
-    return c.notFound()
-  }
-  const query = new URL(c.req.url).search
-  return c.redirect(`/api/auth/error${query}`, 302)
-})
-
-serverApp.get('/error', (c) => {
-  if (!isAuthDebugEnabled()) {
-    return c.notFound()
-  }
-  const query = new URL(c.req.url).search
-  return c.redirect(`/api/auth/error${query}`, 302)
-})
-
-// Alle weiteren Pfade (inkl. /api/*) an die Hono-API mit basePath('/api')
-// weiterreichen – ohne Pfad-Rewrite, damit die bestehende App unverändert routet.
-serverApp.all('*', (c) => app.fetch(c.req.raw))
-
-export default serverApp
+export default app

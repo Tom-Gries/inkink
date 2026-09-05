@@ -1,8 +1,8 @@
+import { authError, authLog } from '@inkink/api'
 import { useTranslations } from '@inkink/i18n'
 import { Button } from '@inkink/ui'
 import { LogIn } from 'lucide-react'
 import type { ReactNode } from 'react'
-import { authError, authLog } from '@inkink/api'
 import { useAuthStore } from './store'
 
 export interface LoginButtonProps {

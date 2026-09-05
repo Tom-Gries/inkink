@@ -1,6 +1,5 @@
 import { Field } from '@base-ui-components/react/field'
-import type { TextareaHTMLAttributes } from 'react'
-import type { ReactNode } from 'react'
+import type { ReactNode, TextareaHTMLAttributes } from 'react'
 import { cn } from './cn'
 
 type AppTextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement>

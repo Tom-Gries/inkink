@@ -1,5 +1,5 @@
-import { hc } from 'hono/client'
 import type { AppType } from 'api'
+import { hc } from 'hono/client'
 
 export type ApiClient = ReturnType<typeof hc<AppType>>
 

@@ -45,7 +45,13 @@ describe('Link', () => {
 
   it('platziert das Icon bei type="next" nach dem Text', () => {
     render(
-      <Link render={<a href="#x" />} type="next">
+      // useRender injiziert die children (Text) erst zur Laufzeit in den <a> –
+      // der statisch übergebene <a> ist daher bewusst ohne Text.
+      <Link
+        // biome-ignore lint/a11y/useAnchorContent: children werden per useRender injiziert
+        render={<a href="#x" />}
+        type="next"
+      >
         Weiter
       </Link>,
     )
@@ -57,7 +63,11 @@ describe('Link', () => {
 
   it('platziert das Icon bei type="back" vor dem Text', () => {
     render(
-      <Link render={<a href="#x" />} type="back">
+      <Link
+        // biome-ignore lint/a11y/useAnchorContent: children werden per useRender injiziert
+        render={<a href="#x" />}
+        type="back"
+      >
         Zurück
       </Link>,
     )
@@ -68,7 +78,12 @@ describe('Link', () => {
 
   it('vereint Basis-Klassen, Variante und eigene className', () => {
     render(
-      <Link render={<a href="#x" />} variant="outline" className="meine-klasse">
+      <Link
+        // biome-ignore lint/a11y/useAnchorContent: children werden per useRender injiziert
+        render={<a href="#x" />}
+        variant="outline"
+        className="meine-klasse"
+      >
         X
       </Link>,
     )

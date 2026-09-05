@@ -1,4 +1,4 @@
-import { createAuth, type Auth } from '@inkink/auth'
+import { type Auth, createAuth } from '@inkink/auth'
 import { getDb, getMongoClient } from './db'
 
 let auth: Auth | undefined
@@ -26,19 +26,25 @@ export function getAuth(): Auth {
       | 'error'
       | undefined
 
-    console.log('[auth:server] getAuth(): Erstelle Better-Auth-Instanz (lazy Singleton)')
+    console.log(
+      '[auth:server] getAuth(): Erstelle Better-Auth-Instanz (lazy Singleton)',
+    )
     console.log(`[auth:server] getAuth(): BETTER_AUTH_URL=${baseURL}`)
     console.log(
       `[auth:server] getAuth(): BETTER_AUTH_SECRET=${secret ? `gesetzt (${secret.length} Zeichen)` : 'FEHLT'}`,
     )
-    console.log(`[auth:server] getAuth(): ${envState(googleClientId, 'GOOGLE_CLIENT_ID')}`)
+    console.log(
+      `[auth:server] getAuth(): ${envState(googleClientId, 'GOOGLE_CLIENT_ID')}`,
+    )
     console.log(
       `[auth:server] getAuth(): ${envState(googleClientSecret, 'GOOGLE_CLIENT_SECRET')}`,
     )
     console.log(
       `[auth:server] getAuth(): WEB_ORIGIN (trustedOrigins)=${JSON.stringify(trustedOrigins)}`,
     )
-    console.log(`[auth:server] getAuth(): COOKIE_DOMAIN=${cookieDomain ?? '(keine)'}`)
+    console.log(
+      `[auth:server] getAuth(): COOKIE_DOMAIN=${cookieDomain ?? '(keine)'}`,
+    )
     console.log(
       `[auth:server] getAuth(): AUTH_LOG_LEVEL=${logLevel ?? '(Standard laut NODE_ENV)'}`,
     )

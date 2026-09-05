@@ -1,6 +1,8 @@
 import { z } from 'zod'
 
-const objectIdSchema = z.string().regex(/^[0-9a-fA-F]{24}$/, 'Ungültige Benutzer-ID.')
+const objectIdSchema = z
+  .string()
+  .regex(/^[0-9a-fA-F]{24}$/, 'Ungültige Benutzer-ID.')
 
 export const userIdParamSchema = z.object({
   id: objectIdSchema,

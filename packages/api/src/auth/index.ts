@@ -1,9 +1,9 @@
-export { authClient, type AuthClient } from './client'
+export { type AuthClient, authClient } from './client'
 export { isAuthenticated } from './guard'
 export {
+  type AuthLogLevel,
   authError,
   authInfo,
   authLog,
   authWarn,
-  type AuthLogLevel,
 } from './logger'

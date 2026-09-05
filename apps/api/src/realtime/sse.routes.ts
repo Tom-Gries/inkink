@@ -44,7 +44,7 @@ export const realtimeRoutes = new Hono().get('/events', (c) =>
                 .sleep(HEARTBEAT_INTERVAL_MS)
                 .then(() => ({ kind: 'timeout' as const })),
             ])
-          : ({ kind: 'timeout' as const })
+          : { kind: 'timeout' as const }
 
         if (stream.aborted) break
 

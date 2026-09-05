@@ -1,4 +1,5 @@
 // @vitest-environment node
+// @vitest-environment node
 import { afterEach, describe, expect, it } from 'vitest'
 import app from './index'
 

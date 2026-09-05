@@ -24,7 +24,11 @@ describe('Test-Nachrichten (Vertragstests)', () => {
 
     expect(res.status).toBe(201)
 
-    const body = (await res.json()) as { id: string; message: string; createdAt: string }
+    const body = (await res.json()) as {
+      id: string
+      message: string
+      createdAt: string
+    }
     expect(body.message).toBe('Integrationstest')
     expect(body.id).toMatch(/^[0-9a-fA-F]{24}$/)
 
@@ -76,7 +80,9 @@ describe('Test-Nachrichten (Vertragstests)', () => {
   })
 
   it('löscht die Test-Nachricht (204) und liefert danach 404', async () => {
-    const res = await app.request(`/api/test/${createdIds[0]}`, { method: 'DELETE' })
+    const res = await app.request(`/api/test/${createdIds[0]}`, {
+      method: 'DELETE',
+    })
 
     expect(res.status).toBe(204)
 

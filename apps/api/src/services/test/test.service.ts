@@ -1,4 +1,4 @@
-import { ObjectId, type ChangeStream, type WithId } from 'mongodb'
+import { type ChangeStream, ObjectId, type WithId } from 'mongodb'
 import { getDb } from '../../db'
 import type { CreateTestMessage, TestMessageDto } from '../../schemas/test'
 
@@ -8,7 +8,8 @@ interface TestMessageDocument {
   createdAt: Date
 }
 
-const testMessages = () => getDb().collection<TestMessageDocument>('test_messages')
+const testMessages = () =>
+  getDb().collection<TestMessageDocument>('test_messages')
 
 function toDto(document: WithId<TestMessageDocument>): TestMessageDto {
   return {
@@ -18,7 +19,9 @@ function toDto(document: WithId<TestMessageDocument>): TestMessageDto {
   }
 }
 
-export async function createTestMessage(data: CreateTestMessage): Promise<TestMessageDto> {
+export async function createTestMessage(
+  data: CreateTestMessage,
+): Promise<TestMessageDto> {
   const createdAt = new Date()
   const { insertedId } = await testMessages().insertOne({
     message: data.message,
@@ -42,14 +45,18 @@ export async function listTestMessages(): Promise<TestMessageDto[]> {
   return documents.map(toDto)
 }
 
-export async function getTestMessage(id: string): Promise<TestMessageDto | null> {
+export async function getTestMessage(
+  id: string,
+): Promise<TestMessageDto | null> {
   const document = await testMessages().findOne({ _id: new ObjectId(id) })
 
   return document ? toDto(document) : null
 }
 
 export async function deleteTestMessage(id: string): Promise<boolean> {
-  const { deletedCount } = await testMessages().deleteOne({ _id: new ObjectId(id) })
+  const { deletedCount } = await testMessages().deleteOne({
+    _id: new ObjectId(id),
+  })
 
   return deletedCount > 0
 }

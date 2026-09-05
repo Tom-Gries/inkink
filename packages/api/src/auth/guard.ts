@@ -32,7 +32,10 @@ export async function isAuthenticated(): Promise<boolean> {
     }
 
     if (data?.user) {
-      authLog('guard', `isAuthenticated: authentifiziert (user=${data.user.id})`)
+      authLog(
+        'guard',
+        `isAuthenticated: authentifiziert (user=${data.user.id})`,
+      )
       return true
     }
 

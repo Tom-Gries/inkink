@@ -1,6 +1,6 @@
+import { authLog } from '@inkink/api'
 import type { ReactNode } from 'react'
 import { useEffect } from 'react'
-import { authLog } from '@inkink/api'
 import { LoginGate } from './login-gate'
 import { AUTH_REQUEST_STATE_ID, useAuthStore } from './store'
 

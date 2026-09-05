@@ -1,8 +1,4 @@
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { getApiClient } from '../client'
 import { createTestMessage, listTestMessages } from '../resources/test'
 
@@ -20,6 +16,7 @@ export function useCreateTestMessage() {
 
   return useMutation({
     mutationFn: (message: string) => createTestMessage(getApiClient(), message),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: testMessagesKey }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: testMessagesKey }),
   })
 }

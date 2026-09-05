@@ -111,7 +111,7 @@ export function StacksView() {
                   ) : (
                     <ul className="mt-2 flex flex-col gap-1.5">
                       {stack.leaderboard.map((entry, index) => (
-                        <li key={`${entry.name}-${index}`} className="text-sm">
+                        <li key={entry.name} className="text-sm">
                           <span className="mr-2">
                             {TOP3_MEDALS[index] ?? '·'}
                           </span>

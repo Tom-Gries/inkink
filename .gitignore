@@ -5,15 +5,23 @@ node_modules/
 .env
 .env.*
 !.env.example
+.env.local
 
 # Build
 dist/
 build/
 .next/
 .vite/
+.output/
+.tanstack/
+.vercel/
+.wrangler/
+.nitro/
+__unconfig*
 
-# Logs
+# Logs (auch in apps/)
 *.log
+**/*.log
 
 # OS
 .DS_Store
@@ -33,6 +41,5 @@ Thumbs.db
 
 # Local files
 *.local
-
-.vscode/
-.vercel
+.prod-build-test/
+todos.json

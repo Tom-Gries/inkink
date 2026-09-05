@@ -1,5 +1,5 @@
-import { fireEvent, render, screen } from '@testing-library/react'
 import { I18nProvider } from '@inkink/i18n'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const authClient = vi.hoisted(() => ({
@@ -51,9 +51,7 @@ describe('LoginGate', () => {
   it('übergibt das Ziel als ABSOLUTE URL auf den Web-Origin (relativer pendingTarget → localhost:3000) an Google', () => {
     renderGate()
 
-    fireEvent.click(
-      screen.getByRole('button', { name: 'Mit Google anmelden' }),
-    )
+    fireEvent.click(screen.getByRole('button', { name: 'Mit Google anmelden' }))
 
     // Kein relativer callbackURL: Sonst würde Better Auth den Redirect
     // nach dem Login relativ zur API-Base (localhost:8787) auflösen.
@@ -67,9 +65,7 @@ describe('LoginGate', () => {
     useAuthStore.setState({ pendingTarget: 'http://localhost:3000/foo' })
 
     renderGate()
-    fireEvent.click(
-      screen.getByRole('button', { name: 'Mit Google anmelden' }),
-    )
+    fireEvent.click(screen.getByRole('button', { name: 'Mit Google anmelden' }))
 
     expect(authClient.signIn.social).toHaveBeenCalledWith({
       provider: 'google',

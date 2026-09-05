@@ -1,5 +1,5 @@
-import { HTTPException } from 'hono/http-exception'
 import type { ErrorHandler } from 'hono'
+import { HTTPException } from 'hono/http-exception'
 
 const statusCodes: Record<number, string> = {
   400: 'BAD_REQUEST',

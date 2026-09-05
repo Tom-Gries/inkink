@@ -3,7 +3,7 @@
   "vcs": {
     "enabled": false,
     "clientKind": "git",
-    "useIgnoreFile": false
+    "useIgnoreFile": true
   },
   "files": {
     "ignoreUnknown": false,
@@ -12,8 +12,15 @@
       "**/.vscode/**/*",
       "**/index.html",
       "**/vite.config.ts",
+      "vite.config.ts",
+      "vitest.config.ts",
       "!**/src/routeTree.gen.ts",
-      "!**/src/styles.css"
+      "!**/src/styles.css",
+      "!**/.vercel",
+      "!**/.output",
+      "!**/node_modules",
+      "!**/.github",
+      "!**/.tanstack"
     ]
   },
   "formatter": {

@@ -84,16 +84,28 @@ export function authLog(tag: string, message: string, details?: unknown): void {
   write('debug', tag, message, details)
 }
 
-export function authInfo(tag: string, message: string, details?: unknown): void {
+export function authInfo(
+  tag: string,
+  message: string,
+  details?: unknown,
+): void {
   write('info', tag, message, details)
 }
 
 /** Hinweis auf eine ungewöhnliche/verdächtige Auth-Situation. */
-export function authWarn(tag: string, message: string, details?: unknown): void {
+export function authWarn(
+  tag: string,
+  message: string,
+  details?: unknown,
+): void {
   write('warn', tag, message, details)
 }
 
 /** Fehler im Auth-Flow – immer sichtbar (außer explizit reduziert). */
-export function authError(tag: string, message: string, details?: unknown): void {
+export function authError(
+  tag: string,
+  message: string,
+  details?: unknown,
+): void {
   write('error', tag, message, details)
 }

@@ -186,7 +186,10 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
         }
 
         set({ user, status: 'authenticated', loginRequired: false })
-        authLog('store.refresh', 'Status → authenticated (LoginGate schließt sich)')
+        authLog(
+          'store.refresh',
+          'Status → authenticated (LoginGate schließt sich)',
+        )
         return true
       }
 
@@ -273,12 +276,18 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
   },
 
   clearLoginRequired: () => {
-    authLog('store.clearLoginRequired', 'loginRequired=false (öffentliche Route)')
+    authLog(
+      'store.clearLoginRequired',
+      'loginRequired=false (öffentliche Route)',
+    )
     set({ loginRequired: false, pendingTarget: null })
   },
 
   resetRequestState: () => {
-    authLog('store.resetRequestState', 'SSR: request-relevante Flags zurückgesetzt')
+    authLog(
+      'store.resetRequestState',
+      'SSR: request-relevante Flags zurückgesetzt',
+    )
     set({ loginRequired: false, pendingTarget: null })
   },
 }))

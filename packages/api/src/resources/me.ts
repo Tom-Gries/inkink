@@ -1,5 +1,5 @@
-import { assertOk } from '../errors'
 import type { ApiClient } from '../client'
+import { assertOk } from '../errors'
 
 export interface MeResponse {
   user: {
