@@ -120,6 +120,10 @@ writeFileSync(
       routes: [
         { handle: 'filesystem' },
         { src: '/api/(.*)', dest: functionRoute },
+        // TEMPORÄR (Diagnose): Fängt `/` und `/error` auf der API-Domain ab,
+        // damit die OAuth-Fehler-Redirects (/?error=state_mismatch) in der
+        // Function landen statt im Vercel-404. Nach der Fehlersuche entfernen.
+        { src: '/(.*)', dest: functionRoute },
       ],
     },
     null,

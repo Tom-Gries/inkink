@@ -60,6 +60,12 @@ export function createAuth(options: CreateAuthOptions) {
     options.logLevel ??
     (process.env.NODE_ENV === 'production' ? 'warn' : 'debug')
 
+  // TEMPORÄR (Diagnose): Nur bei AUTH_DEBUG=1 zeigt Better Auth OAuth-Fehler
+  // auf /api/auth/error statt auf /?error=… (das sonst im Vercel-404 landet).
+  const debugEnabled =
+    process.env.AUTH_DEBUG === '1' ||
+    process.env.AUTH_DEBUG?.toLowerCase() === 'true'
+
   serverLog(
     `createAuth: baseURL=${baseURL}, secret=${secret ? `gesetzt (${secret.length} Zeichen)` : 'FEHLT'}, google=${hasGoogleCredentials ? 'konfiguriert' : 'FEHLT'}, trustedOrigins=${JSON.stringify(options.trustedOrigins)}, cookieDomain=${options.cookieDomain ?? '(keine)'}, logLevel=${logLevel}`,
   )
@@ -86,8 +92,10 @@ export function createAuth(options: CreateAuthOptions) {
     logger: { level: logLevel },
 
     // Auth-API-Fehler (z. B. INVALID_SESSION, rate limit, DB-Fehler)
-    // zentral sichtbar machen.
+    // zentral sichtbar machen. Mit AUTH_DEBUG=1 zusätzlich auf die temporäre
+    // Diagnose-Seite /api/auth/error weiterleiten (statt /?error=… → Vercel-404).
     onAPIError: {
+      errorURL: debugEnabled ? '/api/auth/error' : undefined,
       onError: (error) => {
         serverError('onAPIError:', error)
       },
