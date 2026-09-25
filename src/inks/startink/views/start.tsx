@@ -1,0 +1,20 @@
+import { useTranslations } from '../../../i18n/index'
+import { Link, PageContainer, PageHeader } from '../../../ui/index'
+
+export function StartView() {
+  const t = useTranslations()
+
+  return (
+    <PageContainer>
+      <PageHeader
+        title={t('startink.start')}
+        description={t('startink.startSubtitle')}
+      />
+      <div className="flex flex-wrap items-center gap-3">
+        <Link to="startink.ziel" type="next">
+          {t('startink.ziel')}
+        </Link>
+      </div>
+    </PageContainer>
+  )
+}

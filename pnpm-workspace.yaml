@@ -1,0 +1,5 @@
+# Pnpm 11 settings: build-script approvals.
+# No workspace "packages" globs - web/ is a single-package project.
+allowBuilds:
+  esbuild: true
+  lightningcss: true
