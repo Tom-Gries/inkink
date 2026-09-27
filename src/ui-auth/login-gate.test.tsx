@@ -33,7 +33,7 @@ describe('LoginGate', () => {
       error: null,
       loginRequired: true,
       // Der Auth-Guard meldet das Ziel als RELATIVEN Pfad (location.href).
-      pendingTarget: '/startink/ziel',
+      pendingTarget: '/learnink/stacks',
     })
   })
 
@@ -54,7 +54,7 @@ describe('LoginGate', () => {
     // nach dem Login relativ zur API-Base (localhost:8787) auflösen.
     expect(authClient.signIn.social).toHaveBeenCalledWith({
       provider: 'google',
-      callbackURL: 'http://localhost:3000/startink/ziel',
+      callbackURL: 'http://localhost:3000/learnink/stacks',
     })
   })
 

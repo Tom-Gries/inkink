@@ -32,7 +32,7 @@ describe('AuthProvider', () => {
       status: 'idle',
       error: null,
       loginRequired: true,
-      pendingTarget: 'http://localhost:3000/startink/ziel',
+      pendingTarget: 'http://localhost:3000/learnink/stacks',
     })
   })
 
@@ -62,7 +62,7 @@ describe('AuthProvider', () => {
   })
 
   it('übergibt den Gate-Zustand per <template data-state> (valides JSON) an den Client', () => {
-    useAuthStore.setState({ pendingTarget: '/startink/ziel' })
+    useAuthStore.setState({ pendingTarget: '/learnink/stacks' })
 
     renderProvider('geschützter Inhalt')
 
@@ -76,7 +76,7 @@ describe('AuthProvider', () => {
     const parsed = JSON.parse(state ?? '{}')
     expect(parsed).toEqual({
       loginRequired: true,
-      pendingTarget: '/startink/ziel',
+      pendingTarget: '/learnink/stacks',
     })
   })
 })

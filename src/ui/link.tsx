@@ -47,7 +47,7 @@ export type LinkProps = Omit<TanStackLinkProps, 'to'> &
     children?: ReactNode
     render?: ReactElement
     type?: LinkType
-    /** Typsichere Referenz auf eine registrierte Ink-Route, z.B. "startink.ziel". */
+    /** Typsichere Referenz auf eine registrierte Ink-Route, z.B. "learnink.stacks". */
     to?: RouteRef
     /** Pfadparameter für Routen mit dynamischen Segmenten, z.B. { id: "123" }. */
     params?: Record<string, string>

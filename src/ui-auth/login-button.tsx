@@ -27,7 +27,7 @@ export function LoginButton({ className, children }: LoginButtonProps) {
   async function handleGoogleSignIn() {
     // Ziel immer ABSOLUT auf den Web-Origin machen: Der Auth-Guard
     // meldet das Ziel als relativen Pfad (location.href), z. B.
-    // "/startink/ziel". Ein relativer callbackURL würde Better Auth
+    // "/learnink/stacks". Ein relativer callbackURL würde Better Auth
     // nach dem OAuth-Callback relativ zur API-Base (localhost:8787)
     // auflösen – der Benutzer landete also nicht auf der Web-App
     // (localhost:3000). new URL() löst relative Pfade gegen den

@@ -39,7 +39,7 @@ export function resolveInkRoute(ref: string): string {
 }
 
 export interface VisibleInkRoute {
-  /** Vollständige Referenz, z. B. `startink.start`. */
+  /** Vollständige Referenz, z. B. `learnink.stacks`. */
   ref: string
   inkName: string
   routeName: string

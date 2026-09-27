@@ -44,7 +44,7 @@ describe('useAuthStore', () => {
     // Gate-Flag zuvor gesetzt (z. B. vom Auth-Guard gemeldet).
     useAuthStore.setState({
       loginRequired: true,
-      pendingTarget: 'http://localhost:3000/startink/ziel',
+      pendingTarget: 'http://localhost:3000/learnink/stacks',
     })
 
     await expect(useAuthStore.getState().refresh()).resolves.toBe(true)
@@ -161,12 +161,12 @@ describe('useAuthStore', () => {
   it('signInWithGoogle startet den Google-Flow mit dem angegebenen callbackURL', async () => {
     await useAuthStore
       .getState()
-      .signInWithGoogle('http://localhost:3000/startink/ziel')
+      .signInWithGoogle('http://localhost:3000/learnink/stacks')
 
     expect(api.authClient.signIn.social).toHaveBeenCalledOnce()
     expect(api.authClient.signIn.social).toHaveBeenCalledWith({
       provider: 'google',
-      callbackURL: 'http://localhost:3000/startink/ziel',
+      callbackURL: 'http://localhost:3000/learnink/stacks',
     })
   })
 
@@ -215,17 +215,19 @@ describe('useAuthStore', () => {
   })
 
   it('requireLogin setzt loginRequired und das Ziel für den Login', () => {
-    useAuthStore.getState().requireLogin('http://localhost:3000/startink/ziel')
+    useAuthStore
+      .getState()
+      .requireLogin('http://localhost:3000/learnink/stacks')
 
     const state = useAuthStore.getState()
     expect(state.loginRequired).toBe(true)
-    expect(state.pendingTarget).toBe('http://localhost:3000/startink/ziel')
+    expect(state.pendingTarget).toBe('http://localhost:3000/learnink/stacks')
   })
 
   it('clearLoginRequired setzt loginRequired und pendingTarget zurück (öffentliche Route)', () => {
     useAuthStore.setState({
       loginRequired: true,
-      pendingTarget: 'http://localhost:3000/startink/ziel',
+      pendingTarget: 'http://localhost:3000/learnink/stacks',
     })
 
     useAuthStore.getState().clearLoginRequired()
@@ -238,7 +240,7 @@ describe('useAuthStore', () => {
   it('resetRequestState setzt die request-relevanten Auth-Flags zurück', () => {
     useAuthStore.setState({
       loginRequired: true,
-      pendingTarget: 'http://localhost:3000/startink/ziel',
+      pendingTarget: 'http://localhost:3000/learnink/stacks',
     })
 
     useAuthStore.getState().resetRequestState()
