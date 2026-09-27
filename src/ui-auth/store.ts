@@ -1,9 +1,6 @@
 import { create } from 'zustand'
 import {
   authClient,
-  authError,
-  authLog,
-  authWarn,
   getApiClient,
   getProfile,
   updateProfileUsername,
@@ -124,40 +121,19 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
   refresh: async () => {
     set({ status: 'loading', error: null })
-    authLog('store.refresh', 'Session-Check gestartet')
 
     try {
-      const result = await authClient.getSession()
-      const { data, error: sessionError } = result
+      const { data } = await authClient.getSession()
       const user = data?.user ? toAuthUser(data.user) : null
 
-      if (sessionError) {
-        authWarn(
-          'store.refresh',
-          'authClient.getSession meldet einen Fehler (wird als „nicht authentifiziert" gewertet)',
-          sessionError,
-        )
-      }
-
       if (user) {
-        authLog('store.refresh', `Session gültig (user=${user.id})`)
-
         // Profil (eigenes Benutzername-Feld) best effort nachladen;
         // ein Profil-Fehler darf die Session nicht als ungültig werten.
         try {
           const profile = await getProfile(getApiClient())
           user.username = profile?.username ?? null
-          authLog(
-            'store.refresh',
-            `Profil geladen (username=${user.username ?? '(keiner)'})`,
-          )
-        } catch (error) {
+        } catch {
           user.username = null
-          authWarn(
-            'store.refresh',
-            'Profil konnte nicht geladen werden – Session bleibt gültig',
-            error,
-          )
         }
 
         // Fallback „Name als Benutzername" (erster Google-Login):
@@ -171,30 +147,17 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
             try {
               await updateProfileUsername(getApiClient(), fullName)
               user.username = fullName
-              authLog(
-                'store.refresh',
-                `Erstanmeldung: Anzeigename als Benutzername gespeichert ("${fullName}")`,
-              )
-            } catch (error) {
-              authWarn(
-                'store.refresh',
-                'Benutzername konnte nicht gespeichert werden – nicht kritisch',
-                error,
-              )
+            } catch {
+              // Nicht kritisch – der Nutzer kann den Namen später ändern.
             }
           }
         }
 
         set({ user, status: 'authenticated', loginRequired: false })
-        authLog(
-          'store.refresh',
-          'Status → authenticated (LoginGate schließt sich)',
-        )
         return true
       }
 
       set({ user: null, status: 'unauthenticated' })
-      authLog('store.refresh', 'Keine gültige Session → Status unauthenticated')
       return false
     } catch (error) {
       set({
@@ -205,38 +168,20 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
             ? error.message
             : 'Session konnte nicht geladen werden.',
       })
-      authError(
-        'store.refresh',
-        'Session-Request fehlgeschlagen (fail-closed → unauthenticated)',
-        error,
-      )
       return false
     }
   },
 
   signInWithGoogle: async (callbackURL) => {
     const target = callbackURL ?? window.location.origin
-    authLog(
-      'store.signInWithGoogle',
-      `Google-Login gestartet (provider=google, callbackURL=${target})`,
-    )
 
-    try {
-      await authClient.signIn.social({
-        provider: 'google',
-        // Absolut auf die Web-App zeigen (lokal: http://localhost:3000,
-        // in Produktion: die echte App-Domain). Bei Cross-Origin baut
-        // Better Auth den callbackURL sonst auf der API-Base-URL auf.
-        callbackURL: target,
-      })
-      authLog(
-        'store.signInWithGoogle',
-        'Google-Login: Redirect zum Provider ausgelöst',
-      )
-    } catch (error) {
-      authError('store.signInWithGoogle', 'Google-Login fehlgeschlagen', error)
-      throw error
-    }
+    await authClient.signIn.social({
+      provider: 'google',
+      // Absolut auf die Web-App zeigen (lokal: http://localhost:3000,
+      // in Produktion: die echte App-Domain). Bei Cross-Origin baut
+      // Better Auth den callbackURL sonst auf der API-Base-URL auf.
+      callbackURL: target,
+    })
   },
 
   updateUsername: async (username) => {
@@ -249,16 +194,8 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
   },
 
   signOut: async () => {
-    authLog('store.signOut', 'Sign-Out gestartet')
-
-    try {
-      await authClient.signOut()
-      set({ user: null, status: 'unauthenticated' })
-      authLog('store.signOut', 'Sign-Out abgeschlossen')
-    } catch (error) {
-      authError('store.signOut', 'Sign-Out fehlgeschlagen', error)
-      throw error
-    }
+    await authClient.signOut()
+    set({ user: null, status: 'unauthenticated' })
   },
 
   clear: () =>
@@ -271,23 +208,14 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     }),
 
   requireLogin: (targetHref) => {
-    authLog('store.requireLogin', `loginRequired=true (Ziel=${targetHref})`)
     set({ loginRequired: true, pendingTarget: targetHref })
   },
 
   clearLoginRequired: () => {
-    authLog(
-      'store.clearLoginRequired',
-      'loginRequired=false (öffentliche Route)',
-    )
     set({ loginRequired: false, pendingTarget: null })
   },
 
   resetRequestState: () => {
-    authLog(
-      'store.resetRequestState',
-      'SSR: request-relevante Flags zurückgesetzt',
-    )
     set({ loginRequired: false, pendingTarget: null })
   },
 }))
@@ -317,17 +245,10 @@ if (typeof document !== 'undefined') {
               ? parsed.pendingTarget
               : null,
         })
-        authLog(
-          'store.hydrate',
-          `SSR-Gate-Zustand übernommen (loginRequired=${parsed.loginRequired}, pendingTarget=${parsed.pendingTarget ?? '(keins)'})`,
-        )
       }
-    } catch (error) {
-      authWarn(
-        'store.hydrate',
-        'SSR-Zustand nicht interpretierbar – Store startet ohne Gate-Zustand',
-        error,
-      )
+    } catch {
+      // Nicht interpretierbaren SSR-Zustand ignorieren – der Store kann
+      // auch ohne Gate-Zustand starten.
     }
   }
 }

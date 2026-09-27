@@ -10,9 +10,6 @@ const authClient = vi.hoisted(() => ({
 
 vi.mock('../api/index', () => ({
   authClient,
-  authLog: vi.fn(),
-  authWarn: vi.fn(),
-  authError: vi.fn(),
 }))
 
 import { LoginGate } from './login-gate'

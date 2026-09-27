@@ -1,6 +1,5 @@
 import { LogIn } from 'lucide-react'
 import type { ReactNode } from 'react'
-import { authError, authLog } from '../api/index'
 import { useTranslations } from '../i18n/index'
 import { Button } from '../ui/index'
 import { useAuthStore } from './store'
@@ -39,13 +38,11 @@ export function LoginButton({ className, children }: LoginButtonProps) {
       window.location.origin,
     ).toString()
 
-    authLog('login-button', `Google-Sign-In gestartet (Ziel=${target})`)
-
     try {
       await signInWithGoogle(target)
-      authLog('login-button', 'Google-Sign-In: Redirect ausgelöst')
-    } catch (error) {
-      authError('login-button', 'Google-Sign-In fehlgeschlagen', error)
+    } catch {
+      // Fehler bewusst geschluckt: Das LoginGate bleibt offen, der Nutzer
+      // kann es erneut versuchen – kein Logging aus dem Auth-Flow.
     }
   }
 

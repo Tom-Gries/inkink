@@ -1,11 +1,6 @@
 interface ImportMetaEnv {
   readonly VITE_API_URL?: string
-  /**
-   * Log-Level des Auth-Clients: debug | info | warn | error
-   * (Standard: debug in Dev, warn in Produktion, leise in Tests).
-   */
-  readonly VITE_AUTH_LOG_LEVEL?: string
-  /** Von Vite ersetzte Standardfelder (für den Auth-Logger). */
+  /** Von Vite bereitgestellte Standard-Metafelder. */
   readonly DEV: boolean
   readonly PROD: boolean
   readonly MODE: string
