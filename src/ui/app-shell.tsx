@@ -48,10 +48,6 @@ export interface AppShellProps {
   children: ReactNode
 }
 
-export const DEFAULT_PROFILE: ShellProfile = {
-  name: 'Tom Gries',
-}
-
 /** Baut die Sidebar-Items automatisch aus den sichtbaren Ink-Routen. */
 function useAutoNavItems(showAuthLinks: boolean) {
   const t = useTranslations()
