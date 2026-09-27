@@ -29,8 +29,6 @@ export interface SidebarGroup {
 export interface ShellProfile {
   name: string
   handle?: string
-  level?: number
-  xp?: number
 }
 
 export interface AppShellProps {
@@ -54,8 +52,6 @@ export interface AppShellProps {
 export const DEFAULT_PROFILE: ShellProfile = {
   name: 'Tom Gries',
   handle: '@tommylein',
-  level: 12,
-  xp: 1240,
 }
 
 /** Baut die Sidebar-Items automatisch aus den sichtbaren Ink-Routen. */
@@ -79,9 +75,7 @@ function DefaultProfileFooter({ profile }: { profile: ShellProfile }) {
       <div className="min-w-0">
         <p className="truncate text-sm font-medium">{profile.name}</p>
         <p className="truncate text-xs text-muted-foreground">
-          {profile.level !== undefined && profile.xp !== undefined
-            ? `Level ${profile.level} · ${profile.xp.toLocaleString('de-DE')} XP`
-            : profile.handle}
+          {profile.handle}
         </p>
       </div>
     </div>

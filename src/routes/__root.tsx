@@ -30,7 +30,7 @@ function RootLayout() {
         isAuthenticated
           ? {
               ...DEFAULT_PROFILE,
-              // Name über der XP-Anzeige: der eigene Benutzername.
+              // Name im Sidebar-Footer: der eigene Benutzername.
               name: user?.username ?? user?.name ?? DEFAULT_PROFILE.name,
             }
           : undefined

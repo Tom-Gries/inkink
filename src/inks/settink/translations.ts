@@ -6,8 +6,6 @@ export const translations = {
     'settink.settingsSubtitle':
       'Verwalte dein Profil, deine Sichtbarkeit und deine Benachrichtigungen.',
     'settink.nav.settings': 'Einstellungen',
-    'settink.sidebar.level': 'Level',
-    'settink.sidebar.xp': 'XP',
     /* Profil */
     'settink.profile': 'Profil',
     'settink.profile.loginPrompt':
@@ -73,8 +71,6 @@ export const translations = {
     'settink.settingsSubtitle':
       'Manage your profile, visibility, and notifications.',
     'settink.nav.settings': 'Settings',
-    'settink.sidebar.level': 'Level',
-    'settink.sidebar.xp': 'XP',
     /* Profile */
     'settink.profile': 'Profile',
     'settink.profile.loginPrompt': 'Sign in to manage your username.',
