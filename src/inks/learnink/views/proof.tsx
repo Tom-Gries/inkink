@@ -12,6 +12,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  ConfirmDialog,
   Input,
   Link,
   PageContainer,
@@ -67,6 +68,8 @@ export function ProofView() {
   const [registering, setRegistering] = useState(false)
   const [registered, setRegistered] = useState(false)
   const [registerError, setRegisterError] = useState<string | null>(null)
+  // Bestätigungsdialog vor der Abgabe (statt window.confirm).
+  const [confirmSubmit, setConfirmSubmit] = useState(false)
 
   const leaderboardNameState = useState(
     () => user?.username ?? randomDefaultName(),
@@ -259,8 +262,7 @@ export function ProofView() {
               variant="default"
               onClick={() => {
                 if (current >= total - 1) {
-                  if (window.confirm(t('learnink.proof.submitConfirm')))
-                    finish()
+                  setConfirmSubmit(true)
                 } else {
                   setCurrent(current + 1)
                 }
@@ -281,12 +283,21 @@ export function ProofView() {
           <Button
             variant="destructive"
             className="w-full sm:w-fit sm:self-end"
-            onClick={() => {
-              if (window.confirm(t('learnink.proof.submitConfirm'))) finish()
-            }}
+            onClick={() => setConfirmSubmit(true)}
           >
             {t('learnink.proof.submit')}
           </Button>
+
+          <ConfirmDialog
+            open={confirmSubmit}
+            onOpenChange={setConfirmSubmit}
+            title={t('learnink.proof.title')}
+            description={t('learnink.proof.submitConfirm')}
+            confirmLabel={t('learnink.proof.submit')}
+            cancelLabel={t('learnink.confirm.cancel')}
+            destructive
+            onConfirm={finish}
+          />
         </div>
       </PageContainer>
     )

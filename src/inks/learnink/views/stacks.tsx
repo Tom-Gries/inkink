@@ -6,16 +6,18 @@ import {
   Plus,
   Trophy,
 } from 'lucide-react'
+import { useState } from 'react'
+import type { StackDto } from '../../../api/index'
 import { useArchiveStack, useStacks } from '../../../api/index'
 import { useTranslations } from '../../../i18n/index'
 import {
-  Badge,
   Button,
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
+  ConfirmDialog,
   Link,
   PageContainer,
   PageHeader,
@@ -29,13 +31,15 @@ export function StacksView() {
   const { data, isLoading, isError } = useStacks()
   const archive = useArchiveStack()
 
-  function handleArchive(id: string) {
-    if (window.confirm(t('learnink.stack.archiveConfirm'))) {
-      void archive.mutate(id)
-    }
-  }
+  // Archivierte Stapel werden nicht mehr angezeigt.
+  const stacks = (data ?? []).filter((stack) => !stack.archived)
 
-  const stacks = data ?? []
+  // Bestätigungsdialog vor dem Archivieren (statt window.confirm).
+  const [archiveTarget, setArchiveTarget] = useState<StackDto | null>(null)
+
+  function confirmArchive() {
+    if (archiveTarget) void archive.mutate(archiveTarget.id)
+  }
 
   return (
     <PageContainer>
@@ -72,11 +76,6 @@ export function StacksView() {
                   <div className="min-w-0">
                     <CardTitle className="flex flex-wrap items-center gap-2">
                       {stack.name}
-                      {stack.archived && (
-                        <Badge variant="outline">
-                          {t('learnink.stack.archived')}
-                        </Badge>
-                      )}
                     </CardTitle>
                     <CardDescription>
                       {stack.creatorName}
@@ -89,16 +88,14 @@ export function StacksView() {
                       {formatExamTime(stack.examTime)}
                     </CardDescription>
                   </div>
-                  {!stack.archived && (
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => handleArchive(stack.id)}
-                    >
-                      <Archive className="size-4" />
-                      {t('learnink.stack.archive')}
-                    </Button>
-                  )}
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => setArchiveTarget(stack)}
+                  >
+                    <Archive className="size-4" />
+                    {t('learnink.stack.archive')}
+                  </Button>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm font-semibold text-foreground">
@@ -126,28 +123,24 @@ export function StacksView() {
                   )}
 
                   <div className="mt-4 flex flex-wrap items-center gap-2">
-                    {!stack.archived && (
-                      <Link
-                        to="learnink.learn"
-                        params={{ id: stack.id }}
-                        variant="default"
-                        type="next"
-                      >
-                        <BookOpen className="size-4" />
-                        {t('learnink.stack.learn')}
-                      </Link>
-                    )}
-                    {!stack.archived && (
-                      <Link
-                        to="learnink.proof"
-                        params={{ id: stack.id }}
-                        variant="outline"
-                        type="next"
-                      >
-                        <Trophy className="size-4" />
-                        {t('learnink.stack.proof')}
-                      </Link>
-                    )}
+                    <Link
+                      to="learnink.learn"
+                      params={{ id: stack.id }}
+                      variant="default"
+                      type="next"
+                    >
+                      <BookOpen className="size-4" />
+                      {t('learnink.stack.learn')}
+                    </Link>
+                    <Link
+                      to="learnink.proof"
+                      params={{ id: stack.id }}
+                      variant="outline"
+                      type="next"
+                    >
+                      <Trophy className="size-4" />
+                      {t('learnink.stack.proof')}
+                    </Link>
                     <Link
                       to="learnink.edit"
                       params={{ id: stack.id }}
@@ -164,6 +157,19 @@ export function StacksView() {
           ))}
         </ul>
       )}
+
+      <ConfirmDialog
+        open={archiveTarget !== null}
+        onOpenChange={(open) => {
+          if (!open) setArchiveTarget(null)
+        }}
+        title={archiveTarget?.name ?? ''}
+        description={t('learnink.stack.archiveConfirm')}
+        confirmLabel={t('learnink.stack.archive')}
+        cancelLabel={t('learnink.confirm.cancel')}
+        destructive
+        onConfirm={confirmArchive}
+      />
     </PageContainer>
   )
 }

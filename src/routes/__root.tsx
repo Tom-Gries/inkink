@@ -1,7 +1,7 @@
 import { createRootRoute, Outlet } from '@tanstack/react-router'
 import { useEffect } from 'react'
 import { useLocaleStore } from '../i18n/index'
-import { AppShell } from '../ui/index'
+import { AppShell, DEFAULT_PROFILE } from '../ui/index'
 import { AuthProvider, LoginButton, useAuthStore } from '../ui-auth/index'
 
 export const Route = createRootRoute({
@@ -26,6 +26,15 @@ function RootLayout() {
   return (
     <AppShell
       authenticated={isAuthenticated}
+      profile={
+        isAuthenticated
+          ? {
+              ...DEFAULT_PROFILE,
+              // Name über der XP-Anzeige: der eigene Benutzername.
+              name: user?.username ?? user?.name ?? DEFAULT_PROFILE.name,
+            }
+          : undefined
+      }
       footer={
         !isAuthenticated ? (
           <LoginButton className="w-full">

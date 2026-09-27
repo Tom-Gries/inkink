@@ -61,6 +61,12 @@ export function LearnView() {
 
   const total = questions.length
   const question = questions[current]
+  // Der „Prüfen"-Button wird bei allen Fragen angezeigt, sobald der Stack
+  // mindestens eine Frage mit mehreren richtigen Antworten enthält. Ohne
+  // Multi-Fragen decken Einfach-Antworten beim Klick sofort auf.
+  const hasMulti = questions.some(
+    (q) => q.type === 'closed' && !isSingleAnswer(q),
+  )
   const isRevealed = revealed[question?.id ?? ''] ?? false
   const isChecked = checked[question?.id ?? ''] ?? false
   const answerSelection = selected[question?.id ?? ''] ?? []
@@ -77,7 +83,9 @@ export function LearnView() {
 
     if (isSingleAnswer(question)) {
       setSelected((state) => ({ ...state, [question.id]: [optionId] }))
-      reveal(isCorrectSelection(question, [optionId]))
+      // Ohne Multi-Fragen im Stack sofort aufdecken. Sobald mindestens eine
+      // Frage mehrere richtige Antworten hat, läuft alles über „Prüfen".
+      if (!hasMulti) reveal(isCorrectSelection(question, [optionId]))
     } else {
       const next = chosen.includes(optionId)
         ? chosen.filter((id) => id !== optionId)
@@ -147,65 +155,59 @@ export function LearnView() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {question.type === 'open' ? (
-              <Textarea
-                placeholder={t('learnink.learn.answerPlaceholder')}
-                value={openAnswer[question.id] ?? ''}
-                disabled={isRevealed}
-                onChange={(e) =>
-                  setOpenAnswer((state) => ({
-                    ...state,
-                    [question.id]: e.target.value,
-                  }))
-                }
-              />
-            ) : (
-              <div className="flex flex-col gap-2.5">
-                {question.answerOptions.map((option) => {
-                  const isCorrectAnswer = option.correct
-                  const isChosen =
-                    isRevealed && answerSelection.includes(option.id)
-                  return (
-                    <Button
-                      key={option.id}
-                      variant={
-                        isRevealed
-                          ? isCorrectAnswer
-                            ? 'success'
-                            : isChosen
-                              ? 'destructive'
-                              : 'outline'
-                          : answerSelection.includes(option.id)
+            {!isRevealed ? (
+              <>
+                {question.type === 'open' ? (
+                  <Textarea
+                    placeholder={t('learnink.learn.answerPlaceholder')}
+                    value={openAnswer[question.id] ?? ''}
+                    onChange={(e) =>
+                      setOpenAnswer((state) => ({
+                        ...state,
+                        [question.id]: e.target.value,
+                      }))
+                    }
+                  />
+                ) : (
+                  <div className="flex flex-col gap-2.5">
+                    {question.answerOptions.map((option) => (
+                      <Button
+                        key={option.id}
+                        variant={
+                          answerSelection.includes(option.id)
                             ? 'default'
                             : 'outline'
-                      }
-                      className="w-full justify-start"
-                      disabled={isRevealed}
-                      onClick={() => toggleOption(option.id)}
-                    >
-                      {option.text}
-                    </Button>
-                  )
-                })}
-              </div>
-            )}
+                        }
+                        className="w-full justify-start"
+                        onClick={() => toggleOption(option.id)}
+                      >
+                        {option.text}
+                      </Button>
+                    ))}
+                  </div>
+                )}
 
-            {question.type === 'closed' &&
-            !isSingleAnswer(question) &&
-            !isRevealed ? (
-              <Button className="mt-3" onClick={checkMulti}>
-                {t('learnink.learn.check')}
-              </Button>
-            ) : null}
+                {/* Prüfen: Sobald mindestens eine Multi-Frage im Stack ist,
+                    wird der Button bei allen Fragen angezeigt. */}
+                {question.type === 'closed' &&
+                !isRevealed &&
+                (hasMulti || !isSingleAnswer(question)) ? (
+                  <Button className="mt-3" onClick={checkMulti}>
+                    {t('learnink.learn.check')}
+                  </Button>
+                ) : null}
 
-            {question.type === 'open' && !isRevealed ? (
-              <Button className="mt-3" onClick={checkOpen}>
-                {t('learnink.learn.check')}
-              </Button>
-            ) : null}
-
-            {isRevealed && (
-              <div className="mt-4 flex flex-col gap-3 rounded-md border border-border bg-background p-4">
+                {question.type === 'open' && !isRevealed ? (
+                  <Button className="mt-3" onClick={checkOpen}>
+                    {t('learnink.learn.check')}
+                  </Button>
+                ) : null}
+              </>
+            ) : (
+              /* Aufgedeckte Lösung: Die Antwortoptionen der Frage sind
+                 ausgeblendet – die Antworten erscheinen genau einmal in
+                 der Auswertung unten (kein zusätzlicher Rahmen). */
+              <div className="flex flex-col gap-3">
                 <div className="flex items-center gap-2">
                   {question.type === 'open' ? (
                     <Badge variant="secondary">

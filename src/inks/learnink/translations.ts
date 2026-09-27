@@ -18,6 +18,7 @@ export const translations = {
     'learnink.stack.archive': 'Archivieren',
     'learnink.stack.archiveConfirm':
       'Möchtest du diesen Stack wirklich archivieren?',
+    'learnink.confirm.cancel': 'Abbrechen',
     'learnink.stack.createdBy': 'von {creator}',
     'learnink.stack.examTime': 'Prüfungszeit: {minutes} Minuten',
     'learnink.stack.leaderboardEmpty': 'Noch keine Einträge im Leaderboard.',
@@ -153,6 +154,7 @@ export const translations = {
     'learnink.stack.archive': 'Archive',
     'learnink.stack.archiveConfirm':
       'Do you really want to archive this stack?',
+    'learnink.confirm.cancel': 'Cancel',
     'learnink.stack.createdBy': 'by {creator}',
     'learnink.stack.examTime': 'Exam time: {minutes} minutes',
     'learnink.stack.leaderboardEmpty': 'No leaderboard entries yet.',

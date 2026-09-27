@@ -51,7 +51,7 @@ export interface AppShellProps {
   children: ReactNode
 }
 
-const DEFAULT_PROFILE: ShellProfile = {
+export const DEFAULT_PROFILE: ShellProfile = {
   name: 'Tom Gries',
   handle: '@tommylein',
   level: 12,

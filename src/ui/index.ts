@@ -1,6 +1,7 @@
 export {
   AppShell,
   type AppShellProps,
+  DEFAULT_PROFILE,
   type ShellProfile,
   type SidebarGroup,
   type SidebarItem,
@@ -16,6 +17,7 @@ export {
   CardTitle,
 } from './card'
 export { cn } from './cn'
+export { ConfirmDialog, type ConfirmDialogProps } from './confirm-dialog'
 export { Divider } from './divider'
 export { Input, TextField } from './input'
 export { Link, type LinkProps, type LinkType, linkVariants } from './link'
