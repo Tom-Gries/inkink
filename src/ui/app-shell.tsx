@@ -28,7 +28,6 @@ export interface SidebarGroup {
  */
 export interface ShellProfile {
   name: string
-  handle?: string
 }
 
 export interface AppShellProps {
@@ -51,7 +50,6 @@ export interface AppShellProps {
 
 export const DEFAULT_PROFILE: ShellProfile = {
   name: 'Tom Gries',
-  handle: '@tommylein',
 }
 
 /** Baut die Sidebar-Items automatisch aus den sichtbaren Ink-Routen. */
@@ -74,9 +72,6 @@ function DefaultProfileFooter({ profile }: { profile: ShellProfile }) {
       <AvatarControl name={profile.name} className="size-8 text-xs" />
       <div className="min-w-0">
         <p className="truncate text-sm font-medium">{profile.name}</p>
-        <p className="truncate text-xs text-muted-foreground">
-          {profile.handle}
-        </p>
       </div>
     </div>
   )
