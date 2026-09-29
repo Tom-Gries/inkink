@@ -64,6 +64,12 @@ export const translations = {
     'learnink.editor.explanation': 'Lösung / Erklärung',
     'learnink.editor.explanationPlaceholder':
       'Die richtige Antwort und Erklärung …',
+    'learnink.editor.explanationBold': 'Fett',
+    'learnink.editor.explanationBullets': 'Aufzählung',
+    'learnink.editor.explanationNumbers': 'Nummerierte Liste',
+    'learnink.editor.explanationQuote': 'Einrücken',
+    'learnink.editor.explanationHint':
+      'Formatierung: **fett**, *kursiv*, Umbrüche per Enter, Listen „- “ / „1. “, Einrücken „> “.',
     'learnink.editor.options': 'Antwortmöglichkeiten',
     'learnink.editor.optionText': 'Antworttext',
     'learnink.editor.addOption': 'Option hinzufügen',
@@ -201,6 +207,12 @@ export const translations = {
     'learnink.editor.explanation': 'Solution / explanation',
     'learnink.editor.explanationPlaceholder':
       'The correct answer and explanation …',
+    'learnink.editor.explanationBold': 'Bold',
+    'learnink.editor.explanationBullets': 'Bullet list',
+    'learnink.editor.explanationNumbers': 'Numbered list',
+    'learnink.editor.explanationQuote': 'Indent',
+    'learnink.editor.explanationHint':
+      'Formatting: **bold**, *italic*, line breaks with Enter, lists “- ” / “1. ”, indent “> ”.',
     'learnink.editor.options': 'Answer options',
     'learnink.editor.optionText': 'Answer text',
     'learnink.editor.addOption': 'Add option',

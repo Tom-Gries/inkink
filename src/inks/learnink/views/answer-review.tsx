@@ -2,6 +2,7 @@ import { Check, X } from 'lucide-react'
 import type { QuestionDto } from '../../../api/index'
 import { useTranslations } from '../../../i18n/index'
 import { Badge, cn } from '../../../ui/index'
+import { RichText } from '../rich-text'
 
 /**
  * Antwortoptionen einer geschlossenen Frage nach dem Auflösen: Jede Antwort
@@ -43,17 +44,20 @@ export function AnswerOptionsReview({
                 <X className="size-4 shrink-0 text-destructive" />
               )}
               <span
-                className={cn('flex-1 text-sm', wasChosen ? 'font-medium' : '')}
+                className={cn(
+                  'min-w-0 flex-1 break-words text-sm',
+                  wasChosen ? 'font-medium' : '',
+                )}
               >
                 {option.text}
               </span>
               {isCorrect && (
-                <Badge variant="success">
+                <Badge variant="success" className="shrink-0">
                   {t('learnink.result.correctAnswer')}
                 </Badge>
               )}
               {wasChosen && (
-                <Badge variant="outline">
+                <Badge variant="outline" className="shrink-0">
                   {t('learnink.result.chosenAnswer')}
                 </Badge>
               )}
@@ -72,14 +76,17 @@ export function AnswerSolution({ question }: { question: QuestionDto }) {
   return (
     <div>
       <p className="text-sm font-semibold">{t('learnink.learn.solution')}</p>
-      <p className="text-sm text-muted-foreground">
-        {question.explanation.trim().length > 0
-          ? question.explanation
-          : question.answerOptions
-              .filter((o) => o.correct)
-              .map((o) => o.text)
-              .join(', ')}
-      </p>
+      <RichText
+        className="mt-1 space-y-2 text-sm leading-relaxed text-muted-foreground"
+        text={
+          question.explanation.trim().length > 0
+            ? question.explanation
+            : question.answerOptions
+                .filter((o) => o.correct)
+                .map((o) => o.text)
+                .join(', ')
+        }
+      />
     </div>
   )
 }

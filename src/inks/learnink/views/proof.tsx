@@ -230,7 +230,7 @@ export function ProofView() {
                           ? 'default'
                           : 'outline'
                       }
-                      className="w-full justify-start"
+                      className="w-full justify-start whitespace-normal! break-words text-left h-auto! min-h-10"
                       onClick={() => toggleOption(question, option.id)}
                     >
                       {option.text}

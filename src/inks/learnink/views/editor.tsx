@@ -22,11 +22,11 @@ import {
   PageContainer,
   PageHeader,
   SwitchControl,
-  TextareaField,
   TextField,
 } from '../../../ui/index'
 import { useAuthStore } from '../../../ui-auth/index'
 import { DEFAULT_EXAM_TIME_SECONDS, randomDefaultName } from '../constants'
+import { RichTextArea } from '../rich-text-area'
 
 interface SliderOption<T extends string> {
   value: T
@@ -464,12 +464,12 @@ export function EditorView() {
             />
           </div>
           <div className="mt-4">
-            <TextareaField
+            <RichTextArea
               label={t('learnink.editor.explanation')}
               placeholder={t('learnink.editor.explanationPlaceholder')}
               value={question.explanation}
-              onChange={(e) =>
-                updateQuestion(question.id, { explanation: e.target.value })
+              onChange={(value) =>
+                updateQuestion(question.id, { explanation: value })
               }
             />
           </div>
