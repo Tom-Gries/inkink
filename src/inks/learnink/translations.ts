@@ -21,6 +21,7 @@ export const translations = {
     'learnink.confirm.cancel': 'Abbrechen',
     'learnink.stack.createdBy': 'von {creator}',
     'learnink.stack.examTime': 'Prüfungszeit: {minutes} Minuten',
+    'learnink.stack.noExamTime': 'Ohne Zeitbegrenzung',
     'learnink.stack.leaderboardEmpty': 'Noch keine Einträge im Leaderboard.',
     'learnink.stack.leaderboardTitle': 'Top 3',
     'learnink.stack.questions': '{count} Fragen',
@@ -34,9 +35,13 @@ export const translations = {
     'learnink.editor.creatorHint':
       'Wird öffentlich angezeigt und für neue Prüfungen verwendet.',
     'learnink.editor.examTime': 'Prüfungszeit (Minuten)',
+    'learnink.editor.examTimeToggle': 'Zeitbegrenzung',
+    'learnink.editor.examTimeOffHint': 'Ohne zeitliche Begrenzung.',
     'learnink.editor.passingScore': 'Bestehen ab … Punkten',
     'learnink.editor.passingScoreHint':
       'Ab dieser Punktzahl gilt die Prüfung als bestanden.',
+    'learnink.editor.passingScoreToggle': 'Bestehen-Schwelle',
+    'learnink.editor.passingScoreOffHint': 'Keine Bestehen-Schwelle.',
     'learnink.editor.questions': 'Fragen',
     'learnink.editor.questionsEmpty':
       'Noch keine Fragen. Füge die erste hinzu.',
@@ -157,6 +162,7 @@ export const translations = {
     'learnink.confirm.cancel': 'Cancel',
     'learnink.stack.createdBy': 'by {creator}',
     'learnink.stack.examTime': 'Exam time: {minutes} minutes',
+    'learnink.stack.noExamTime': 'No time limit',
     'learnink.stack.leaderboardEmpty': 'No leaderboard entries yet.',
     'learnink.stack.leaderboardTitle': 'Top 3',
     'learnink.stack.questions': '{count} questions',
@@ -168,9 +174,13 @@ export const translations = {
     'learnink.editor.creator': 'Creator name',
     'learnink.editor.creatorHint': 'Shown publicly and used for new exams.',
     'learnink.editor.examTime': 'Exam time (minutes)',
+    'learnink.editor.examTimeToggle': 'Time limit',
+    'learnink.editor.examTimeOffHint': 'No time limit.',
     'learnink.editor.passingScore': 'Passing score from … points',
     'learnink.editor.passingScoreHint':
       'From this score an exam counts as passed.',
+    'learnink.editor.passingScoreToggle': 'Passing threshold',
+    'learnink.editor.passingScoreOffHint': 'No passing threshold.',
     'learnink.editor.questions': 'Questions',
     'learnink.editor.questionsEmpty': 'No questions yet. Add the first one.',
     'learnink.editor.addQuestion': 'Add question',

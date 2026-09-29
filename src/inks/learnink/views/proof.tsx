@@ -101,7 +101,7 @@ export function ProofView() {
     const interval = setInterval(() => {
       const tick = Date.now()
       setNow(tick)
-      if ((tick - startedAt) / 1000 >= examTime) setDone(true)
+      if (examTime > 0 && (tick - startedAt) / 1000 >= examTime) setDone(true)
     }, 250)
     return () => clearInterval(interval)
   }, [done, startedAt, examTime])
@@ -128,11 +128,14 @@ export function ProofView() {
   }
 
   const total = questions.length
+  // ExamTime 0 bedeutet „keine Zeitbegrenzung“ (Countdowns ausgeblendet).
+  const unlimited = examTime <= 0
   // Verstrichene / verbleibende Gesamtzeit (live über „now"-Tick).
   const elapsed = startedAt > 0 ? Math.max(0, (now - startedAt) / 1000) : 0
   const remaining = Math.max(0, examTime - elapsed)
   // Zu Beginn berechnetes Zeitbudget je Frage; zählt ab Öffnen herunter.
-  const perQuestionBudget = total > 0 ? Math.max(1, examTime / total) : 0
+  const perQuestionBudget =
+    total > 0 && !unlimited ? Math.max(1, examTime / total) : 0
   const questionStart =
     questionStarted[questions[current]?.id ?? ''] ?? startedAt
   const currentElapsed =
@@ -204,7 +207,7 @@ export function ProofView() {
                 .replace('{total}', String(total))}
             </p>
             <p className="text-4xl font-bold tabular-nums">
-              {formatTime(remaining)}
+              {unlimited ? '∞' : formatTime(remaining)}
             </p>
           </div>
           <Card>
@@ -244,10 +247,12 @@ export function ProofView() {
               {t('learnink.proof.perQuestion')}
             </p>
             <p className="text-2xl font-bold tabular-nums">
-              {formatTime(perQuestionRemaining)}
+              {unlimited ? '∞' : formatTime(perQuestionRemaining)}
             </p>
           </div>
-          <ProgressControl value={Math.round(perQuestionFraction * 100)} />
+          {!unlimited && (
+            <ProgressControl value={Math.round(perQuestionFraction * 100)} />
+          )}
 
           <div className="flex items-center gap-2">
             <Button
@@ -378,7 +383,7 @@ export function ProofView() {
           <p className="mt-3 text-sm">
             {t('learnink.result.time').replace('{time}', formatTime(elapsed))}
           </p>
-          {remaining === 0 && (
+          {!unlimited && remaining === 0 && (
             <p className="mt-2 text-sm font-medium text-destructive">
               {t('learnink.proof.timeUp')}
             </p>

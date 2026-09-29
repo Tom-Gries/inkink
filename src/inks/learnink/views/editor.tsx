@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { Plus, Save, Trash2 } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { type ReactNode, useEffect, useState } from 'react'
 import type {
   AnswerOptionDto,
   Appearance,
@@ -21,11 +21,12 @@ import {
   Link,
   PageContainer,
   PageHeader,
+  SwitchControl,
   TextareaField,
   TextField,
 } from '../../../ui/index'
 import { useAuthStore } from '../../../ui-auth/index'
-import { randomDefaultName } from '../constants'
+import { DEFAULT_EXAM_TIME_SECONDS, randomDefaultName } from '../constants'
 
 interface SliderOption<T extends string> {
   value: T
@@ -173,6 +174,57 @@ function toDraft(stack: StackDto): DraftQuestion[] {
   }))
 }
 
+interface ToggleFieldProps {
+  inputId: string
+  label: string
+  enabled: boolean
+  onEnabledChange: (enabled: boolean) => void
+  toggleLabel: string
+  description?: string
+  className?: string
+  children: ReactNode
+}
+
+/**
+ * Eingabefeld mit Schalter: Der Input wird erst aktiviert, wenn der Switch
+ * eingeschaltet ist (z. B. Prüfungszeit, Bestehen-Schwelle).
+ */
+function ToggleField({
+  inputId,
+  label,
+  enabled,
+  onEnabledChange,
+  toggleLabel,
+  description,
+  className,
+  children,
+}: ToggleFieldProps) {
+  return (
+    <div className={cn('flex w-full flex-col gap-1.5', className)}>
+      <div className="flex items-center justify-between gap-2">
+        <label
+          htmlFor={inputId}
+          className="text-sm font-medium text-foreground"
+        >
+          {label}
+        </label>
+        <span className="flex cursor-pointer items-center gap-1.5 text-sm text-muted-foreground">
+          <SwitchControl
+            checked={enabled}
+            onCheckedChange={onEnabledChange}
+            aria-label={toggleLabel}
+          />
+          {toggleLabel}
+        </span>
+      </div>
+      {children}
+      {description && (
+        <p className="text-xs leading-5 text-muted-foreground">{description}</p>
+      )}
+    </div>
+  )
+}
+
 export function EditorView() {
   const t = useTranslations()
   const routeParams = useParams({ strict: false })
@@ -192,7 +244,11 @@ export function EditorView() {
   const [creatorName, setCreatorName] = useState<string>(
     isNew ? (user?.username ?? randomDefaultName()) : '',
   )
-  const [examMinutes, setExamMinutes] = useState<number>(10)
+  const [examEnabled, setExamEnabled] = useState(true)
+  const [examMinutes, setExamMinutes] = useState<number>(
+    DEFAULT_EXAM_TIME_SECONDS / 60,
+  )
+  const [passingEnabled, setPassingEnabled] = useState(false)
   const [passingScore, setPassingScore] = useState<number>(0)
   const [questions, setQuestions] = useState<DraftQuestion[]>([])
   const [saveError, setSaveError] = useState<string | null>(null)
@@ -202,7 +258,13 @@ export function EditorView() {
     if (!data) return
     setName(data.name)
     setCreatorName(data.creatorName)
-    setExamMinutes(Math.max(1, Math.round(data.examTime / 60)))
+    setExamEnabled(data.examTime > 0)
+    setExamMinutes(
+      data.examTime > 0
+        ? Math.max(1, Math.round(data.examTime / 60))
+        : DEFAULT_EXAM_TIME_SECONDS / 60,
+    )
+    setPassingEnabled((data.passingScore ?? 0) > 0)
     setPassingScore(data.passingScore ?? 0)
     setQuestions(toDraft(data))
   }, [data])
@@ -273,8 +335,8 @@ export function EditorView() {
     const input = {
       name: name.trim(),
       creatorName: creatorName.trim() || randomDefaultName(),
-      examTime: examMinutes * 60,
-      passingScore: Math.max(0, Math.floor(passingScore)),
+      examTime: examEnabled ? examMinutes * 60 : 0,
+      passingScore: passingEnabled ? Math.max(0, Math.floor(passingScore)) : 0,
       questions: questions.map((question) => ({
         id: question.id,
         type: question.type,
@@ -548,32 +610,59 @@ export function EditorView() {
                 value={creatorName}
                 onChange={(e) => setCreatorName(e.target.value)}
               />
-              <TextField
+              <ToggleField
+                inputId="editor-exam-time"
                 label={t('learnink.editor.examTime')}
-                type="number"
-                min={1}
-                value={String(examMinutes)}
-                onChange={(e) => {
-                  const parsed = parseInt(e.target.value, 10)
-                  setExamMinutes(Math.max(1, Number.isNaN(parsed) ? 1 : parsed))
-                }}
-              />
+                enabled={examEnabled}
+                onEnabledChange={setExamEnabled}
+                toggleLabel={t('learnink.editor.examTimeToggle')}
+                description={
+                  examEnabled ? undefined : t('learnink.editor.examTimeOffHint')
+                }
+              >
+                <Input
+                  id="editor-exam-time"
+                  type="number"
+                  min={1}
+                  disabled={!examEnabled}
+                  value={String(examMinutes)}
+                  onChange={(e) => {
+                    const parsed = parseInt(e.target.value, 10)
+                    setExamMinutes(
+                      Math.max(1, Number.isNaN(parsed) ? 1 : parsed),
+                    )
+                  }}
+                />
+              </ToggleField>
             </div>
             <div className="mt-4">
-              <TextField
+              <ToggleField
+                inputId="editor-passing-score"
                 label={t('learnink.editor.passingScore')}
-                description={t('learnink.editor.passingScoreHint')}
-                type="number"
-                min={0}
+                enabled={passingEnabled}
+                onEnabledChange={setPassingEnabled}
+                toggleLabel={t('learnink.editor.passingScoreToggle')}
+                description={
+                  passingEnabled
+                    ? t('learnink.editor.passingScoreHint')
+                    : t('learnink.editor.passingScoreOffHint')
+                }
                 className="sm:max-w-xs"
-                value={String(passingScore)}
-                onChange={(e) => {
-                  const parsed = parseInt(e.target.value, 10)
-                  setPassingScore(
-                    Math.max(0, Number.isNaN(parsed) ? 0 : parsed),
-                  )
-                }}
-              />
+              >
+                <Input
+                  id="editor-passing-score"
+                  type="number"
+                  min={0}
+                  disabled={!passingEnabled}
+                  value={String(passingScore)}
+                  onChange={(e) => {
+                    const parsed = parseInt(e.target.value, 10)
+                    setPassingScore(
+                      Math.max(0, Number.isNaN(parsed) ? 0 : parsed),
+                    )
+                  }}
+                />
+              </ToggleField>
             </div>
           </CardContent>
         </Card>

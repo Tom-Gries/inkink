@@ -85,7 +85,9 @@ export function StacksView() {
                         String(stack.questions.length),
                       )}
                       {' · '}
-                      {formatExamTime(stack.examTime)}
+                      {stack.examTime > 0
+                        ? formatExamTime(stack.examTime)
+                        : t('learnink.stack.noExamTime')}
                     </CardDescription>
                   </div>
                   <Button
