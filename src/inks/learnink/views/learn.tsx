@@ -81,17 +81,21 @@ export function LearnView() {
     if (isRevealed || !question) return
     const chosen = selected[question.id] ?? []
 
-    if (isSingleAnswer(question)) {
+    // Single-Frage ohne Multi-Fragen im Stack: Radio-Verhalten – die Auswahl
+    // wird ersetzt und die Antwort sofort aufgedeckt.
+    if (isSingleAnswer(question) && !hasMulti) {
       setSelected((state) => ({ ...state, [question.id]: [optionId] }))
-      // Ohne Multi-Fragen im Stack sofort aufdecken. Sobald mindestens eine
-      // Frage mehrere richtige Antworten hat, läuft alles über „Prüfen".
-      if (!hasMulti) reveal(isCorrectSelection(question, [optionId]))
-    } else {
-      const next = chosen.includes(optionId)
-        ? chosen.filter((id) => id !== optionId)
-        : [...chosen, optionId]
-      setSelected((state) => ({ ...state, [question.id]: next }))
+      reveal(isCorrectSelection(question, [optionId]))
+      return
     }
+
+    // Sobald mindestens eine Multi-Frage im Stack ist, gelten auch
+    // Single-Fragen als Checkbox: Mehrere Antworten sind auswählbar und
+    // werden gemeinsam über „Prüfen" bewertet.
+    const next = chosen.includes(optionId)
+      ? chosen.filter((id) => id !== optionId)
+      : [...chosen, optionId]
+    setSelected((state) => ({ ...state, [question.id]: next }))
   }
 
   function checkMulti() {
