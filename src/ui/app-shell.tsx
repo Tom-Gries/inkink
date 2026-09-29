@@ -187,7 +187,7 @@ export function AppShell({
 
   const sidebarFooter =
     footer === undefined ? (
-      authenticated ? (
+      authenticated && profile ? (
         <DefaultProfileFooter profile={profile} />
       ) : null
     ) : (

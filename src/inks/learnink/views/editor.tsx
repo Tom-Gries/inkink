@@ -186,8 +186,8 @@ interface ToggleFieldProps {
 }
 
 /**
- * Eingabefeld mit Schalter: Der Input wird erst aktiviert, wenn der Switch
- * eingeschaltet ist (z. B. Prüfungszeit, Bestehen-Schwelle).
+ * Eingabefeld mit Schalter: Der Input ist nur sichtbar und bedienbar, wenn
+ * der Switch eingeschaltet ist (z. B. Prüfungszeit, Bestehen-Schwelle).
  */
 function ToggleField({
   inputId,
@@ -217,7 +217,7 @@ function ToggleField({
           {toggleLabel}
         </span>
       </div>
-      {children}
+      {enabled && children}
       {description && (
         <p className="text-xs leading-5 text-muted-foreground">{description}</p>
       )}
@@ -624,7 +624,6 @@ export function EditorView() {
                   id="editor-exam-time"
                   type="number"
                   min={1}
-                  disabled={!examEnabled}
                   value={String(examMinutes)}
                   onChange={(e) => {
                     const parsed = parseInt(e.target.value, 10)
@@ -653,7 +652,6 @@ export function EditorView() {
                   id="editor-passing-score"
                   type="number"
                   min={0}
-                  disabled={!passingEnabled}
                   value={String(passingScore)}
                   onChange={(e) => {
                     const parsed = parseInt(e.target.value, 10)
