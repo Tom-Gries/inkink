@@ -1,7 +1,6 @@
 export {
   AppShell,
   type AppShellProps,
-  DEFAULT_PROFILE,
   type ShellProfile,
   type SidebarGroup,
   type SidebarItem,

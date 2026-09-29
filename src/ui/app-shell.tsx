@@ -174,7 +174,7 @@ export function AppShell({
   groups,
   brand,
   footer,
-  profile = DEFAULT_PROFILE,
+  profile,
   authenticated = true,
   children,
 }: AppShellProps) {
