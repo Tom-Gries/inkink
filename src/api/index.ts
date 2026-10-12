@@ -6,6 +6,11 @@ export {
   getApiClient,
 } from './client'
 export { ApiError, assertOk } from './errors'
+export {
+  useCreateFeeling,
+  useDeleteFeeling,
+  useFeelings,
+} from './hooks/use-feelings'
 export { useMe } from './hooks/use-me'
 export {
   useAddLeaderboardEntry,
@@ -19,6 +24,14 @@ export {
   useCreateTestMessage,
   useTestMessages,
 } from './hooks/use-test-messages'
+export {
+  createFeeling,
+  deleteFeeling,
+  type FeelingDto,
+  type FeelingInputDto,
+  type FeelingMood,
+  listFeelings,
+} from './resources/feelings'
 export { getMe, type MeResponse } from './resources/me'
 export {
   getProfile,

@@ -29,8 +29,8 @@ function RootLayout() {
       profile={
         isAuthenticated
           ? {
-            name: user?.username ?? user?.name ?? '',
-          }
+              name: user?.username ?? user?.name ?? '',
+            }
           : undefined
       }
       footer={
