@@ -18,7 +18,7 @@ import {
   cn,
   PageContainer,
   PageHeader,
-  TextField,
+  TextareaField,
 } from '../../../ui/index'
 import { FEELINGS } from '../constants'
 
@@ -97,11 +97,12 @@ export function FeelView() {
           </fieldset>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-            <TextField
+            <TextareaField
               label={t('feelink.note.label')}
               placeholder={t('feelink.note.placeholder')}
               value={note}
               maxLength={280}
+              rows={2}
               onChange={(event) => setNote(event.target.value)}
               className="flex-1"
             />
