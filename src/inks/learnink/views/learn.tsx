@@ -239,7 +239,7 @@ export function LearnView() {
                     <p className="text-sm font-medium text-foreground">
                       {t('learnink.result.yourAnswer')}
                     </p>
-                    <p className="break-words text-sm">
+                    <p className="break-words whitespace-pre-line text-sm">
                       {(openAnswer[question.id] ?? '').trim().length > 0
                         ? openAnswer[question.id]
                         : t('learnink.learn.selectAnswer')}
