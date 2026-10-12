@@ -64,6 +64,17 @@ export function getProofQuestions(stack: StackDto): QuestionDto[] {
 }
 
 /**
+ * Liefert die Frage mit einmalig gemischten Antwortoptionen. Die IDs bleiben
+ * erhalten – Auswahl und Bewertung arbeiten nur mit den IDs, daher ist die
+ * Anzeige-Reihenfolge für die Korrektheit irrelevant. Offene Fragen haben
+ * keine Optionen und bleiben unverändert. Wird einmal beim Laden gemischt,
+ * damit die Reihenfolge beim Aufdecken der Lösung nicht „springt“.
+ */
+export function shuffleQuestionOptions(question: QuestionDto): QuestionDto {
+  return { ...question, answerOptions: shuffle(question.answerOptions) }
+}
+
+/**
  * Sortiert die Top 3 nach Punktzahl (absteigend) und – bei gleicher
  * Punktzahl – nach benötigter Zeit (aufsteigend).
  */

@@ -6,6 +6,7 @@ import {
   qualifiesForTop3,
   rankLeaderboard,
   shuffle,
+  shuffleQuestionOptions,
 } from './lib'
 
 function question(
@@ -31,6 +32,27 @@ describe('shuffle / formatTime', () => {
     const input = [1, 2, 3, 4, 5]
     const out = shuffle(input)
     expect(out.sort()).toEqual([...input].sort())
+  })
+
+  it('mischt die Antwortoptionen und behält IDs, Texte und correct-Flags', () => {
+    const q = question()
+    const original = [...q.answerOptions]
+    const out = shuffleQuestionOptions(q)
+
+    // Gleiche Elemente (per ID), nur die Reihenfolge darf abweichen.
+    expect(out.answerOptions.map((o) => o.id).sort()).toEqual(
+      original.map((o) => o.id).sort(),
+    )
+
+    // Texte und correct-Flags bleiben an ihren IDs hängen.
+    for (const option of original) {
+      const match = out.answerOptions.find((o) => o.id === option.id)
+      expect(match?.text).toBe(option.text)
+      expect(match?.correct).toBe(option.correct)
+    }
+
+    // Die Eingabe wird nicht mutiert.
+    expect(q.answerOptions).toEqual(original)
   })
 
   it('formatiert Sekunden als mm:ss', () => {

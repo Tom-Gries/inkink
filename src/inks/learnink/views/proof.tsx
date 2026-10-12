@@ -27,6 +27,7 @@ import {
   getProofQuestions,
   qualifiesForTop3,
   shuffle,
+  shuffleQuestionOptions,
 } from '../lib'
 import { AnswerOptionsReview, AnswerSolution } from './answer-review'
 
@@ -79,7 +80,12 @@ export function ProofView() {
 
   useEffect(() => {
     if (data) {
-      const proofQuestions = shuffle(getProofQuestions(data))
+      // Einmal beim Laden mischen: Fragen-Reihenfolge UND Antwortoptionen je
+      // Frage. Die gemischte Reihenfolge bleibt für die gesamte Prüfung stabil,
+      // damit die Antworten in der Auswertung nicht „springen“.
+      const proofQuestions = shuffle(getProofQuestions(data)).map(
+        shuffleQuestionOptions,
+      )
       if (proofQuestions.length > 0) {
         const start = Date.now()
         setQuestions(proofQuestions)

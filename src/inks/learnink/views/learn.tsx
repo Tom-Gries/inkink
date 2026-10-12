@@ -17,7 +17,7 @@ import {
   PageHeader,
   Textarea,
 } from '../../../ui/index'
-import { getLearnQuestions, shuffle } from '../lib'
+import { getLearnQuestions, shuffle, shuffleQuestionOptions } from '../lib'
 import { AnswerOptionsReview, AnswerSolution } from './answer-review'
 
 function isSingleAnswer(question: QuestionDto): boolean {
@@ -55,8 +55,13 @@ export function LearnView() {
   const [revealed, setRevealed] = useState<Record<string, boolean>>({})
   const [checked, setChecked] = useState<Record<string, boolean>>({})
 
+  // Einmal beim Laden mischen: Fragen-Reihenfolge UND Antwortoptionen je
+  // Frage. Die gemischte Reihenfolge bleibt für die gesamte Session stabil,
+  // damit die Antworten beim Aufdecken der Lösung nicht „springen“.
   useEffect(() => {
-    if (data) setQuestions(shuffle(getLearnQuestions(data)))
+    if (data) {
+      setQuestions(shuffle(getLearnQuestions(data)).map(shuffleQuestionOptions))
+    }
   }, [data])
 
   const total = questions.length
