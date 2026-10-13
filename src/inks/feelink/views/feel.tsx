@@ -87,9 +87,7 @@ export function FeelView() {
                       : 'border-border bg-background text-muted-foreground hover:bg-muted/50 hover:text-foreground',
                   )}
                 >
-                  <span className="text-2xl leading-none" aria-hidden="true">
-                    {feeling.emoji}
-                  </span>
+                  <feeling.icon className="size-6" aria-hidden="true" />
                   {t(`feelink.mood.${feeling.id}`)}
                 </button>
               )
@@ -157,7 +155,9 @@ export function FeelView() {
                   >
                     <div className="min-w-0">
                       <p className="flex items-center gap-2 text-sm font-medium text-foreground">
-                        <span aria-hidden="true">{feeling?.emoji}</span>
+                        {feeling ? (
+                          <feeling.icon className="size-4" aria-hidden="true" />
+                        ) : null}
                         {t(`feelink.mood.${entry.mood}`)}
                       </p>
                       {entry.note && (

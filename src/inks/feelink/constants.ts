@@ -1,8 +1,19 @@
+import {
+  Activity,
+  Angry,
+  Frown,
+  HeartHandshake,
+  Leaf,
+  type LucideIcon,
+  Moon,
+  Smile,
+  Sparkles,
+} from 'lucide-react'
 import type { FeelingMood } from '../../api/index'
 
 export interface FeelingOption {
   id: FeelingMood
-  emoji: string
+  icon: LucideIcon
 }
 
 /**
@@ -11,12 +22,12 @@ export interface FeelingOption {
  * die Beschriftung kommt aus den Translations (`feelink.mood.<id>`).
  */
 export const FEELINGS: ReadonlyArray<FeelingOption> = [
-  { id: 'happy', emoji: '😊' },
-  { id: 'sad', emoji: '😢' },
-  { id: 'angry', emoji: '😠' },
-  { id: 'calm', emoji: '😌' },
-  { id: 'tired', emoji: '😴' },
-  { id: 'anxious', emoji: '😰' },
-  { id: 'excited', emoji: '🤩' },
-  { id: 'grateful', emoji: '🙏' },
+  { id: 'happy', icon: Smile },
+  { id: 'sad', icon: Frown },
+  { id: 'angry', icon: Angry },
+  { id: 'calm', icon: Leaf },
+  { id: 'tired', icon: Moon },
+  { id: 'anxious', icon: Activity },
+  { id: 'excited', icon: Sparkles },
+  { id: 'grateful', icon: HeartHandshake },
 ]
