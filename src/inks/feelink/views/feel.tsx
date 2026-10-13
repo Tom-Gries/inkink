@@ -28,22 +28,30 @@ export function FeelView() {
   const create = useCreateFeeling()
   const remove = useDeleteFeeling()
 
-  const [selected, setSelected] = useState<FeelingMood | null>(null)
+  const [selected, setSelected] = useState<FeelingMood[]>([])
   const [note, setNote] = useState('')
   const [justSaved, setJustSaved] = useState(false)
   const [deleteTarget, setDeleteTarget] = useState<FeelingDto | null>(null)
 
   const entries = data ?? []
-  const canSave = selected !== null && !create.isPending
+  const canSave = selected.length > 0 && !create.isPending
+
+  function toggleFeeling(mood: FeelingMood) {
+    setSelected((current) =>
+      current.includes(mood)
+        ? current.filter((m) => m !== mood)
+        : [...current, mood],
+    )
+  }
 
   function handleSave() {
-    if (selected === null) return
+    if (selected.length === 0) return
 
     create.mutate(
-      { mood: selected, note: note.trim() },
+      { moods: selected, note: note.trim() },
       {
         onSuccess: () => {
-          setSelected(null)
+          setSelected([])
           setNote('')
           setJustSaved(true)
           window.setTimeout(() => setJustSaved(false), 2000)
@@ -73,13 +81,13 @@ export function FeelView() {
           <fieldset className="m-0 grid min-w-0 grid-cols-4 gap-2 border-0 p-0 sm:grid-cols-8">
             <legend className="sr-only">{t('feelink.question')}</legend>
             {FEELINGS.map((feeling) => {
-              const isSelected = selected === feeling.id
+              const isSelected = selected.includes(feeling.id)
               return (
                 <button
                   key={feeling.id}
                   type="button"
                   aria-pressed={isSelected}
-                  onClick={() => setSelected(feeling.id)}
+                  onClick={() => toggleFeeling(feeling.id)}
                   className={cn(
                     'flex cursor-pointer flex-col items-center gap-1.5 rounded-xl border px-2 py-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
                     isSelected
@@ -146,42 +154,52 @@ export function FeelView() {
             </p>
           ) : (
             <ul className="flex flex-col divide-y divide-border">
-              {entries.map((entry) => {
-                const feeling = FEELINGS.find((f) => f.id === entry.mood)
-                return (
-                  <li
-                    key={entry.id}
-                    className="flex items-start justify-between gap-3 py-3"
-                  >
-                    <div className="min-w-0">
-                      <p className="flex items-center gap-2 text-sm font-medium text-foreground">
-                        {feeling ? (
-                          <feeling.icon className="size-4" aria-hidden="true" />
-                        ) : null}
-                        {t(`feelink.mood.${entry.mood}`)}
-                      </p>
-                      {entry.note && (
-                        <p className="mt-0.5 text-sm break-words text-muted-foreground">
-                          {entry.note}
-                        </p>
-                      )}
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        {new Date(entry.createdAt).toLocaleString()}
-                      </p>
+              {entries.map((entry) => (
+                <li
+                  key={entry.id}
+                  className="flex items-start justify-between gap-3 py-3"
+                >
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      {entry.moods.map((mood) => {
+                        const feeling = FEELINGS.find((f) => f.id === mood)
+                        return (
+                          <span
+                            key={mood}
+                            className="flex items-center gap-1.5 rounded-full border border-border bg-muted/50 px-2 py-0.5 text-sm font-medium text-foreground"
+                          >
+                            {feeling ? (
+                              <feeling.icon
+                                className="size-3.5"
+                                aria-hidden="true"
+                              />
+                            ) : null}
+                            {t(`feelink.mood.${mood}`)}
+                          </span>
+                        )
+                      })}
                     </div>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      aria-label={t('feelink.delete')}
-                      onClick={() => setDeleteTarget(entry)}
-                      disabled={remove.isPending}
-                    >
-                      <Trash2 className="size-4" />
-                    </Button>
-                  </li>
-                )
-              })}
+                    {entry.note && (
+                      <p className="mt-1 text-sm break-words text-muted-foreground">
+                        {entry.note}
+                      </p>
+                    )}
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {new Date(entry.createdAt).toLocaleString()}
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    aria-label={t('feelink.delete')}
+                    onClick={() => setDeleteTarget(entry)}
+                    disabled={remove.isPending}
+                  >
+                    <Trash2 className="size-4" />
+                  </Button>
+                </li>
+              ))}
             </ul>
           )}
         </CardContent>
@@ -192,7 +210,13 @@ export function FeelView() {
         onOpenChange={(open) => {
           if (!open) setDeleteTarget(null)
         }}
-        title={deleteTarget ? t(`feelink.mood.${deleteTarget.mood}`) : ''}
+        title={
+          deleteTarget
+            ? deleteTarget.moods
+                .map((mood) => t(`feelink.mood.${mood}`))
+                .join(', ')
+            : ''
+        }
         description={t('feelink.deleteConfirm')}
         confirmLabel={t('feelink.delete')}
         cancelLabel={t('feelink.confirm.cancel')}

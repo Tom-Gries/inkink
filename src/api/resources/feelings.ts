@@ -14,13 +14,13 @@ export type FeelingMood =
 
 export interface FeelingDto {
   id: string
-  mood: FeelingMood
+  moods: FeelingMood[]
   note: string
   createdAt: string
 }
 
 export interface FeelingInputDto {
-  mood: FeelingMood
+  moods: FeelingMood[]
   note: string
 }
 

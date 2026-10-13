@@ -5,9 +5,9 @@ export const translations = {
     'feelink.nav.feel': 'Feelink',
     'feelink.feel': 'Feelink',
     'feelink.feelSubtitle':
-      'Wie geht es dir gerade? Wähle ein Gefühl und halte es fest.',
+      'Wie geht es dir gerade? Wähle ein oder mehrere Gefühle und halte sie fest.',
     'feelink.question': 'Wie fühlst du dich?',
-    'feelink.selectPrompt': 'Wähle dein Gefühl aus.',
+    'feelink.selectPrompt': 'Wähle ein oder mehrere Gefühle aus.',
     'feelink.note.label': 'Notiz',
     'feelink.note.placeholder': 'Was ist los? (optional) …',
     'feelink.save': 'Feel',
@@ -33,9 +33,9 @@ export const translations = {
     'feelink.nav.feel': 'Feelink',
     'feelink.feel': 'Feelink',
     'feelink.feelSubtitle':
-      'How are you feeling right now? Pick a feeling and capture it.',
+      'How are you feeling right now? Pick one or more feelings and capture them.',
     'feelink.question': 'How do you feel?',
-    'feelink.selectPrompt': 'Choose your feeling.',
+    'feelink.selectPrompt': 'Choose one or more feelings.',
     'feelink.note.label': 'Note',
     'feelink.note.placeholder': "What's going on? (optional) …",
     'feelink.save': 'Feel',
