@@ -11,6 +11,7 @@ import type { StackDto } from '../../../api/index'
 import { useArchiveStack, useStacks } from '../../../api/index'
 import { useTranslations } from '../../../i18n/index'
 import {
+  Badge,
   Button,
   Card,
   CardContent,
@@ -76,6 +77,11 @@ export function StacksView() {
                   <div className="min-w-0">
                     <CardTitle className="flex flex-wrap items-center gap-2">
                       {stack.name}
+                      <Badge variant={stack.isPublic ? 'success' : 'outline'}>
+                        {stack.isPublic
+                          ? t('learnink.stack.visibility.public')
+                          : t('learnink.stack.visibility.private')}
+                      </Badge>
                     </CardTitle>
                     <CardDescription>
                       {stack.creatorName}

@@ -36,6 +36,8 @@ export interface StackDto {
   examTime: number
   /** Ab dieser Punktzahl gilt die Prüfung als bestanden (0 = keine Schwelle). */
   passingScore: number
+  /** Öffentlich (true) oder privat (false). */
+  isPublic: boolean
   archived: boolean
   questions: QuestionDto[]
   leaderboard: LeaderboardEntryDto[]
@@ -46,6 +48,8 @@ export interface StackInputDto {
   creatorName: string
   examTime: number
   passingScore: number
+  /** Öffentlich (true) oder privat (false) – Default public. */
+  isPublic: boolean
   questions: QuestionDto[]
 }
 

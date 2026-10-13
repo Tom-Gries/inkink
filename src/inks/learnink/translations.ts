@@ -26,6 +26,8 @@ export const translations = {
     'learnink.stack.leaderboardTitle': 'Top 3',
     'learnink.stack.questions': '{count} Fragen',
     'learnink.stack.points': 'Punkte',
+    'learnink.stack.visibility.public': 'Öffentlich',
+    'learnink.stack.visibility.private': 'Privat',
     /* Editor */
     'learnink.editor.new': 'Neuer Stack',
     'learnink.editor.edit': 'Stack bearbeiten',
@@ -91,6 +93,12 @@ export const translations = {
     'learnink.editor.notFound': 'Stack nicht gefunden.',
     'learnink.editor.error': 'Stack konnte nicht geladen werden.',
     'learnink.editor.nameRequired': 'Bitte gib einen Namen an.',
+    'learnink.editor.visibility': 'Sichtbarkeit',
+    'learnink.editor.visibilityToggle': 'Sichtbarkeit umschalten',
+    'learnink.editor.visibilityPublic': 'Öffentlich',
+    'learnink.editor.visibilityPrivate': 'Privat',
+    'learnink.editor.visibilityHint':
+      'Öffentliche Stacks sind für alle sichtbar. Private Stacks siehst nur du.',
     /* Learn */
     'learnink.learn.title': 'Lernen',
     'learnink.learn.subtitle':
@@ -173,6 +181,8 @@ export const translations = {
     'learnink.stack.leaderboardTitle': 'Top 3',
     'learnink.stack.questions': '{count} questions',
     'learnink.stack.points': 'points',
+    'learnink.stack.visibility.public': 'Public',
+    'learnink.stack.visibility.private': 'Private',
     'learnink.editor.new': 'New stack',
     'learnink.editor.edit': 'Edit stack',
     'learnink.editor.name': 'Name',
@@ -233,6 +243,12 @@ export const translations = {
     'learnink.editor.notFound': 'Stack not found.',
     'learnink.editor.error': 'Could not load stack.',
     'learnink.editor.nameRequired': 'Please provide a name.',
+    'learnink.editor.visibility': 'Visibility',
+    'learnink.editor.visibilityToggle': 'Toggle visibility',
+    'learnink.editor.visibilityPublic': 'Public',
+    'learnink.editor.visibilityPrivate': 'Private',
+    'learnink.editor.visibilityHint':
+      'Public stacks are visible to everyone. Private stacks are only visible to you.',
     'learnink.learn.title': 'Learn',
     'learnink.learn.subtitle': 'Answer the questions and get instant feedback.',
     'learnink.learn.question': 'Question {current} of {total}',

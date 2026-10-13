@@ -250,6 +250,8 @@ export function EditorView() {
   )
   const [passingEnabled, setPassingEnabled] = useState(false)
   const [passingScore, setPassingScore] = useState<number>(0)
+  // Neue Stacks sind standardmäßig öffentlich (Default in Schema/API).
+  const [isPublic, setIsPublic] = useState(true)
   const [questions, setQuestions] = useState<DraftQuestion[]>([])
   const [saveError, setSaveError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
@@ -266,6 +268,7 @@ export function EditorView() {
     )
     setPassingEnabled((data.passingScore ?? 0) > 0)
     setPassingScore(data.passingScore ?? 0)
+    setIsPublic(data.isPublic ?? true)
     setQuestions(toDraft(data))
   }, [data])
 
@@ -337,6 +340,7 @@ export function EditorView() {
       creatorName: creatorName.trim() || randomDefaultName(),
       examTime: examEnabled ? examMinutes * 60 : 0,
       passingScore: passingEnabled ? Math.max(0, Math.floor(passingScore)) : 0,
+      isPublic,
       questions: questions.map((question) => ({
         id: question.id,
         type: question.type,
@@ -661,6 +665,29 @@ export function EditorView() {
                   }}
                 />
               </ToggleField>
+            </div>
+            <div className="mt-4">
+              <div className="flex items-center justify-between gap-2">
+                <label
+                  htmlFor="editor-visibility"
+                  className="text-sm font-medium text-foreground"
+                >
+                  {t('learnink.editor.visibility')}
+                </label>
+                <span className="flex cursor-pointer items-center gap-1.5 text-sm text-muted-foreground">
+                  <SwitchControl
+                    checked={isPublic}
+                    onCheckedChange={setIsPublic}
+                    aria-label={t('learnink.editor.visibilityToggle')}
+                  />
+                  {isPublic
+                    ? t('learnink.editor.visibilityPublic')
+                    : t('learnink.editor.visibilityPrivate')}
+                </span>
+              </div>
+              <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                {t('learnink.editor.visibilityHint')}
+              </p>
             </div>
           </CardContent>
         </Card>
