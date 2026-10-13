@@ -1,7 +1,7 @@
 import { Dialog } from '@base-ui-components/react/dialog'
 import { Link as TanStackLink, useLocation } from '@tanstack/react-router'
 import { Circle, Menu, X } from 'lucide-react'
-import type { ReactNode } from 'react'
+import { type ReactNode, useState } from 'react'
 import type { VisibleInkRoute } from '../core/index'
 import { getVisibleInkRoutes, resolveInkRoute } from '../core/index'
 import { useTranslations } from '../i18n/index'
@@ -180,6 +180,10 @@ export function AppShell({
 }: AppShellProps) {
   const autoItems = useAutoNavItems(authenticated)
 
+  // Kontrollierter Mobile-Drawer: Auf- und Zuklappen über Trigger, Close-Button
+  // und Backdrop – und beim Klick auf einen Nav-Link (onNavigate) schließen.
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
   const sidebarGroups: Array<SidebarGroup> = [
     { items: autoItems },
     ...(groups ?? []),
@@ -212,7 +216,7 @@ export function AppShell({
       {/* Mobile: Topbar + Drawer */}
       <div className="flex min-w-0 flex-1 flex-col lg:pl-52">
         <header className="flex h-14 shrink-0 items-center gap-2 border-b border-border px-4 lg:hidden">
-          <Dialog.Root>
+          <Dialog.Root open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <Dialog.Trigger
               aria-label="Menü öffnen"
               className="inline-flex size-9 cursor-pointer items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -241,7 +245,7 @@ export function AppShell({
                 <div className="flex-1 overflow-y-auto p-3">
                   <SidebarNav
                     groups={sidebarGroups}
-                    onNavigate={() => undefined}
+                    onNavigate={() => setMobileMenuOpen(false)}
                   />
                 </div>
                 {sidebarFooter && (
