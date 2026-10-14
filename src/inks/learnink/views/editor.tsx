@@ -666,29 +666,35 @@ export function EditorView() {
                 />
               </ToggleField>
             </div>
-            <div className="mt-4">
-              <div className="flex items-center justify-between gap-2">
-                <label
-                  htmlFor="editor-visibility"
-                  className="text-sm font-medium text-foreground"
-                >
-                  {t('learnink.editor.visibility')}
-                </label>
-                <span className="flex cursor-pointer items-center gap-1.5 text-sm text-muted-foreground">
-                  <SwitchControl
-                    checked={isPublic}
-                    onCheckedChange={setIsPublic}
-                    aria-label={t('learnink.editor.visibilityToggle')}
-                  />
-                  {isPublic
-                    ? t('learnink.editor.visibilityPublic')
-                    : t('learnink.editor.visibilityPrivate')}
-                </span>
+            {user ? (
+              <div className="mt-4">
+                <div className="flex items-center justify-between gap-2">
+                  <label
+                    htmlFor="editor-visibility"
+                    className="text-sm font-medium text-foreground"
+                  >
+                    {t('learnink.editor.visibility')}
+                  </label>
+                  <span className="flex cursor-pointer items-center gap-1.5 text-sm text-muted-foreground">
+                    <SwitchControl
+                      checked={isPublic}
+                      onCheckedChange={setIsPublic}
+                      aria-label={t('learnink.editor.visibilityToggle')}
+                    />
+                    {isPublic
+                      ? t('learnink.editor.visibilityPublic')
+                      : t('learnink.editor.visibilityPrivate')}
+                  </span>
+                </div>
+                <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                  {t('learnink.editor.visibilityHint')}
+                </p>
               </div>
-              <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                {t('learnink.editor.visibilityHint')}
+            ) : (
+              <p className="mt-4 text-xs leading-5 text-muted-foreground">
+                {t('learnink.editor.visibilityLoginHint')}
               </p>
-            </div>
+            )}
           </CardContent>
         </Card>
 

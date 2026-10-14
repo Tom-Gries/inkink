@@ -99,6 +99,8 @@ export const translations = {
     'learnink.editor.visibilityPrivate': 'Privat',
     'learnink.editor.visibilityHint':
       'Öffentliche Stacks sind für alle sichtbar. Private Stacks siehst nur du.',
+    'learnink.editor.visibilityLoginHint':
+      'Melde dich an, um Stacks privat zu stellen.',
     /* Learn */
     'learnink.learn.title': 'Lernen',
     'learnink.learn.subtitle':
@@ -249,6 +251,8 @@ export const translations = {
     'learnink.editor.visibilityPrivate': 'Private',
     'learnink.editor.visibilityHint':
       'Public stacks are visible to everyone. Private stacks are only visible to you.',
+    'learnink.editor.visibilityLoginHint':
+      'Log in to make stacks private.',
     'learnink.learn.title': 'Learn',
     'learnink.learn.subtitle': 'Answer the questions and get instant feedback.',
     'learnink.learn.question': 'Question {current} of {total}',

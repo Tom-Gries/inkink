@@ -23,12 +23,14 @@ import {
   PageContainer,
   PageHeader,
 } from '../../../ui/index'
+import { useAuthStore } from '../../../ui-auth/index'
 import { formatExamTime } from '../lib'
 
 const TOP3_MEDALS = ['🥇', '🥈', '🥉']
 
 export function StacksView() {
   const t = useTranslations()
+  const user = useAuthStore((state) => state.user)
   const { data, isLoading, isError } = useStacks()
   const archive = useArchiveStack()
 
@@ -96,14 +98,16 @@ export function StacksView() {
                         : t('learnink.stack.noExamTime')}
                     </CardDescription>
                   </div>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => setArchiveTarget(stack)}
-                  >
-                    <Archive className="size-4" />
-                    {t('learnink.stack.archive')}
-                  </Button>
+                  {user ? (
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => setArchiveTarget(stack)}
+                    >
+                      <Archive className="size-4" />
+                      {t('learnink.stack.archive')}
+                    </Button>
+                  ) : null}
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm font-semibold text-foreground">
@@ -149,15 +153,17 @@ export function StacksView() {
                       <Trophy className="size-4" />
                       {t('learnink.stack.proof')}
                     </Link>
-                    <Link
-                      to="learnink.edit"
-                      params={{ id: stack.id }}
-                      variant="ghost"
-                      type="next"
-                    >
-                      <FilePen className="size-4" />
-                      {t('learnink.stack.edit')}
-                    </Link>
+                    {user ? (
+                      <Link
+                        to="learnink.edit"
+                        params={{ id: stack.id }}
+                        variant="ghost"
+                        type="next"
+                      >
+                        <FilePen className="size-4" />
+                        {t('learnink.stack.edit')}
+                      </Link>
+                    ) : null}
                   </div>
                 </CardContent>
               </Card>
