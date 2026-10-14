@@ -1,0 +1,544 @@
+import { Check, Search, Trash2, UsersRound, X } from 'lucide-react'
+import { useState } from 'react'
+import {
+  type ConnectedUserDto,
+  type UserSearchDto,
+  useAcceptConnectRequest,
+  useConnectinkConnections,
+  useConnectinkRequests,
+  useConnectinkSearch,
+  useIgnoreConnectRequest,
+  useRejectConnectRequest,
+  useRemoveConnection,
+  useSendConnectRequest,
+} from '../../../api/index'
+import { useTranslations } from '../../../i18n/index'
+import {
+  AvatarControl,
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  ConfirmDialog,
+  cn,
+  Input,
+  PageContainer,
+  PageHeader,
+} from '../../../ui/index'
+
+type Tab = 'discover' | 'requests' | 'connections'
+
+type RequestsQueryResult = ReturnType<typeof useConnectinkRequests>
+type ConnectionsQueryResult = ReturnType<typeof useConnectinkConnections>
+
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString()
+}
+
+/**
+ * Conectink-Hauptseite: Drei Bereiche (Entdecken / Anfragen / Verbunden),
+ * über eine leichte Tab-Leiste umschaltbar. Der "Anfragen"-Tab zeigt die
+ * Anzahl offener eingehender Anfragen als Badge.
+ */
+export function ConectinkView() {
+  const t = useTranslations()
+  const [tab, setTab] = useState<Tab>('discover')
+
+  const requests = useConnectinkRequests()
+  const connections = useConnectinkConnections()
+
+  const send = useSendConnectRequest()
+  const accept = useAcceptConnectRequest()
+  const reject = useRejectConnectRequest()
+  const ignore = useIgnoreConnectRequest()
+  const remove = useRemoveConnection()
+
+  const [removeTarget, setRemoveTarget] = useState<ConnectedUserDto | null>(
+    null,
+  )
+
+  const pendingIncoming = requests.data?.incoming.length ?? 0
+
+  function confirmRemove() {
+    if (removeTarget) {
+      remove.mutate(removeTarget.id)
+    }
+  }
+
+  return (
+    <PageContainer>
+      <PageHeader
+        title={t('conectink.page.title')}
+        description={t('conectink.page.description')}
+      />
+
+      <div
+        role="tablist"
+        aria-label={t('conectink.tabs.label')}
+        className="flex gap-1 rounded-lg border border-border bg-muted/40 p-1"
+      >
+        <TabButton
+          active={tab === 'discover'}
+          onClick={() => setTab('discover')}
+        >
+          {t('conectink.tabs.discover')}
+        </TabButton>
+        <TabButton
+          active={tab === 'requests'}
+          badge={pendingIncoming}
+          onClick={() => setTab('requests')}
+        >
+          {t('conectink.tabs.requests')}
+        </TabButton>
+        <TabButton
+          active={tab === 'connections'}
+          onClick={() => setTab('connections')}
+        >
+          {t('conectink.tabs.connections')}
+        </TabButton>
+      </div>
+
+      <div className="mt-6">
+        {tab === 'discover' ? (
+          <DiscoverTab send={send} onGoToRequests={() => setTab('requests')} />
+        ) : null}
+        {tab === 'requests' ? (
+          <RequestsTab
+            requests={requests}
+            accept={accept}
+            reject={reject}
+            ignore={ignore}
+          />
+        ) : null}
+        {tab === 'connections' ? (
+          <ConnectionsTab
+            connections={connections}
+            onRemove={setRemoveTarget}
+          />
+        ) : null}
+      </div>
+
+      <ConfirmDialog
+        open={removeTarget !== null}
+        onOpenChange={(open) => {
+          if (!open) setRemoveTarget(null)
+        }}
+        title={
+          removeTarget
+            ? t('conectink.connections.removeConfirmTitle').replace(
+                '{name}',
+                removeTarget.user.name,
+              )
+            : ''
+        }
+        description={t('conectink.connections.removeConfirmDescription')}
+        confirmLabel={t('conectink.connections.remove')}
+        cancelLabel={t('conectink.confirm.cancel')}
+        destructive
+        onConfirm={confirmRemove}
+      />
+    </PageContainer>
+  )
+}
+
+function TabButton({
+  active,
+  badge,
+  onClick,
+  children,
+}: {
+  active: boolean
+  badge?: number
+  onClick: () => void
+  children: React.ReactNode
+}) {
+  return (
+    <button
+      type="button"
+      role="tab"
+      aria-selected={active}
+      onClick={onClick}
+      className={cn(
+        'flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+        active
+          ? 'bg-background text-foreground shadow-sm'
+          : 'text-muted-foreground hover:text-foreground',
+      )}
+    >
+      {children}
+      {badge !== undefined && badge > 0 ? (
+        <Badge variant="destructive">{badge}</Badge>
+      ) : null}
+    </button>
+  )
+}
+
+/**
+ * Entdecken-Tab: Namenssuche mit eigenem Input + Submit. Die Suche wird erst
+ * beim Absenden des Formulars gestartet; jeder Treffer zeigt passend zur
+ * aktuellen `relation` den richtigen Aktions-Button.
+ */
+function DiscoverTab({
+  send,
+  onGoToRequests,
+}: {
+  send: ReturnType<typeof useSendConnectRequest>
+  onGoToRequests: () => void
+}) {
+  const t = useTranslations()
+  const [query, setQuery] = useState('')
+  const [submitted, setSubmitted] = useState('')
+
+  const search = useConnectinkSearch(submitted)
+  const results = search.data ?? []
+
+  function handleSubmit(event: React.FormEvent) {
+    event.preventDefault()
+    setSubmitted(query.trim())
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('conectink.search.title')}</CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-4">
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col gap-3 sm:flex-row"
+        >
+          <Input
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder={t('conectink.search.placeholder')}
+            aria-label={t('conectink.search.label')}
+          />
+          <Button type="submit" className="shrink-0">
+            <Search className="size-4" />
+            {t('conectink.search.button')}
+          </Button>
+        </form>
+
+        {send.isError ? (
+          <p className="text-sm text-destructive">
+            {send.error instanceof Error
+              ? send.error.message
+              : t('conectink.errors.requestFailed')}
+          </p>
+        ) : null}
+
+        {!submitted ? (
+          <p className="text-sm text-muted-foreground">
+            {t('conectink.search.emptyQuery')}
+          </p>
+        ) : search.isLoading ? (
+          <p className="text-sm text-muted-foreground">
+            {t('conectink.search.loading')}
+          </p>
+        ) : search.isError ? (
+          <p className="text-sm text-destructive">
+            {t('conectink.search.error')}
+          </p>
+        ) : results.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            {t('conectink.search.noResults').replace('{query}', submitted)}
+          </p>
+        ) : (
+          <ul className="flex flex-col divide-y divide-border">
+            {results.map((result) => (
+              <li
+                key={result.id}
+                className="flex items-center justify-between gap-3 py-3"
+              >
+                <div className="flex min-w-0 items-center gap-3">
+                  <AvatarControl
+                    name={result.name}
+                    src={result.image ?? undefined}
+                  />
+                  <p className="truncate text-sm font-medium text-foreground">
+                    {result.name}
+                  </p>
+                </div>
+                <RelationAction
+                  result={result}
+                  send={send}
+                  onGoToRequests={onGoToRequests}
+                />
+              </li>
+            ))}
+          </ul>
+        )}
+      </CardContent>
+    </Card>
+  )
+}
+
+/** Relationsabhängiger Aktions-Button/-Badge für einen Sucher-Treffer. */
+function RelationAction({
+  result,
+  send,
+  onGoToRequests,
+}: {
+  result: UserSearchDto
+  send: ReturnType<typeof useSendConnectRequest>
+  onGoToRequests: () => void
+}) {
+  const t = useTranslations()
+
+  switch (result.relation) {
+    case 'accepted':
+      return (
+        <Badge variant="success">{t('conectink.relation.connected')}</Badge>
+      )
+    case 'outgoingPending':
+      return (
+        <Badge variant="outline">{t('conectink.relation.requestSent')}</Badge>
+      )
+    case 'ignored':
+      return (
+        <Badge variant="destructive">{t('conectink.relation.ignored')}</Badge>
+      )
+    case 'incomingPending':
+      return (
+        <Button size="sm" variant="outline" onClick={onGoToRequests}>
+          {t('conectink.relation.incoming')}
+        </Button>
+      )
+    case 'rejected':
+      return (
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={send.isPending}
+          onClick={() => send.mutate(result.id)}
+        >
+          {t('conectink.relation.requestAgain')}
+        </Button>
+      )
+    default:
+      return (
+        <Button
+          size="sm"
+          disabled={send.isPending}
+          onClick={() => send.mutate(result.id)}
+        >
+          {t('conectink.relation.connect')}
+        </Button>
+      )
+  }
+}
+
+/**
+ * Anfragen-Tab: Eingehende Anfragen mit Akzeptieren/Ablehnen/Ignorieren,
+ * darunter die gesendeten (noch offenen) Anfragen als Statusliste.
+ */
+function RequestsTab({
+  requests,
+  accept,
+  reject,
+  ignore,
+}: {
+  requests: RequestsQueryResult
+  accept: ReturnType<typeof useAcceptConnectRequest>
+  reject: ReturnType<typeof useRejectConnectRequest>
+  ignore: ReturnType<typeof useIgnoreConnectRequest>
+}) {
+  const t = useTranslations()
+  const incoming = requests.data?.incoming ?? []
+  const outgoing = requests.data?.outgoing ?? []
+
+  return (
+    <div className="flex flex-col gap-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('conectink.requests.incoming')}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {requests.isLoading ? (
+            <p className="text-sm text-muted-foreground">
+              {t('conectink.loading')}
+            </p>
+          ) : requests.isError ? (
+            <p className="text-sm text-destructive">
+              {t('conectink.loadError')}
+            </p>
+          ) : incoming.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              {t('conectink.requests.incomingEmpty')}
+            </p>
+          ) : (
+            <ul className="flex flex-col divide-y divide-border">
+              {incoming.map((request) => (
+                <li
+                  key={request.id}
+                  className="flex flex-wrap items-center justify-between gap-3 py-3"
+                >
+                  <div className="flex min-w-0 items-center gap-3">
+                    <AvatarControl
+                      name={request.user.name}
+                      src={request.user.image ?? undefined}
+                    />
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium text-foreground">
+                        {request.user.name}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {formatDate(request.createdAt)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Button
+                      size="sm"
+                      variant="success"
+                      disabled={accept.isPending}
+                      onClick={() => accept.mutate(request.id)}
+                    >
+                      <Check className="size-4" />
+                      {t('conectink.requests.accept')}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={reject.isPending}
+                      onClick={() => reject.mutate(request.id)}
+                    >
+                      <X className="size-4" />
+                      {t('conectink.requests.reject')}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      disabled={ignore.isPending}
+                      onClick={() => ignore.mutate(request.id)}
+                    >
+                      {t('conectink.requests.ignore')}
+                    </Button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('conectink.requests.outgoing')}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {requests.isLoading ? (
+            <p className="text-sm text-muted-foreground">
+              {t('conectink.loading')}
+            </p>
+          ) : requests.isError ? (
+            <p className="text-sm text-destructive">
+              {t('conectink.loadError')}
+            </p>
+          ) : outgoing.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              {t('conectink.requests.outgoingEmpty')}
+            </p>
+          ) : (
+            <ul className="flex flex-col divide-y divide-border">
+              {outgoing.map((request) => (
+                <li
+                  key={request.id}
+                  className="flex items-center justify-between gap-3 py-3"
+                >
+                  <div className="flex min-w-0 items-center gap-3">
+                    <AvatarControl
+                      name={request.user.name}
+                      src={request.user.image ?? undefined}
+                    />
+                    <p className="truncate text-sm font-medium text-foreground">
+                      {request.user.name}
+                    </p>
+                  </div>
+                  <Badge variant="outline">
+                    {t('conectink.requests.waiting')}
+                  </Badge>
+                </li>
+              ))}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+
+/** Verbunden-Tab: Liste der Verbundenen mit Entfernen-Aktion. */
+function ConnectionsTab({
+  connections,
+  onRemove,
+}: {
+  connections: ConnectionsQueryResult
+  onRemove: (connection: ConnectedUserDto) => void
+}) {
+  const t = useTranslations()
+  const items = connections.data ?? []
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('conectink.connections.title')}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {connections.isLoading ? (
+          <p className="text-sm text-muted-foreground">
+            {t('conectink.loading')}
+          </p>
+        ) : connections.isError ? (
+          <p className="text-sm text-destructive">{t('conectink.loadError')}</p>
+        ) : items.length === 0 ? (
+          <div className="flex flex-col items-center gap-2 py-6 text-center">
+            <UsersRound
+              className="size-8 text-muted-foreground"
+              aria-hidden="true"
+            />
+            <p className="text-sm text-muted-foreground">
+              {t('conectink.connections.empty')}
+            </p>
+          </div>
+        ) : (
+          <ul className="flex flex-col divide-y divide-border">
+            {items.map((connection) => (
+              <li
+                key={connection.id}
+                className="flex items-center justify-between gap-3 py-3"
+              >
+                <div className="flex min-w-0 items-center gap-3">
+                  <AvatarControl
+                    name={connection.user.name}
+                    src={connection.user.image ?? undefined}
+                  />
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium text-foreground">
+                      {connection.user.name}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {t('conectink.connections.since').replace(
+                        '{date}',
+                        formatDate(connection.since),
+                      )}
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={() => onRemove(connection)}
+                >
+                  <Trash2 className="size-4" />
+                  {t('conectink.connections.remove')}
+                </Button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </CardContent>
+    </Card>
+  )
+}

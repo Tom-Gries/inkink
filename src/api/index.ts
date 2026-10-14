@@ -7,6 +7,16 @@ export {
 } from './client'
 export { ApiError, assertOk } from './errors'
 export {
+  useAcceptConnectRequest,
+  useConnectinkConnections,
+  useConnectinkRequests,
+  useConnectinkSearch,
+  useIgnoreConnectRequest,
+  useRejectConnectRequest,
+  useRemoveConnection,
+  useSendConnectRequest,
+} from './hooks/use-connectink'
+export {
   useCreateFeeling,
   useDeleteFeeling,
   useFeelings,
@@ -24,6 +34,22 @@ export {
   useCreateTestMessage,
   useTestMessages,
 } from './hooks/use-test-messages'
+export {
+  acceptConnectRequest,
+  type ConnectedUserDto,
+  type ConnectionRelation,
+  type ConnectRequestDto,
+  type ConnectRequestsResponse,
+  type CounterpartUserDto,
+  ignoreConnectRequest,
+  listConnections,
+  listRequests,
+  rejectConnectRequest,
+  removeConnection,
+  searchUsers,
+  sendConnectRequest,
+  type UserSearchDto,
+} from './resources/connectink'
 export {
   createFeeling,
   deleteFeeling,
