@@ -3,6 +3,11 @@ import type { Translations } from '../../i18n/index'
 export const translations = {
   de: {
     'learnink.nav.stacks': 'Learnink',
+    /* Startseite */
+    'learnink.home.title': 'Learnink',
+    'learnink.home.description':
+      'Lerne mit Learnink oder hilf anderen zu lernen.',
+    'learnink.home.cta': 'Zu Learnink',
     /* Übersicht */
     'learnink.stacks': 'Learnink',
     'learnink.stacksSubtitle':
@@ -169,6 +174,10 @@ export const translations = {
   },
   en: {
     'learnink.nav.stacks': 'Learnink',
+    /* Home */
+    'learnink.home.title': 'Learnink',
+    'learnink.home.description': 'Learn with Learnink or help others learn.',
+    'learnink.home.cta': 'Go to Learnink',
     'learnink.stacks': 'Learnink',
     'learnink.stacksSubtitle':
       'Create, learn and take exams on your flashcard stacks.',
@@ -256,8 +265,7 @@ export const translations = {
     'learnink.editor.notFound': 'Stack not found.',
     'learnink.editor.error': 'Could not load stack.',
     'learnink.editor.nameRequired': 'Please provide a name.',
-    'learnink.editor.validationError':
-      'Please fill in the highlighted fields.',
+    'learnink.editor.validationError': 'Please fill in the highlighted fields.',
     'learnink.editor.optionsMin': 'At least two answer options are required.',
     'learnink.editor.correctRequired': 'Mark at least one answer as correct.',
     'learnink.editor.visibility': 'Visibility',
@@ -266,8 +274,7 @@ export const translations = {
     'learnink.editor.visibilityPrivate': 'Private',
     'learnink.editor.visibilityHint':
       'Public stacks are visible to everyone. Private stacks are only visible to you.',
-    'learnink.editor.visibilityLoginHint':
-      'Log in to make stacks private.',
+    'learnink.editor.visibilityLoginHint': 'Log in to make stacks private.',
     'learnink.learn.title': 'Learn',
     'learnink.learn.subtitle': 'Answer the questions and get instant feedback.',
     'learnink.learn.question': 'Question {current} of {total}',

@@ -3,6 +3,11 @@ import type { Translations } from '../../i18n/index'
 export const translations = {
   de: {
     'feelink.nav.feel': 'Feelink',
+    /* Startseite */
+    'feelink.home.title': 'Feelink',
+    'feelink.home.description': 'Melde dich an, um deine Gefühle zu tracken.',
+    'feelink.home.cta': 'Zu Feelink',
+    'feelink.home.loginCta': 'Anmelden',
     'feelink.feel': 'Feelink',
     'feelink.feelSubtitle':
       'Wie geht es dir gerade? Wähle ein oder mehrere Gefühle und halte sie fest.',
@@ -31,6 +36,11 @@ export const translations = {
   },
   en: {
     'feelink.nav.feel': 'Feelink',
+    /* Home */
+    'feelink.home.title': 'Feelink',
+    'feelink.home.description': 'Sign in to track your feelings.',
+    'feelink.home.cta': 'Go to Feelink',
+    'feelink.home.loginCta': 'Sign in',
     'feelink.feel': 'Feelink',
     'feelink.feelSubtitle':
       'How are you feeling right now? Pick one or more feelings and capture them.',

@@ -2,6 +2,7 @@ import { Heart } from 'lucide-react'
 import { defineInk } from '../../core/index'
 import { translations } from './translations'
 import { FeelView } from './views/feel'
+import { FeelinkHome } from './views/home'
 
 declare module '../../core/index' {
   interface RouteRegistry {
@@ -12,6 +13,7 @@ declare module '../../core/index' {
 export default defineInk({
   name: 'feelink',
   guard: 'auth',
+  home: FeelinkHome,
   routes: [
     {
       name: 'feel',

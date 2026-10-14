@@ -17,4 +17,16 @@ describe('defineInk', () => {
       '/defineink-test/seite',
     )
   })
+
+  it('trägt eine optionale Home-Komponente (Startseiten-Karte) durch die Definition', () => {
+    const home = () => null
+    const definition = defineInk({
+      name: 'home-test',
+      routes: [],
+      home,
+      translations: { de: {}, en: {} },
+    })
+
+    expect(definition.home).toBe(home)
+  })
 })

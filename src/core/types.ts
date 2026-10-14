@@ -35,6 +35,14 @@ export interface Definition {
   guard?: RouteGuard
 
   routes: Array<Route>
+
+  /**
+   * Optionale Komponente, die auf der Startseite (Home-Route "/") als
+   * Karte angezeigt wird – analog zu `routes[].component`. Ohne Angabe
+   * erscheint der Ink nicht auf der Startseite.
+   */
+  home?: FunctionComponent
+
   translations: Translations
 }
 

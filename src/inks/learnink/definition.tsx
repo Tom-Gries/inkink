@@ -2,6 +2,7 @@ import { GraduationCap } from 'lucide-react'
 import { defineInk } from '../../core/index'
 import { translations } from './translations'
 import { EditorView } from './views/editor'
+import { LearninkHome } from './views/home'
 import { LearnView } from './views/learn'
 import { ProofView } from './views/proof'
 import { StacksView } from './views/stacks'
@@ -19,6 +20,7 @@ declare module '../../core/index' {
 export default defineInk({
   name: 'learnink',
   guard: 'none',
+  home: LearninkHome,
   routes: [
     {
       name: 'stacks',
