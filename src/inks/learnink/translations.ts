@@ -28,6 +28,9 @@ export const translations = {
     'learnink.stack.points': 'Punkte',
     'learnink.stack.visibility.public': 'Öffentlich',
     'learnink.stack.visibility.private': 'Privat',
+    'learnink.stack.notFoundHint':
+      'Dieser Stack ist privat, wurde gelöscht oder der Link ist falsch.',
+    'learnink.stack.loadError': 'Stack konnte nicht geladen werden.',
     /* Editor */
     'learnink.editor.new': 'Neuer Stack',
     'learnink.editor.edit': 'Stack bearbeiten',
@@ -93,6 +96,11 @@ export const translations = {
     'learnink.editor.notFound': 'Stack nicht gefunden.',
     'learnink.editor.error': 'Stack konnte nicht geladen werden.',
     'learnink.editor.nameRequired': 'Bitte gib einen Namen an.',
+    'learnink.editor.validationError':
+      'Bitte fülle die rot markierten Felder aus.',
+    'learnink.editor.optionsMin': 'Mindestens zwei Antwortmöglichkeiten.',
+    'learnink.editor.correctRequired':
+      'Markiere mindestens eine Antwort als korrekt.',
     'learnink.editor.visibility': 'Sichtbarkeit',
     'learnink.editor.visibilityToggle': 'Sichtbarkeit umschalten',
     'learnink.editor.visibilityPublic': 'Öffentlich',
@@ -185,6 +193,9 @@ export const translations = {
     'learnink.stack.points': 'points',
     'learnink.stack.visibility.public': 'Public',
     'learnink.stack.visibility.private': 'Private',
+    'learnink.stack.notFoundHint':
+      'This stack is private, was deleted, or the link is incorrect.',
+    'learnink.stack.loadError': 'Could not load stack.',
     'learnink.editor.new': 'New stack',
     'learnink.editor.edit': 'Edit stack',
     'learnink.editor.name': 'Name',
@@ -245,6 +256,10 @@ export const translations = {
     'learnink.editor.notFound': 'Stack not found.',
     'learnink.editor.error': 'Could not load stack.',
     'learnink.editor.nameRequired': 'Please provide a name.',
+    'learnink.editor.validationError':
+      'Please fill in the highlighted fields.',
+    'learnink.editor.optionsMin': 'At least two answer options are required.',
+    'learnink.editor.correctRequired': 'Mark at least one answer as correct.',
     'learnink.editor.visibility': 'Visibility',
     'learnink.editor.visibilityToggle': 'Toggle visibility',
     'learnink.editor.visibilityPublic': 'Public',

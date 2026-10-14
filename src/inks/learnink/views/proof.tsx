@@ -29,6 +29,7 @@ import {
   shuffle,
   shuffleQuestionOptions,
 } from '../lib'
+import { StackLoadError } from '../stack-load-error'
 import { AnswerOptionsReview, AnswerSolution } from './answer-review'
 
 function isCorrectSelection(
@@ -50,7 +51,7 @@ export function ProofView() {
   const t = useTranslations()
   const params = useParams({ strict: false })
   const id = typeof params.id === 'string' ? params.id : undefined
-  const { data, isLoading, isError } = useStack(id)
+  const { data, isLoading, isError, error } = useStack(id)
   const addEntry = useAddLeaderboardEntry()
   const user = useAuthStore((state) => state.user)
 
@@ -173,9 +174,7 @@ export function ProofView() {
     return (
       <PageContainer>
         <PageHeader title={t('learnink.proof.title')} />
-        <p className="text-sm text-destructive">
-          {t('learnink.proof.notFound')}
-        </p>
+        <StackLoadError error={error} />
       </PageContainer>
     )
   }

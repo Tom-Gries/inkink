@@ -18,6 +18,7 @@ import {
   Textarea,
 } from '../../../ui/index'
 import { getLearnQuestions, shuffle, shuffleQuestionOptions } from '../lib'
+import { StackLoadError } from '../stack-load-error'
 import { AnswerOptionsReview, AnswerSolution } from './answer-review'
 
 function isSingleAnswer(question: QuestionDto): boolean {
@@ -46,7 +47,7 @@ export function LearnView() {
   const t = useTranslations()
   const params = useParams({ strict: false })
   const id = typeof params.id === 'string' ? params.id : undefined
-  const { data, isLoading, isError } = useStack(id)
+  const { data, isLoading, isError, error } = useStack(id)
 
   const [questions, setQuestions] = useState<QuestionDto[]>([])
   const [current, setCurrent] = useState(0)
@@ -125,9 +126,7 @@ export function LearnView() {
             {t('learnink.learn.loading')}
           </p>
         ) : isError || !data ? (
-          <p className="text-sm text-destructive">
-            {t('learnink.learn.notFound')}
-          </p>
+          <StackLoadError error={error} />
         ) : (
           <p className="text-sm text-muted-foreground">
             {t('learnink.learn.empty')}

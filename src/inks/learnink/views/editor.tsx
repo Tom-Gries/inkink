@@ -27,6 +27,7 @@ import {
 import { useAuthStore } from '../../../ui-auth/index'
 import { DEFAULT_EXAM_TIME_SECONDS, randomDefaultName } from '../constants'
 import { RichTextArea } from '../rich-text-area'
+import { StackLoadError } from '../stack-load-error'
 
 interface SliderOption<T extends string> {
   value: T
@@ -232,7 +233,7 @@ export function EditorView() {
   const isNew = !id || id === 'new'
   const stackId = isNew ? undefined : id
 
-  const { data, isLoading, isError } = useStack(stackId)
+  const { data, isLoading, isError, error } = useStack(stackId)
   const create = useCreateStack()
   const update = useUpdateStack()
   const user = useAuthStore((state) => state.user)
@@ -255,6 +256,11 @@ export function EditorView() {
   const [questions, setQuestions] = useState<DraftQuestion[]>([])
   const [saveError, setSaveError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
+  // Validierung nach „Speichern“: Feld-Schlüssel → Fehlermeldung. Die
+  // Umrandung verschwindet, sobald der Nutzer das jeweilige Feld bearbeitet.
+  const [validation, setValidation] = useState<Record<string, string | true>>(
+    {},
+  )
 
   useEffect(() => {
     if (!data) return
@@ -272,7 +278,19 @@ export function EditorView() {
     setQuestions(toDraft(data))
   }, [data])
 
+  function clearInvalid(key: string) {
+    setValidation((current) => {
+      if (!(key in current)) return current
+      const next = { ...current }
+      delete next[key]
+      return next
+    })
+  }
+
   function updateQuestion(id: string, patch: Partial<DraftQuestion>) {
+    // Beim Bearbeiten der Frage verschwinden deren Fehlermarkierungen.
+    clearInvalid(`q:${id}`)
+    clearInvalid(`qmsg:${id}`)
     setQuestions((current) =>
       current.map((question) =>
         question.id === id ? { ...question, ...patch } : question,
@@ -285,6 +303,8 @@ export function EditorView() {
     optionId: string,
     patch: Partial<DraftOption>,
   ) {
+    clearInvalid(`opt:${questionId}:${optionId}`)
+    clearInvalid(`qmsg:${questionId}`)
     setQuestions((current) =>
       current.map((question) =>
         question.id === questionId
@@ -326,12 +346,47 @@ export function EditorView() {
       ],
     })
   }
-  async function handleSave() {
+  /**
+   * Prüft die Pflichtfelder und liefert je Feld eine Fehlermarkierung
+   * (Schlüssel → Meldung), damit `handleSave` die Felder rot umranden kann.
+   */
+  function collectValidationErrors(): Record<string, string | true> {
+    const errors: Record<string, string | true> = {}
+
     if (name.trim().length === 0) {
-      setSaveError(t('learnink.editor.nameRequired'))
+      errors.name = t('learnink.editor.nameRequired')
+    }
+
+    for (const question of questions) {
+      if (question.question.trim().length === 0) {
+        errors[`q:${question.id}`] = true
+      }
+      if (question.type !== 'closed') continue
+
+      for (const option of question.answerOptions) {
+        if (option.text.trim().length === 0) {
+          errors[`opt:${question.id}:${option.id}`] = true
+        }
+      }
+      if (question.answerOptions.length < 2) {
+        errors[`qmsg:${question.id}`] = t('learnink.editor.optionsMin')
+      } else if (!question.answerOptions.some((option) => option.correct)) {
+        errors[`qmsg:${question.id}`] = t('learnink.editor.correctRequired')
+      }
+    }
+
+    return errors
+  }
+
+  async function handleSave() {
+    const errors = collectValidationErrors()
+    if (Object.keys(errors).length > 0) {
+      setValidation(errors)
+      setSaveError(t('learnink.editor.validationError'))
       return
     }
 
+    setValidation({})
     setSaving(true)
     setSaveError(null)
 
@@ -386,6 +441,7 @@ export function EditorView() {
   ]
   function renderQuestion(question: DraftQuestion) {
     const correctCount = question.answerOptions.filter((o) => o.correct).length
+    const questionMessage = validation[`qmsg:${question.id}`]
 
     return (
       <Card>
@@ -408,6 +464,7 @@ export function EditorView() {
           <TextField
             label={t('learnink.editor.questionText')}
             value={question.question}
+            invalid={Boolean(validation[`q:${question.id}`])}
             onChange={(e) =>
               updateQuestion(question.id, { question: e.target.value })
             }
@@ -533,6 +590,9 @@ export function EditorView() {
                       className="flex-1"
                       value={option.text}
                       placeholder={t('learnink.editor.optionText')}
+                      invalid={Boolean(
+                        validation[`opt:${question.id}:${option.id}`],
+                      )}
                       onChange={(e) =>
                         updateOption(question.id, option.id, {
                           text: e.target.value,
@@ -550,6 +610,11 @@ export function EditorView() {
                   </div>
                 ))}
               </div>
+              {typeof questionMessage === 'string' && (
+                <p className="mt-1 text-xs text-destructive">
+                  {questionMessage}
+                </p>
+              )}
               <Button
                 variant="ghost"
                 className="mt-2"
@@ -579,7 +644,7 @@ export function EditorView() {
     return (
       <PageContainer>
         <PageHeader title={t('learnink.editor.edit')} />
-        <p className="text-sm text-destructive">{t('learnink.editor.error')}</p>
+        <StackLoadError error={error} />
       </PageContainer>
     )
   }
@@ -605,7 +670,11 @@ export function EditorView() {
               label={t('learnink.editor.name')}
               placeholder={t('learnink.editor.namePlaceholder')}
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              invalid={Boolean(validation.name)}
+              onChange={(e) => {
+                clearInvalid('name')
+                setName(e.target.value)
+              }}
             />
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               <TextField
