@@ -1,13 +1,20 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
-import { ChevronDown, Plus, Save, Trash2 } from 'lucide-react'
-import { type ReactNode, useEffect, useState } from 'react'
+import { ChevronDown, Plus, Save, Trash2, Upload } from 'lucide-react'
+import {
+  type ChangeEvent,
+  type ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import type {
   AnswerOptionDto,
   Appearance,
   GroupDto,
+  QuestionDto,
   QuestionType,
   Scoring,
-  StackDto,
+  StackInputDto,
 } from '../../../api/index'
 import {
   useConnectinkGroups,
@@ -32,6 +39,7 @@ import {
 } from '../../../ui/index'
 import { useAuthStore } from '../../../ui-auth/index'
 import { DEFAULT_EXAM_TIME_SECONDS, randomDefaultName } from '../constants'
+import { parseStackImport, StackImportError } from '../import-stack'
 import { RichTextArea } from '../rich-text-area'
 import { StackLoadError } from '../stack-load-error'
 
@@ -168,7 +176,7 @@ function newQuestion(): DraftQuestion {
   }
 }
 
-function toDraft(stack: StackDto): DraftQuestion[] {
+function toDraft(stack: { questions: QuestionDto[] }): DraftQuestion[] {
   return stack.questions.map((question) => ({
     id: question.id,
     type: question.type,
@@ -272,6 +280,10 @@ export function EditorView() {
   const [validation, setValidation] = useState<Record<string, string | true>>(
     {},
   )
+  // JSON-Import: Die Datei wird im Editor vorausgefüllt, damit Fragen
+  // anschließend angepasst werden können.
+  const [importError, setImportError] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (!data) return
@@ -289,6 +301,44 @@ export function EditorView() {
     setGroupIds(data.groups.map((group) => group.id))
     setQuestions(toDraft(data))
   }, [data])
+
+  function applyImportedStack(input: StackInputDto) {
+    setName(input.name)
+    setCreatorName(input.creatorName)
+    setExamEnabled(input.examTime > 0)
+    setExamMinutes(
+      input.examTime > 0
+        ? Math.max(1, Math.round(input.examTime / 60))
+        : DEFAULT_EXAM_TIME_SECONDS / 60,
+    )
+    setPassingEnabled((input.passingScore ?? 0) > 0)
+    setPassingScore(input.passingScore ?? 0)
+    setIsPublic(input.isPublic ?? true)
+    setGroupIds(input.groupIds ?? [])
+    setQuestions(toDraft(input))
+    setValidation({})
+    setSaveError(null)
+    setImportError(null)
+  }
+
+  async function handleImportFile(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0]
+    // Setze den Datei-Input zurück, damit dieselbe Datei erneut gewählt
+    // werden kann (sonst signalisiert der Browser kein neues Ereignis).
+    event.target.value = ''
+    if (!file) return
+
+    try {
+      const text = await file.text()
+      applyImportedStack(parseStackImport(text))
+    } catch (error) {
+      setImportError(
+        error instanceof StackImportError
+          ? error.message
+          : t('learnink.editor.importError'),
+      )
+    }
+  }
 
   function clearInvalid(key: string) {
     setValidation((current) => {
@@ -667,10 +717,30 @@ export function EditorView() {
       <PageHeader
         title={isNew ? t('learnink.editor.new') : t('learnink.editor.edit')}
         actions={
-          <Link to="learnink.stacks" variant="outline" type="back">
-            {t('learnink.result.back')}
-          </Link>
+          <>
+            <Button
+              variant="outline"
+              size="sm"
+              title={t('learnink.editor.importHint')}
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <Upload className="size-4" />
+              {t('learnink.editor.import')}
+            </Button>
+            <Link to="learnink.stacks" variant="outline" type="back">
+              {t('learnink.result.back')}
+            </Link>
+          </>
         }
+      />
+
+      {/* Versteckter Datei-Input für den JSON-Import */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".json,application/json"
+        className="hidden"
+        onChange={handleImportFile}
       />
 
       <div className="flex flex-col gap-6">
@@ -853,6 +923,10 @@ export function EditorView() {
         </Card>
 
         {saveError && <p className="text-sm text-destructive">{saveError}</p>}
+
+        {importError && (
+          <p className="text-sm text-destructive">{importError}</p>
+        )}
 
         <Button disabled={saving} onClick={handleSave} className="w-fit">
           <Save className="size-4" />

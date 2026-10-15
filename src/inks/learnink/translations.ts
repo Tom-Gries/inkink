@@ -97,6 +97,10 @@ export const translations = {
     'learnink.editor.scoring.partial': 'Anteilig je richtiger Antwort',
     'learnink.editor.scoring.partialDesc':
       'Jede richtig ausgewählte Antwort zählt anteilig zum Punktwert der Frage.',
+    'learnink.editor.import': 'Importieren',
+    'learnink.editor.importHint':
+      'Stack aus einer JSON-Datei importieren und im Editor weiterbearbeiten.',
+    'learnink.editor.importError': 'Die Datei konnte nicht importiert werden.',
     'learnink.editor.save': 'Speichern',
     'learnink.editor.saveError':
       'Speichern fehlgeschlagen. Bitte erneut versuchen.',
@@ -268,6 +272,10 @@ export const translations = {
     'learnink.editor.scoring.partial': 'Partial per correct answer',
     'learnink.editor.scoring.partialDesc':
       'Each correct answer selected counts toward the point value of the question.',
+    'learnink.editor.import': 'Import',
+    'learnink.editor.importHint':
+      'Import a stack from a JSON file and keep editing it.',
+    'learnink.editor.importError': 'The file could not be imported.',
     'learnink.editor.save': 'Save',
     'learnink.editor.saveError': 'Saving failed. Please try again.',
     'learnink.editor.loading': 'Loading stack …',
