@@ -50,6 +50,55 @@ export interface ConnectedUserDto {
 }
 
 /**
+ * Verwaltungs-Richtlinie einer Gruppe (vom Owner änderbar).
+ * Muss dem API-Schema entsprechen (api/src/schemas/connectink.ts).
+ */
+export type GroupManagement = 'owner' | 'members_add' | 'members_full'
+
+/** Rolle eines Mitglieds in einer Gruppe. */
+export type GroupRole = 'owner' | 'admin' | 'member'
+
+/** Status einer Gruppen-Einladung (wie bei Connect-Anfragen). */
+export type GroupInvitationStatus =
+  | 'pending'
+  | 'accepted'
+  | 'rejected'
+  | 'ignored'
+
+/** Mitglied einer Gruppe (mit aufgelöstem Nutzer). */
+export interface GroupMemberDto {
+  userId: string
+  name: string
+  image: string | null
+  role: GroupRole
+  addedAt: string
+}
+
+/** Gruppe inkl. meiner Rolle, Richtlinie, Mitgliedern und offenen Einladungen. */
+export interface GroupDto {
+  id: string
+  name: string
+  ownerId: string
+  management: GroupManagement
+  /** Rolle des anfragenden Nutzers in dieser Gruppe. */
+  myRole: GroupRole
+  createdAt: string
+  /** Aktive Mitglieder (acceptierte Einladungen + Owner). */
+  members: GroupMemberDto[]
+  /** Offene Einladungen (warten auf Antwort). */
+  invitations: GroupMemberDto[]
+}
+
+/** Offene Gruppen-Einladung (an mich), mit Gruppe und Einladendem. */
+export interface GroupInvitationDto {
+  id: string
+  group: { id: string; name: string }
+  invitedBy: CounterpartUserDto
+  status: GroupInvitationStatus
+  createdAt: string
+}
+
+/**
  * Explizit typisierte Subrouten (wie beim Feelings-/Stacks-Resource). Die
  * über wasserdichte Hono-Routen abgeleitete AppType verliert bei tief
  * verschachtelten Pfaden (z. B. „/requests/:id/accept") gelegentlich den Typ –
@@ -74,11 +123,46 @@ type ConnectinkConnectionsClient = {
   ':id': { $delete: (options: { param: { id: string } }) => Promise<Response> }
 }
 
+type GroupActionClient = {
+  $post: (options: {
+    param: { id: string }
+    json: { userId: string }
+  }) => Promise<Response>
+  ':userId': {
+    $delete: (options: {
+      param: { id: string; userId: string }
+    }) => Promise<Response>
+  }
+}
+
+type ConnectinkGroupsClient = {
+  $get: () => Promise<Response>
+  $post: (options: { json: { name: string } }) => Promise<Response>
+  ':id': {
+    $patch: (options: {
+      param: { id: string }
+      json: { name?: string; management?: GroupManagement }
+    }) => Promise<Response>
+    $delete: (options: { param: { id: string } }) => Promise<Response>
+    members: GroupActionClient
+    admins: GroupActionClient
+  }
+  invitations: {
+    $get: () => Promise<Response>
+    ':id': {
+      accept: RequestActionClient
+      reject: RequestActionClient
+      ignore: RequestActionClient
+    }
+  }
+}
+
 type ConnectinkApiClientShape = {
   connectink: {
     users: { $get: (options: { query: { q: string } }) => Promise<Response> }
     requests: ConnectinkRequestsClient
     connections: ConnectinkConnectionsClient
+    groups: ConnectinkGroupsClient
   }
 }
 
@@ -181,4 +265,158 @@ export async function removeConnection(
   if (!res.ok) {
     await assertOk<void>(res)
   }
+}
+/** Listet meine Gruppen (Owner/Admin/Mitglied) inkl. Mitgliedern. */
+export async function listGroups(client: ApiClient): Promise<GroupDto[]> {
+  const res = await connectinkClient(client).groups.$get()
+  const body = await assertOk<{ groups: GroupDto[] }>(res)
+
+  return body.groups
+}
+
+/** Erstellt eine Gruppe (der Ersteller wird Owner-Mitglied). */
+export async function createGroup(
+  client: ApiClient,
+  name: string,
+): Promise<GroupDto> {
+  const res = await connectinkClient(client).groups.$post({ json: { name } })
+
+  return assertOk<GroupDto>(res)
+}
+
+/** Aktualisiert Name und/oder Richtlinie einer Gruppe. */
+export async function updateGroup(
+  client: ApiClient,
+  id: string,
+  input: { name?: string; management?: GroupManagement },
+): Promise<GroupDto> {
+  const res = await connectinkClient(client).groups[':id'].$patch({
+    param: { id },
+    json: input,
+  })
+
+  return assertOk<GroupDto>(res)
+}
+
+/** Löscht eine Gruppe (nur Owner). */
+export async function deleteGroup(
+  client: ApiClient,
+  id: string,
+): Promise<void> {
+  const res = await connectinkClient(client).groups[':id'].$delete({
+    param: { id },
+  })
+
+  if (!res.ok) {
+    await assertOk<void>(res)
+  }
+}
+
+/** Fügt ein verbundenes Mitglied hinzu (nur verbundene Freunde). */
+export async function addGroupMember(
+  client: ApiClient,
+  id: string,
+  userId: string,
+): Promise<GroupDto> {
+  const res = await connectinkClient(client).groups[':id'].members.$post({
+    param: { id },
+    json: { userId },
+  })
+
+  return assertOk<GroupDto>(res)
+}
+
+/** Entfernt ein Mitglied aus einer Gruppe. */
+export async function removeGroupMember(
+  client: ApiClient,
+  id: string,
+  userId: string,
+): Promise<GroupDto> {
+  const res = await connectinkClient(client).groups[':id'].members[
+    ':userId'
+  ].$delete({
+    param: { id, userId },
+  })
+
+  return assertOk<GroupDto>(res)
+}
+
+/** ernennt ein Mitglied zum Admin (nur Owner). */
+export async function setGroupAdmin(
+  client: ApiClient,
+  id: string,
+  userId: string,
+): Promise<GroupDto> {
+  const res = await connectinkClient(client).groups[':id'].admins.$post({
+    param: { id },
+    json: { userId },
+  })
+
+  return assertOk<GroupDto>(res)
+}
+
+/** Entzieht den Admin-Status (nur Owner). */
+export async function removeGroupAdmin(
+  client: ApiClient,
+  id: string,
+  userId: string,
+): Promise<GroupDto> {
+  const res = await connectinkClient(client).groups[':id'].admins[
+    ':userId'
+  ].$delete({
+    param: { id, userId },
+  })
+
+  return assertOk<GroupDto>(res)
+}
+/** Listet offene Gruppen-Einladungen, die an mich gerichtet sind. */
+export async function listGroupInvitations(
+  client: ApiClient,
+): Promise<GroupInvitationDto[]> {
+  const res = await connectinkClient(client).groups.invitations.$get()
+  const body = await assertOk<{ invitations: GroupInvitationDto[] }>(res)
+
+  return body.invitations
+}
+
+/** Akzeptiert eine Einladung → ich werde Mitglied der Gruppe. */
+export async function acceptGroupInvitation(
+  client: ApiClient,
+  groupId: string,
+): Promise<GroupInvitationDto> {
+  const res = await connectinkClient(client).groups.invitations[
+    ':id'
+  ].accept.$post({
+    param: { id: groupId },
+  })
+
+  return assertOk<GroupInvitationDto>(res)
+}
+
+/** Lehnt eine Einladung ab (Einladende können erneut einladen). */
+export async function rejectGroupInvitation(
+  client: ApiClient,
+  groupId: string,
+): Promise<GroupInvitationDto> {
+  const res = await connectinkClient(client).groups.invitations[
+    ':id'
+  ].reject.$post({
+    param: { id: groupId },
+  })
+
+  return assertOk<GroupInvitationDto>(res)
+}
+
+/** Ignoriert eine Einladung (erneutes Einladen ist dann nicht möglich). */
+export async function ignoreGroupInvitation(
+  client: ApiClient,
+  groupId: string,
+): Promise<GroupInvitationDto> {
+  const res = await connectinkClient(client).groups.invitations[
+    ':id'
+  ].ignore.$post({
+    param: { id: groupId },
+  })
+
+  return assertOk<GroupInvitationDto>(res)
 }

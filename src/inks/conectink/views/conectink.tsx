@@ -1,16 +1,30 @@
-import { Check, Search, Trash2, UsersRound, X } from 'lucide-react'
+import { Check, Plus, Search, Trash2, UsersRound, X } from 'lucide-react'
 import { useState } from 'react'
 import {
   type ConnectedUserDto,
+  type GroupDto,
+  type GroupRole,
   type UserSearchDto,
   useAcceptConnectRequest,
+  useAcceptGroupInvitation,
+  useAddGroupMember,
   useConnectinkConnections,
+  useConnectinkGroupInvitations,
+  useConnectinkGroups,
   useConnectinkRequests,
   useConnectinkSearch,
+  useCreateGroup,
+  useDeleteGroup,
   useIgnoreConnectRequest,
+  useIgnoreGroupInvitation,
   useRejectConnectRequest,
+  useRejectGroupInvitation,
   useRemoveConnection,
+  useRemoveGroupAdmin,
+  useRemoveGroupMember,
   useSendConnectRequest,
+  useSetGroupAdmin,
+  useUpdateGroup,
 } from '../../../api/index'
 import { useTranslations } from '../../../i18n/index'
 import {
@@ -19,6 +33,7 @@ import {
   Button,
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
   ConfirmDialog,
@@ -32,6 +47,7 @@ type Tab = 'discover' | 'requests' | 'connections'
 
 type RequestsQueryResult = ReturnType<typeof useConnectinkRequests>
 type ConnectionsQueryResult = ReturnType<typeof useConnectinkConnections>
+type GroupsQueryResult = ReturnType<typeof useConnectinkGroups>
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString()
@@ -40,7 +56,8 @@ function formatDate(iso: string): string {
 /**
  * Conectink-Hauptseite: Drei Bereiche (Entdecken / Anfragen / Verbunden),
  * über eine leichte Tab-Leiste umschaltbar. Der "Anfragen"-Tab zeigt die
- * Anzahl offener eingehender Anfragen als Badge.
+ * Anzahl offener eingehender Anfragen als Badge. Unterhalb der Tabs folgt
+ * die Gruppen-Verwaltung als eigene Box.
  */
 export function ConectinkView() {
   const t = useTranslations()
@@ -48,14 +65,19 @@ export function ConectinkView() {
 
   const requests = useConnectinkRequests()
   const connections = useConnectinkConnections()
+  const groups = useConnectinkGroups()
 
   const send = useSendConnectRequest()
   const accept = useAcceptConnectRequest()
   const reject = useRejectConnectRequest()
   const ignore = useIgnoreConnectRequest()
   const remove = useRemoveConnection()
+  const deleteGroup = useDeleteGroup()
 
   const [removeTarget, setRemoveTarget] = useState<ConnectedUserDto | null>(
+    null,
+  )
+  const [groupDeleteTarget, setGroupDeleteTarget] = useState<GroupDto | null>(
     null,
   )
 
@@ -64,6 +86,12 @@ export function ConectinkView() {
   function confirmRemove() {
     if (removeTarget) {
       remove.mutate(removeTarget.id)
+    }
+  }
+
+  function confirmDeleteGroup() {
+    if (groupDeleteTarget) {
+      deleteGroup.mutate(groupDeleteTarget.id)
     }
   }
 
@@ -120,6 +148,9 @@ export function ConectinkView() {
         ) : null}
       </div>
 
+      {/* Gruppen als eigene Box unterhalb der Tabs. */}
+      <GroupsTab groups={groups} onDelete={setGroupDeleteTarget} />
+
       <ConfirmDialog
         open={removeTarget !== null}
         onOpenChange={(open) => {
@@ -138,6 +169,26 @@ export function ConectinkView() {
         cancelLabel={t('conectink.confirm.cancel')}
         destructive
         onConfirm={confirmRemove}
+      />
+
+      <ConfirmDialog
+        open={groupDeleteTarget !== null}
+        onOpenChange={(open) => {
+          if (!open) setGroupDeleteTarget(null)
+        }}
+        title={
+          groupDeleteTarget
+            ? t('conectink.groups.deleteConfirmTitle').replace(
+                '{name}',
+                groupDeleteTarget.name,
+              )
+            : ''
+        }
+        description={t('conectink.groups.deleteConfirmDescription')}
+        confirmLabel={t('conectink.groups.delete')}
+        cancelLabel={t('conectink.confirm.cancel')}
+        destructive
+        onConfirm={confirmDeleteGroup}
       />
     </PageContainer>
   )
@@ -538,6 +589,507 @@ function ConnectionsTab({
             ))}
           </ul>
         )}
+      </CardContent>
+    </Card>
+  )
+}
+/** Darf ich in der Gruppe ein Mitglied hinzufügen (Rollen-/Richtlinien-Matrix)? */
+function canAddHere(group: GroupDto): boolean {
+  if (group.myRole === 'owner' || group.myRole === 'admin') return true
+
+  return (
+    group.management === 'members_add' || group.management === 'members_full'
+  )
+}
+
+/** Darf ich in der Gruppe ein Ziel-Mitglied (Rolle) entfernen? */
+function canRemoveHere(group: GroupDto, targetRole: GroupRole): boolean {
+  if (targetRole === 'owner') return false
+  if (group.myRole === 'owner') return true
+  if (group.myRole === 'admin') return targetRole === 'member'
+
+  return group.management === 'members_full' && targetRole === 'member'
+}
+
+/**
+ * Gruppen-Box: Neue Gruppe erstellen und vorhandene Gruppen verwalten
+ * (Mitglieder hinzufügen/entfernen, Admins, Umbenennen, Richtlinie, Löschen).
+ * Eigene Box unterhalb der Tabs der Conectink-Hauptseite.
+ */
+function GroupsTab({
+  groups,
+  onDelete,
+}: {
+  groups: GroupsQueryResult
+  onDelete: (group: GroupDto) => void
+}) {
+  const t = useTranslations()
+  const create = useCreateGroup()
+  const connections = useConnectinkConnections()
+  const invitations = useConnectinkGroupInvitations()
+  const acceptInvitation = useAcceptGroupInvitation()
+  const rejectInvitation = useRejectGroupInvitation()
+  const ignoreInvitation = useIgnoreGroupInvitation()
+  const [newGroupName, setNewGroupName] = useState('')
+  const [managedId, setManagedId] = useState<string | null>(null)
+
+  const items = groups.data ?? []
+  const pendingInvitations = invitations.data ?? []
+
+  function handleCreate(event: React.FormEvent) {
+    event.preventDefault()
+    const name = newGroupName.trim()
+    if (!name) return
+    create.mutate(name, { onSuccess: () => setNewGroupName('') })
+  }
+
+  return (
+    <section className="mt-10 flex flex-col gap-6">
+      <h2 className="flex items-center gap-2 text-lg font-semibold tracking-tight text-foreground">
+        <UsersRound className="size-5" aria-hidden="true" />
+        {t('conectink.groups.title')}
+      </h2>
+
+      {pendingInvitations.length > 0 ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('conectink.groups.invitations')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="flex flex-col divide-y divide-border">
+              {pendingInvitations.map((invitation) => (
+                <li
+                  key={invitation.id}
+                  className="flex flex-wrap items-center justify-between gap-3 py-3"
+                >
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium text-foreground">
+                      {invitation.group.name}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {t('conectink.groups.invitedBy').replace(
+                        '{name}',
+                        invitation.invitedBy.name,
+                      )}
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Button
+                      size="sm"
+                      variant="success"
+                      disabled={acceptInvitation.isPending}
+                      onClick={() =>
+                        acceptInvitation.mutate(invitation.group.id)
+                      }
+                    >
+                      <Check className="size-4" />
+                      {t('conectink.groups.accept')}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={rejectInvitation.isPending}
+                      onClick={() =>
+                        rejectInvitation.mutate(invitation.group.id)
+                      }
+                    >
+                      <X className="size-4" />
+                      {t('conectink.groups.reject')}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      disabled={ignoreInvitation.isPending}
+                      onClick={() =>
+                        ignoreInvitation.mutate(invitation.group.id)
+                      }
+                    >
+                      {t('conectink.groups.ignore')}
+                    </Button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      ) : null}
+
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('conectink.groups.create')}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form
+            onSubmit={handleCreate}
+            className="flex flex-col gap-3 sm:flex-row"
+          >
+            <Input
+              value={newGroupName}
+              onChange={(event) => setNewGroupName(event.target.value)}
+              placeholder={t('conectink.groups.namePlaceholder')}
+              aria-label={t('conectink.groups.nameLabel')}
+            />
+            <Button type="submit" className="shrink-0">
+              <Plus className="size-4" />
+              {t('conectink.groups.createButton')}
+            </Button>
+          </form>
+          {create.isError ? (
+            <p className="mt-3 text-sm text-destructive">
+              {create.error instanceof Error
+                ? create.error.message
+                : t('conectink.errors.requestFailed')}
+            </p>
+          ) : null}
+        </CardContent>
+      </Card>
+
+      {groups.isLoading ? (
+        <p className="text-sm text-muted-foreground">
+          {t('conectink.loading')}
+        </p>
+      ) : groups.isError ? (
+        <p className="text-sm text-destructive">{t('conectink.loadError')}</p>
+      ) : items.length === 0 ? (
+        <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed border-border p-10 text-center">
+          <UsersRound
+            className="size-8 text-muted-foreground"
+            aria-hidden="true"
+          />
+          <p className="text-sm text-muted-foreground">
+            {t('conectink.groups.empty')}
+          </p>
+        </div>
+      ) : (
+        items.map((group) => (
+          <GroupCard
+            key={group.id}
+            group={group}
+            connected={connections.data ?? []}
+            managed={managedId === group.id}
+            onToggleManage={() =>
+              setManagedId((current) =>
+                current === group.id ? null : group.id,
+              )
+            }
+            onDelete={() => onDelete(group)}
+          />
+        ))
+      )}
+    </section>
+  )
+}
+
+/** Eine Gruppe als Karte: Mitgliederliste + Verwaltungs-Panel. */
+function GroupCard({
+  group,
+  connected,
+  managed,
+  onToggleManage,
+  onDelete,
+}: {
+  group: GroupDto
+  connected: ConnectedUserDto[]
+  managed: boolean
+  onToggleManage: () => void
+  onDelete: () => void
+}) {
+  const t = useTranslations()
+  const addMember = useAddGroupMember()
+  const removeMember = useRemoveGroupMember()
+  const setAdmin = useSetGroupAdmin()
+  const removeAdmin = useRemoveGroupAdmin()
+  const updateGroup = useUpdateGroup()
+
+  const [editName, setEditName] = useState(group.name)
+  const [policy, setPolicy] = useState(group.management)
+
+  const memberIds = new Set(group.members.map((member) => member.userId))
+  const invitedIds = new Set(
+    group.invitations.map((invitation) => invitation.userId),
+  )
+  const addable = connected.filter(
+    (connection) =>
+      !memberIds.has(connection.user.id) && !invitedIds.has(connection.user.id),
+  )
+
+  const isOwner = group.myRole === 'owner'
+  const isAdmin = group.myRole === 'admin'
+  const hasManageRights =
+    group.myRole !== 'member' || group.management !== 'owner'
+
+  function handleRename(event: React.FormEvent) {
+    event.preventDefault()
+    const name = editName.trim()
+    if (name && name !== group.name) {
+      updateGroup.mutate({ id: group.id, input: { name } })
+    }
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex flex-wrap items-center gap-2">
+          <span className="truncate">{group.name}</span>
+          <Badge variant={isOwner ? 'default' : 'secondary'}>
+            {t(`conectink.roles.${group.myRole}`)}
+          </Badge>
+        </CardTitle>
+        <CardDescription>
+          {group.members.length} {t('conectink.groups.members')}
+          {' · '}
+          {t(`conectink.policies.${group.management}`)}
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-4">
+        <ul className="flex flex-col divide-y divide-border">
+          {group.members.map((member) => (
+            <li
+              key={member.userId}
+              className="flex flex-wrap items-center justify-between gap-2 py-2"
+            >
+              <div className="flex min-w-0 items-center gap-3">
+                <AvatarControl
+                  name={member.name}
+                  src={member.image ?? undefined}
+                />
+                <p className="truncate text-sm font-medium text-foreground">
+                  {member.name}
+                </p>
+                {member.role !== 'member' ? (
+                  <Badge
+                    variant={member.role === 'owner' ? 'default' : 'secondary'}
+                  >
+                    {t(`conectink.roles.${member.role}`)}
+                  </Badge>
+                ) : null}
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                {isOwner && member.role === 'member' ? (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={setAdmin.isPending}
+                    onClick={() =>
+                      setAdmin.mutate({
+                        groupId: group.id,
+                        userId: member.userId,
+                      })
+                    }
+                  >
+                    {t('conectink.groups.makeAdmin')}
+                  </Button>
+                ) : null}
+                {isOwner && member.role === 'admin' ? (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={removeAdmin.isPending}
+                    onClick={() =>
+                      removeAdmin.mutate({
+                        groupId: group.id,
+                        userId: member.userId,
+                      })
+                    }
+                  >
+                    {t('conectink.groups.removeAdmin')}
+                  </Button>
+                ) : null}
+                {canRemoveHere(group, member.role) ? (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    disabled={removeMember.isPending}
+                    onClick={() =>
+                      removeMember.mutate({
+                        groupId: group.id,
+                        userId: member.userId,
+                      })
+                    }
+                    aria-label={t('conectink.groups.removeMember')}
+                  >
+                    <Trash2 className="size-4" />
+                  </Button>
+                ) : null}
+              </div>
+            </li>
+          ))}
+        </ul>
+        {group.invitations.length > 0 ? (
+          <div className="flex flex-col gap-2">
+            <p className="text-sm font-semibold text-foreground">
+              {t('conectink.groups.invitations')}
+            </p>
+            <ul className="flex flex-col divide-y divide-border">
+              {group.invitations.map((invitation) => (
+                <li
+                  key={invitation.userId}
+                  className="flex flex-wrap items-center justify-between gap-2 py-2"
+                >
+                  <div className="flex min-w-0 items-center gap-3">
+                    <AvatarControl
+                      name={invitation.name}
+                      src={invitation.image ?? undefined}
+                    />
+                    <p className="truncate text-sm font-medium text-foreground">
+                      {invitation.name}
+                    </p>
+                    <Badge variant="outline">
+                      {t('conectink.groups.invitedWaiting')}
+                    </Badge>
+                  </div>
+                  {canRemoveHere(group, 'member') ? (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      disabled={removeMember.isPending}
+                      onClick={() =>
+                        removeMember.mutate({
+                          groupId: group.id,
+                          userId: invitation.userId,
+                        })
+                      }
+                      aria-label={t('conectink.groups.withdrawInvite')}
+                    >
+                      <Trash2 className="size-4" />
+                    </Button>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+
+        {managed && hasManageRights ? (
+          <div className="flex flex-col gap-4 rounded-lg border border-border bg-muted/30 p-4">
+            {canAddHere(group) ? (
+              <div className="flex flex-col gap-2">
+                <p className="text-sm font-semibold text-foreground">
+                  {t('conectink.groups.addMembersTitle')}
+                </p>
+                {addable.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">
+                    {t('conectink.groups.noAddable')}
+                  </p>
+                ) : (
+                  <ul className="flex flex-col divide-y divide-border">
+                    {addable.map((connection) => (
+                      <li
+                        key={connection.user.id}
+                        className="flex items-center justify-between gap-3 py-2"
+                      >
+                        <div className="flex min-w-0 items-center gap-3">
+                          <AvatarControl
+                            name={connection.user.name}
+                            src={connection.user.image ?? undefined}
+                          />
+                          <p className="truncate text-sm font-medium text-foreground">
+                            {connection.user.name}
+                          </p>
+                        </div>
+                        <Button
+                          size="sm"
+                          disabled={addMember.isPending}
+                          onClick={() =>
+                            addMember.mutate({
+                              groupId: group.id,
+                              userId: connection.user.id,
+                            })
+                          }
+                        >
+                          {t('conectink.groups.addMember')}
+                        </Button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {addMember.isError ? (
+                  <p className="text-sm text-destructive">
+                    {addMember.error instanceof Error
+                      ? addMember.error.message
+                      : t('conectink.errors.requestFailed')}
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
+
+            {isOwner || isAdmin ? (
+              <form onSubmit={handleRename} className="flex flex-col gap-2">
+                <p className="text-sm font-semibold text-foreground">
+                  {t('conectink.groups.rename')}
+                </p>
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  <Input
+                    value={editName}
+                    onChange={(event) => setEditName(event.target.value)}
+                    aria-label={t('conectink.groups.nameLabel')}
+                  />
+                  <Button
+                    type="submit"
+                    size="sm"
+                    className="shrink-0"
+                    disabled={updateGroup.isPending}
+                  >
+                    {t('conectink.groups.save')}
+                  </Button>
+                </div>
+              </form>
+            ) : null}
+
+            {isOwner ? (
+              <div className="flex flex-col gap-2">
+                <p className="text-sm font-semibold text-foreground">
+                  {t('conectink.groups.policyTitle')}
+                </p>
+                <div className="flex flex-col gap-1.5">
+                  {(['owner', 'members_add', 'members_full'] as const).map(
+                    (option) => (
+                      <label
+                        key={option}
+                        className="flex cursor-pointer items-center gap-2 text-sm text-foreground"
+                      >
+                        <input
+                          type="radio"
+                          name={`policy-${group.id}`}
+                          checked={policy === option}
+                          onChange={() => {
+                            setPolicy(option)
+                            updateGroup.mutate({
+                              id: group.id,
+                              input: { management: option },
+                            })
+                          }}
+                        />
+                        {t(`conectink.policies.${option}`)}
+                      </label>
+                    ),
+                  )}
+                </div>
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+
+        {hasManageRights ? (
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={onToggleManage}
+              aria-expanded={managed}
+            >
+              {managed
+                ? t('conectink.groups.manageClose')
+                : t('conectink.groups.manage')}
+            </Button>
+            {isOwner ? (
+              <Button size="sm" variant="destructive" onClick={onDelete}>
+                <Trash2 className="size-4" />
+                {t('conectink.groups.delete')}
+              </Button>
+            ) : null}
+          </div>
+        ) : null}
       </CardContent>
     </Card>
   )

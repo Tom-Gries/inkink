@@ -1,14 +1,27 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { getApiClient } from '../client'
+import type { GroupManagement } from '../resources/connectink'
 import {
   acceptConnectRequest,
+  acceptGroupInvitation,
+  addGroupMember,
+  createGroup,
+  deleteGroup,
   ignoreConnectRequest,
+  ignoreGroupInvitation,
   listConnections,
+  listGroupInvitations,
+  listGroups,
   listRequests,
   rejectConnectRequest,
+  rejectGroupInvitation,
   removeConnection,
+  removeGroupAdmin,
+  removeGroupMember,
   searchUsers,
   sendConnectRequest,
+  setGroupAdmin,
+  updateGroup,
 } from '../resources/connectink'
 
 export function connectinkSearchKey(q: string) {
@@ -107,6 +120,139 @@ export function useRemoveConnection() {
 
   return useMutation({
     mutationFn: (id: string) => removeConnection(getApiClient(), id),
+    onSuccess: invalidate,
+  })
+}
+export function connectinkGroupsKey() {
+  return ['connectink', 'groups'] as const
+}
+
+export function connectinkGroupInvitationsKey() {
+  return ['connectink', 'groups', 'invitations'] as const
+}
+
+export function useConnectinkGroups() {
+  return useQuery({
+    queryKey: connectinkGroupsKey(),
+    queryFn: () => listGroups(getApiClient()),
+  })
+}
+
+export function useConnectinkGroupInvitations() {
+  return useQuery({
+    queryKey: connectinkGroupInvitationsKey(),
+    queryFn: () => listGroupInvitations(getApiClient()),
+  })
+}
+
+/** Invalidiert nach Gruppen-Mutationen Gruppen + offene Einladungen. */
+function useInvalidateGroups() {
+  const queryClient = useQueryClient()
+
+  return () => {
+    queryClient.invalidateQueries({ queryKey: connectinkGroupsKey() })
+    queryClient.invalidateQueries({
+      queryKey: connectinkGroupInvitationsKey(),
+    })
+  }
+}
+
+export function useCreateGroup() {
+  const invalidate = useInvalidateGroups()
+
+  return useMutation({
+    mutationFn: (name: string) => createGroup(getApiClient(), name),
+    onSuccess: invalidate,
+  })
+}
+
+export function useUpdateGroup() {
+  const invalidate = useInvalidateGroups()
+
+  return useMutation({
+    mutationFn: (args: {
+      id: string
+      input: { name?: string; management?: GroupManagement }
+    }) => updateGroup(getApiClient(), args.id, args.input),
+    onSuccess: invalidate,
+  })
+}
+
+export function useDeleteGroup() {
+  const invalidate = useInvalidateGroups()
+
+  return useMutation({
+    mutationFn: (id: string) => deleteGroup(getApiClient(), id),
+    onSuccess: invalidate,
+  })
+}
+
+export function useAddGroupMember() {
+  const invalidate = useInvalidateGroups()
+
+  return useMutation({
+    mutationFn: (args: { groupId: string; userId: string }) =>
+      addGroupMember(getApiClient(), args.groupId, args.userId),
+    onSuccess: invalidate,
+  })
+}
+
+export function useRemoveGroupMember() {
+  const invalidate = useInvalidateGroups()
+
+  return useMutation({
+    mutationFn: (args: { groupId: string; userId: string }) =>
+      removeGroupMember(getApiClient(), args.groupId, args.userId),
+    onSuccess: invalidate,
+  })
+}
+
+export function useSetGroupAdmin() {
+  const invalidate = useInvalidateGroups()
+
+  return useMutation({
+    mutationFn: (args: { groupId: string; userId: string }) =>
+      setGroupAdmin(getApiClient(), args.groupId, args.userId),
+    onSuccess: invalidate,
+  })
+}
+
+export function useRemoveGroupAdmin() {
+  const invalidate = useInvalidateGroups()
+
+  return useMutation({
+    mutationFn: (args: { groupId: string; userId: string }) =>
+      removeGroupAdmin(getApiClient(), args.groupId, args.userId),
+    onSuccess: invalidate,
+  })
+}
+
+export function useAcceptGroupInvitation() {
+  const invalidate = useInvalidateGroups()
+
+  return useMutation({
+    mutationFn: (groupId: string) =>
+      acceptGroupInvitation(getApiClient(), groupId),
+    onSuccess: invalidate,
+  })
+}
+
+export function useRejectGroupInvitation() {
+  const invalidate = useInvalidateGroups()
+
+  return useMutation({
+    mutationFn: (groupId: string) =>
+      rejectGroupInvitation(getApiClient(), groupId),
+    onSuccess: invalidate,
+  })
+}
+
+export function useIgnoreGroupInvitation() {
+  const invalidate = useInvalidateGroups()
+
+  return useMutation({
+    mutationFn: (groupId: string) =>
+      ignoreGroupInvitation(getApiClient(), groupId),
     onSuccess: invalidate,
   })
 }
