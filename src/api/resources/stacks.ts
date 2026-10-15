@@ -41,6 +41,8 @@ export interface StackDto {
   archived: boolean
   questions: QuestionDto[]
   leaderboard: LeaderboardEntryDto[]
+  /** Gruppen, denen der Stack zugeordnet ist (mit Namen). */
+  groups: Array<{ id: string; name: string }>
 }
 
 export interface StackInputDto {
@@ -51,6 +53,8 @@ export interface StackInputDto {
   /** Öffentlich (true) oder privat (false) – Default public. */
   isPublic: boolean
   questions: QuestionDto[]
+  /** Gruppen, denen der Stack zugeordnet ist (viele-zu-viele). */
+  groupIds: string[]
 }
 
 /**
@@ -78,7 +82,7 @@ type StackIdClient = {
 
 type StacksApiClientShape = {
   stacks: {
-    $get: () => Promise<Response>
+    $get: (options?: { query?: { mine?: string } }) => Promise<Response>
     $post: (options: { json: StackInputDto }) => Promise<Response>
     ':id': StackIdClient
   }
@@ -88,8 +92,13 @@ function stacksClient(client: ApiClient): StacksApiClientShape {
   return (client as unknown as { api: StacksApiClientShape }).api
 }
 
-export async function listStacks(client: ApiClient): Promise<StackDto[]> {
-  const res = await stacksClient(client).stacks.$get()
+export async function listStacks(
+  client: ApiClient,
+  options?: { mine?: boolean },
+): Promise<StackDto[]> {
+  const res = await stacksClient(client).stacks.$get({
+    ...(options?.mine ? { query: { mine: 'true' } } : {}),
+  })
   return assertOk<StackDto[]>(res)
 }
 

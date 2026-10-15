@@ -1,14 +1,20 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
-import { Plus, Save, Trash2 } from 'lucide-react'
+import { ChevronDown, Plus, Save, Trash2 } from 'lucide-react'
 import { type ReactNode, useEffect, useState } from 'react'
 import type {
   AnswerOptionDto,
   Appearance,
+  GroupDto,
   QuestionType,
   Scoring,
   StackDto,
 } from '../../../api/index'
-import { useCreateStack, useStack, useUpdateStack } from '../../../api/index'
+import {
+  useConnectinkGroups,
+  useCreateStack,
+  useStack,
+  useUpdateStack,
+} from '../../../api/index'
 import { useTranslations } from '../../../i18n/index'
 import {
   Button,
@@ -236,6 +242,7 @@ export function EditorView() {
   const { data, isLoading, isError, error } = useStack(stackId)
   const create = useCreateStack()
   const update = useUpdateStack()
+  const groups = useConnectinkGroups()
   const user = useAuthStore((state) => state.user)
   const navigate = useNavigate()
 
@@ -253,6 +260,10 @@ export function EditorView() {
   const [passingScore, setPassingScore] = useState<number>(0)
   // Neue Stacks sind standardmäßig öffentlich (Default in Schema/API).
   const [isPublic, setIsPublic] = useState(true)
+  // Gruppen, denen der Stack zugeordnet ist (viele-zu-viele).
+  const [groupIds, setGroupIds] = useState<string[]>([])
+  // Gruppen-Auswahl ist standardmäßig eingeklappt.
+  const [groupsExpanded, setGroupsExpanded] = useState(false)
   const [questions, setQuestions] = useState<DraftQuestion[]>([])
   const [saveError, setSaveError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
@@ -275,6 +286,7 @@ export function EditorView() {
     setPassingEnabled((data.passingScore ?? 0) > 0)
     setPassingScore(data.passingScore ?? 0)
     setIsPublic(data.isPublic ?? true)
+    setGroupIds(data.groups.map((group) => group.id))
     setQuestions(toDraft(data))
   }, [data])
 
@@ -396,6 +408,7 @@ export function EditorView() {
       examTime: examEnabled ? examMinutes * 60 : 0,
       passingScore: passingEnabled ? Math.max(0, Math.floor(passingScore)) : 0,
       isPublic,
+      groupIds,
       questions: questions.map((question) => ({
         id: question.id,
         type: question.type,
@@ -764,6 +777,53 @@ export function EditorView() {
                 {t('learnink.editor.visibilityLoginHint')}
               </p>
             )}
+            {user && groups.data && groups.data.length > 0 ? (
+              <div className="mt-4">
+                <button
+                  type="button"
+                  onClick={() => setGroupsExpanded((current) => !current)}
+                  aria-expanded={groupsExpanded}
+                  className="flex w-full cursor-pointer items-center justify-between gap-2 text-sm font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <span>{t('learnink.editor.groups')}</span>
+                  <ChevronDown
+                    className={cn(
+                      'size-4 transition-transform',
+                      groupsExpanded && 'rotate-180',
+                    )}
+                    aria-hidden="true"
+                  />
+                </button>
+                {groupsExpanded ? (
+                  <div className="mt-2">
+                    <p className="text-xs leading-5 text-muted-foreground">
+                      {t('learnink.editor.groupsHint')}
+                    </p>
+                    <div className="mt-2 flex flex-col gap-1.5">
+                      {groups.data.map((group: GroupDto) => (
+                        <label
+                          key={group.id}
+                          className="flex cursor-pointer items-center gap-2 text-sm text-foreground"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={groupIds.includes(group.id)}
+                            onChange={() =>
+                              setGroupIds((current) =>
+                                current.includes(group.id)
+                                  ? current.filter((id) => id !== group.id)
+                                  : [...current, group.id],
+                              )
+                            }
+                          />
+                          {group.name}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
           </CardContent>
         </Card>
 

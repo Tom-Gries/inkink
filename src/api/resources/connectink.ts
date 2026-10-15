@@ -1,5 +1,6 @@
 import type { ApiClient } from '../client'
 import { assertOk } from '../errors'
+import type { StackDto } from './stacks'
 
 /**
  * Relation des anfragenden Nutzers zu einem gefundenen Nutzer.
@@ -146,6 +147,7 @@ type ConnectinkGroupsClient = {
     $delete: (options: { param: { id: string } }) => Promise<Response>
     members: GroupActionClient
     admins: GroupActionClient
+    stacks: { $get: (options: { param: { id: string } }) => Promise<Response> }
   }
   invitations: {
     $get: () => Promise<Response>
@@ -419,4 +421,16 @@ export async function ignoreGroupInvitation(
   })
 
   return assertOk<GroupInvitationDto>(res)
+}
+/** Listet die Stacks einer Gruppe (sichtbar für Gruppenmitglieder). */
+export async function listGroupStacks(
+  client: ApiClient,
+  groupId: string,
+): Promise<StackDto[]> {
+  const res = await connectinkClient(client).groups[':id'].stacks.$get({
+    param: { id: groupId },
+  })
+  const body = await assertOk<{ stacks: StackDto[] }>(res)
+
+  return body.stacks
 }

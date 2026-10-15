@@ -37,6 +37,19 @@ export function StacksView() {
   // Archivierte Stapel werden nicht mehr angezeigt.
   const stacks = (data ?? []).filter((stack) => !stack.archived)
 
+  // Sortierung: nach Name oder nach (erstem) Gruppennamen.
+  const [sortBy, setSortBy] = useState<'name' | 'group'>('name')
+
+  const sortedStacks = [...stacks].sort((a, b) => {
+    if (sortBy === 'group') {
+      const groupA = a.groups[0]?.name ?? ''
+      const groupB = b.groups[0]?.name ?? ''
+      const byGroup = groupA.localeCompare(groupB)
+      if (byGroup !== 0) return byGroup
+    }
+    return a.name.localeCompare(b.name)
+  })
+
   // Bestätigungsdialog vor dem Archivieren (statt window.confirm).
   const [archiveTarget, setArchiveTarget] = useState<StackDto | null>(null)
 
@@ -57,6 +70,22 @@ export function StacksView() {
         }
       />
 
+      <div className="mb-4 flex items-center gap-2">
+        <span className="text-sm text-muted-foreground">
+          {t('learnink.stacks.sortBy')}
+        </span>
+        <select
+          value={sortBy}
+          onChange={(event) =>
+            setSortBy(event.target.value as 'name' | 'group')
+          }
+          className="h-9 rounded-md border border-input bg-background px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <option value="name">{t('learnink.stacks.sortName')}</option>
+          <option value="group">{t('learnink.stacks.sortGroup')}</option>
+        </select>
+      </div>
+
       {isLoading ? (
         <p className="text-sm text-muted-foreground">
           {t('learnink.stacks.loading')}
@@ -72,7 +101,7 @@ export function StacksView() {
         </div>
       ) : (
         <ul className="flex flex-col gap-4">
-          {stacks.map((stack) => (
+          {sortedStacks.map((stack) => (
             <li key={stack.id}>
               <Card>
                 <CardHeader className="flex-row items-start justify-between">
@@ -84,6 +113,11 @@ export function StacksView() {
                           ? t('learnink.stack.visibility.public')
                           : t('learnink.stack.visibility.private')}
                       </Badge>
+                      {stack.groups.map((group) => (
+                        <Badge key={group.id} variant="secondary">
+                          {group.name}
+                        </Badge>
+                      ))}
                     </CardTitle>
                     <CardDescription>
                       {stack.creatorName}

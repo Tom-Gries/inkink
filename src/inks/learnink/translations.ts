@@ -16,6 +16,9 @@ export const translations = {
     'learnink.stacks.create': 'Neuer Stack',
     'learnink.stacks.loading': 'Stacks werden geladen …',
     'learnink.stacks.error': 'Stacks konnten nicht geladen werden.',
+    'learnink.stacks.sortBy': 'Sortieren nach',
+    'learnink.stacks.sortName': 'Name',
+    'learnink.stacks.sortGroup': 'Gruppe',
     'learnink.stack.archived': 'Archiviert',
     'learnink.stack.learn': 'Lernen',
     'learnink.stack.edit': 'Bearbeiten',
@@ -114,6 +117,9 @@ export const translations = {
       'Öffentliche Stacks sind für alle sichtbar. Private Stacks siehst nur du.',
     'learnink.editor.visibilityLoginHint':
       'Melde dich an, um Stacks privat zu stellen.',
+    'learnink.editor.groups': 'Gruppen',
+    'learnink.editor.groupsHint':
+      'Ordne den Stack Gruppen zu – Mitglieder sehen ihn dann dort.',
     /* Learn */
     'learnink.learn.title': 'Lernen',
     'learnink.learn.subtitle':
@@ -185,6 +191,9 @@ export const translations = {
     'learnink.stacks.create': 'New stack',
     'learnink.stacks.loading': 'Loading stacks …',
     'learnink.stacks.error': 'Could not load stacks.',
+    'learnink.stacks.sortBy': 'Sort by',
+    'learnink.stacks.sortName': 'Name',
+    'learnink.stacks.sortGroup': 'Group',
     'learnink.stack.archived': 'Archived',
     'learnink.stack.learn': 'Learn',
     'learnink.stack.edit': 'Edit',
@@ -275,6 +284,9 @@ export const translations = {
     'learnink.editor.visibilityHint':
       'Public stacks are visible to everyone. Private stacks are only visible to you.',
     'learnink.editor.visibilityLoginHint': 'Log in to make stacks private.',
+    'learnink.editor.groups': 'Groups',
+    'learnink.editor.groupsHint':
+      'Assign the stack to groups – members will see it there.',
     'learnink.learn.title': 'Learn',
     'learnink.learn.subtitle': 'Answer the questions and get instant feedback.',
     'learnink.learn.question': 'Question {current} of {total}',

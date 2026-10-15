@@ -1,9 +1,19 @@
-import { Check, Plus, Search, Trash2, UsersRound, X } from 'lucide-react'
+import {
+  BookOpen,
+  Check,
+  Plus,
+  Search,
+  Trash2,
+  UsersRound,
+  X,
+} from 'lucide-react'
 import { useState } from 'react'
 import {
   type ConnectedUserDto,
   type GroupDto,
   type GroupRole,
+  type StackDto,
+  type StackInputDto,
   type UserSearchDto,
   useAcceptConnectRequest,
   useAcceptGroupInvitation,
@@ -15,6 +25,7 @@ import {
   useConnectinkSearch,
   useCreateGroup,
   useDeleteGroup,
+  useGroupStacks,
   useIgnoreConnectRequest,
   useIgnoreGroupInvitation,
   useRejectConnectRequest,
@@ -24,7 +35,9 @@ import {
   useRemoveGroupMember,
   useSendConnectRequest,
   useSetGroupAdmin,
+  useStacks,
   useUpdateGroup,
+  useUpdateStack,
 } from '../../../api/index'
 import { useTranslations } from '../../../i18n/index'
 import {
@@ -39,6 +52,7 @@ import {
   ConfirmDialog,
   cn,
   Input,
+  Link,
   PageContainer,
   PageHeader,
 } from '../../../ui/index'
@@ -800,6 +814,9 @@ function GroupCard({
   const setAdmin = useSetGroupAdmin()
   const removeAdmin = useRemoveGroupAdmin()
   const updateGroup = useUpdateGroup()
+  const groupStacks = useGroupStacks(group.id)
+  const myStacks = useStacks({ mine: true })
+  const updateStack = useUpdateStack()
 
   const [editName, setEditName] = useState(group.name)
   const [policy, setPolicy] = useState(group.management)
@@ -813,6 +830,16 @@ function GroupCard({
       !memberIds.has(connection.user.id) && !invitedIds.has(connection.user.id),
   )
 
+  const groupStackIds = new Set(
+    (groupStacks.data ?? []).map((stack) => stack.id),
+  )
+  const addableStacks = (myStacks.data ?? []).filter(
+    (stack) => !groupStackIds.has(stack.id),
+  )
+  const groupStackList = (groupStacks.data ?? []).filter(
+    (stack) => !stack.archived,
+  )
+
   const isOwner = group.myRole === 'owner'
   const isAdmin = group.myRole === 'admin'
   const hasManageRights =
@@ -824,6 +851,40 @@ function GroupCard({
     if (name && name !== group.name) {
       updateGroup.mutate({ id: group.id, input: { name } })
     }
+  }
+
+  function stackToInput(stack: StackDto): StackInputDto {
+    return {
+      name: stack.name,
+      creatorName: stack.creatorName,
+      examTime: stack.examTime,
+      passingScore: stack.passingScore,
+      isPublic: stack.isPublic,
+      questions: stack.questions,
+      groupIds: stack.groups.map((g) => g.id),
+    }
+  }
+
+  function addStackToGroup(stack: StackDto) {
+    updateStack.mutate({
+      id: stack.id,
+      input: {
+        ...stackToInput(stack),
+        groupIds: [...stack.groups.map((g) => g.id), group.id],
+      },
+    })
+  }
+
+  function removeStackFromGroup(stack: StackDto) {
+    updateStack.mutate({
+      id: stack.id,
+      input: {
+        ...stackToInput(stack),
+        groupIds: stack.groups
+          .filter((g) => g.id !== group.id)
+          .map((g) => g.id),
+      },
+    })
   }
 
   return (
@@ -959,6 +1020,90 @@ function GroupCard({
             </ul>
           </div>
         ) : null}
+        <div className="flex flex-col gap-2">
+          <p className="text-sm font-semibold text-foreground">
+            {t('conectink.groups.stacks')}
+          </p>
+          {groupStacks.isLoading ? (
+            <p className="text-sm text-muted-foreground">
+              {t('conectink.loading')}
+            </p>
+          ) : groupStackList.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              {t('conectink.groups.stacksEmpty')}
+            </p>
+          ) : (
+            <ul className="flex flex-col divide-y divide-border">
+              {groupStackList.map((stack) => (
+                <li
+                  key={stack.id}
+                  className="flex flex-wrap items-center justify-between gap-2 py-2"
+                >
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium text-foreground">
+                      {stack.name}
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Link
+                      to="learnink.learn"
+                      params={{ id: stack.id }}
+                      variant="outline"
+                      type="next"
+                    >
+                      <BookOpen className="size-4" />
+                      {t('conectink.groups.learn')}
+                    </Link>
+                    {(myStacks.data ?? []).some((s) => s.id === stack.id) ? (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        disabled={updateStack.isPending}
+                        onClick={() => removeStackFromGroup(stack)}
+                        aria-label={t('conectink.groups.removeStack')}
+                      >
+                        <Trash2 className="size-4" />
+                      </Button>
+                    ) : null}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+          {addableStacks.length > 0 ? (
+            <div className="flex flex-col gap-2">
+              <p className="text-sm font-semibold text-foreground">
+                {t('conectink.groups.addStack')}
+              </p>
+              <ul className="flex flex-col divide-y divide-border">
+                {addableStacks.map((stack) => (
+                  <li
+                    key={stack.id}
+                    className="flex flex-wrap items-center justify-between gap-2 py-2"
+                  >
+                    <p className="truncate text-sm font-medium text-foreground">
+                      {stack.name}
+                    </p>
+                    <Button
+                      size="sm"
+                      disabled={updateStack.isPending}
+                      onClick={() => addStackToGroup(stack)}
+                    >
+                      {t('conectink.groups.addStackButton')}
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+          {updateStack.isError ? (
+            <p className="text-sm text-destructive">
+              {updateStack.error instanceof Error
+                ? updateStack.error.message
+                : t('conectink.errors.requestFailed')}
+            </p>
+          ) : null}
+        </div>
 
         {managed && hasManageRights ? (
           <div className="flex flex-col gap-4 rounded-lg border border-border bg-muted/30 p-4">
