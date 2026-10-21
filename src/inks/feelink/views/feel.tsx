@@ -180,7 +180,7 @@ export function FeelView() {
                       })}
                     </div>
                     {entry.note && (
-                      <p className="mt-1 text-sm break-words text-muted-foreground">
+                      <p className="mt-1 text-sm break-words whitespace-pre-wrap text-muted-foreground">
                         {entry.note}
                       </p>
                     )}
