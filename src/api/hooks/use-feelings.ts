@@ -4,6 +4,7 @@ import type { FeelingInputDto } from '../resources/feelings'
 import {
   createFeeling,
   deleteFeeling,
+  getFeelingsStatus,
   listFeelings,
 } from '../resources/feelings'
 
@@ -15,6 +16,13 @@ export function useFeelings() {
   return useQuery({
     queryKey: feelingsKey(),
     queryFn: () => listFeelings(getApiClient()),
+  })
+}
+
+export function useFeelingsStatus() {
+  return useQuery({
+    queryKey: ['feelings-status'],
+    queryFn: () => getFeelingsStatus(getApiClient()),
   })
 }
 

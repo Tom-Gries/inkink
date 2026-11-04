@@ -266,8 +266,8 @@ export function EditorView() {
   )
   const [passingEnabled, setPassingEnabled] = useState(false)
   const [passingScore, setPassingScore] = useState<number>(0)
-  // Neue Stacks sind standardmäßig öffentlich (Default in Schema/API).
-  const [isPublic, setIsPublic] = useState(true)
+  // Angemeldete Nutzer geben neue Stacks ausdrücklich frei.
+  const [isPublic, setIsPublic] = useState(!user)
   // Gruppen, denen der Stack zugeordnet ist (viele-zu-viele).
   const [groupIds, setGroupIds] = useState<string[]>([])
   // Gruppen-Auswahl ist standardmäßig eingeklappt.
@@ -313,7 +313,7 @@ export function EditorView() {
     )
     setPassingEnabled((input.passingScore ?? 0) > 0)
     setPassingScore(input.passingScore ?? 0)
-    setIsPublic(input.isPublic ?? true)
+    setIsPublic(user ? (input.isPublic ?? false) : true)
     setGroupIds(input.groupIds ?? [])
     setQuestions(toDraft(input))
     setValidation({})

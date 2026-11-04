@@ -209,7 +209,7 @@ export function parseStackImport(json: string): StackInputDto {
     creatorName: asString(parsed.creatorName),
     examTime: Math.floor(asNumber(parsed.examTime, DEFAULT_EXAM_TIME_SECONDS)),
     passingScore: Math.floor(asNumber(parsed.passingScore, 0)),
-    isPublic: asBoolean(parsed.isPublic, true),
+    isPublic: asBoolean(parsed.isPublic, false),
     questions,
     groupIds,
   }

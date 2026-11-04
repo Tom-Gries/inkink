@@ -20,6 +20,7 @@ export interface FeelingDto {
 }
 
 export interface FeelingInputDto {
+  consent: { granted: true; version: '2026-10-27' }
   moods: FeelingMood[]
   note: string
 }
@@ -36,10 +37,19 @@ type FeelingIdClient = {
 
 type FeelingsApiClientShape = {
   feelings: {
+    status: { $get: () => Promise<Response> }
     $get: () => Promise<Response>
     $post: (options: { json: FeelingInputDto }) => Promise<Response>
     ':id': FeelingIdClient
   }
+}
+
+export function getFeelingsStatus(client: ApiClient) {
+  return feelingsClient(client)
+    .feelings.status.$get()
+    .then((response) =>
+      assertOk<{ enabled: boolean; consentVersion: string }>(response),
+    )
 }
 
 function feelingsClient(client: ApiClient): FeelingsApiClientShape {

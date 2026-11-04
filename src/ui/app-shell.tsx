@@ -37,6 +37,8 @@ export interface AppShellProps {
   brand?: ReactNode
   /** Footer unten; ohne Angabe wird ein Platzhalter-Profil angezeigt. */
   footer?: ReactNode
+  /** Seitenweiter Footer unter dem Inhalt, auch ohne Anmeldung sichtbar. */
+  contentFooter?: ReactNode
   /** Profil für den Standard-Footer; Default ist ein Mock-Profil. */
   profile?: ShellProfile
   /**
@@ -174,6 +176,7 @@ export function AppShell({
   groups,
   brand,
   footer,
+  contentFooter,
   profile,
   authenticated = true,
   children,
@@ -262,6 +265,7 @@ export function AppShell({
         </header>
 
         <main className="min-w-0 flex-1">{children}</main>
+        {contentFooter}
       </div>
     </div>
   )

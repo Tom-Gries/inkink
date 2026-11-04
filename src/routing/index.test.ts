@@ -183,6 +183,33 @@ describe('Route Guards', () => {
     expect(onPublicRoute).toHaveBeenCalledOnce()
   })
 
+  it.each([
+    '/impressum',
+    '/datenschutz',
+  ] as const)('macht %s nach einer geschützten Route ohne Anmeldung erreichbar', async (path) => {
+    const onAuthRequired = vi.fn()
+    const onPublicRoute = vi.fn()
+    const isAuthenticated = vi.fn(() => false)
+    const router = createInkRouter(
+      createRootRoute({ component: () => null }),
+      [guardInk('auth')],
+      { isAuthenticated, onAuthRequired, onPublicRoute },
+    )
+
+    await router.navigate({ to: '/guard-test/seite' as never })
+    expect(onAuthRequired).toHaveBeenCalledOnce()
+    isAuthenticated.mockClear()
+
+    await router.navigate({ to: path })
+
+    expect(router.state.matches.some((match) => match.routeId === path)).toBe(
+      true,
+    )
+    expect(onPublicRoute).toHaveBeenCalledOnce()
+    expect(isAuthenticated).not.toHaveBeenCalled()
+    expect(onAuthRequired).toHaveBeenCalledOnce()
+  })
+
   it('ruft onPublicRoute NICHT beim Preload einer öffentlichen Route auf', async () => {
     const onPublicRoute = vi.fn()
     const router = createInkRouter(

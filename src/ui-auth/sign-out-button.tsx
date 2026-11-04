@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import type { ReactNode } from 'react'
 import { useState } from 'react'
@@ -21,6 +22,7 @@ export interface SignOutButtonProps {
 export function SignOutButton({ className, children }: SignOutButtonProps) {
   const t = useTranslations()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const signOut = useAuthStore((state) => state.signOut)
   const [pending, setPending] = useState(false)
 
@@ -28,6 +30,8 @@ export function SignOutButton({ className, children }: SignOutButtonProps) {
     setPending(true)
     try {
       await signOut()
+      await queryClient.cancelQueries()
+      queryClient.clear()
       // Zurück zur öffentlichen Home-Route (kein Coupling an einen
       // konkreten Ink); nach der Abmeldung hat der User keine Session.
       await navigate({ to: '/' })

@@ -7,7 +7,22 @@ export interface AvatarProps {
   className?: string
 }
 
+/** Nur normalisierte lokale Pfade zulassen; auch Browser-URL-Sonderfälle prüfen. */
+export function getLocalAvatarSrc(src: string | undefined): string | undefined {
+  if (!src) return undefined
+  try {
+    const base = 'https://inkink.invalid'
+    const url = new URL(src, base)
+    return url.origin === base && !url.pathname.startsWith('//')
+      ? `${url.pathname}${url.search}${url.hash}`
+      : undefined
+  } catch {
+    return undefined
+  }
+}
+
 export function AvatarControl({ src, name, className }: AvatarProps) {
+  const localSrc = getLocalAvatarSrc(src)
   const initials = name
     .split(' ')
     .filter(Boolean)
@@ -23,8 +38,12 @@ export function AvatarControl({ src, name, className }: AvatarProps) {
         className,
       )}
     >
-      {src ? (
-        <Avatar.Image src={src} alt={name} className="size-full object-cover" />
+      {localSrc ? (
+        <Avatar.Image
+          src={localSrc}
+          alt={name}
+          className="size-full object-cover"
+        />
       ) : null}
       <Avatar.Fallback className="flex size-full items-center justify-center">
         {initials}

@@ -32,6 +32,7 @@ export {
   useCreateFeeling,
   useDeleteFeeling,
   useFeelings,
+  useFeelingsStatus,
 } from './hooks/use-feelings'
 export { useMe } from './hooks/use-me'
 export {

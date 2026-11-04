@@ -6,7 +6,9 @@ import {
 import type { Definition, RouteGuard } from '../core/index'
 import { ErrorView } from './views/error'
 import { HomeView } from './views/home'
+import { ImprintView } from './views/imprint'
 import { NotFoundView } from './views/not-found'
+import { PrivacyView } from './views/privacy'
 
 export { translations } from './translations'
 
@@ -72,9 +74,31 @@ function createInkRoutes<TRootRoute extends AnyRoute>(
     },
   })
 
+  const imprintRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: '/impressum',
+    component: ImprintView,
+    beforeLoad: ({ cause }) => {
+      if (cause !== 'preload') {
+        options.onPublicRoute?.()
+      }
+    },
+  })
+
+  const privacyRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: '/datenschutz',
+    component: PrivacyView,
+    beforeLoad: ({ cause }) => {
+      if (cause !== 'preload') options.onPublicRoute?.()
+    },
+  })
+
   return [
     indexRoute,
     errorRoute,
+    imprintRoute,
+    privacyRoute,
 
     ...inks.flatMap((ink) =>
       ink.routes.map((route) => {

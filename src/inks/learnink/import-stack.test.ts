@@ -23,7 +23,7 @@ describe('parseStackImport', () => {
     expect(stack.creatorName).toBe('')
     expect(stack.examTime).toBe(600)
     expect(stack.passingScore).toBe(0)
-    expect(stack.isPublic).toBe(true)
+    expect(stack.isPublic).toBe(false)
     expect(stack.groupIds).toEqual([])
     expect(stack.questions).toHaveLength(1)
 

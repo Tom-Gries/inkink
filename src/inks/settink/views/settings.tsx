@@ -18,6 +18,7 @@ import {
   SignOutButton,
   useAuthStore,
 } from '../../../ui-auth/index'
+import { DataControls } from './data-controls'
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error'
 
@@ -131,6 +132,8 @@ export function SettingsView() {
               </CardContent>
             </Card>
           )}
+
+          {isAuthenticated && <DataControls />}
 
           {/* Sprache */}
           <Card>
