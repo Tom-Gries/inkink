@@ -24,7 +24,8 @@ isolierten Tests, ohne Produktivdeploy oder Zugriff auf echte Nutzerdaten.
   nach § 18 Absatz 1 MStV. Ohne Anmeldung, auch vom Loginbildschirm aus erreichbar.
 - **Datenschutzhinweise:** `/datenschutz`, auf Deutsch und Englisch, mit
   Verantwortlichem, Datenarten, Zwecken, Rechtsgrundlagen, Sichtbarkeit,
-  Einwilligung und Betroffenenrechten. Beide Rechtstexte sind im Footer verlinkt.
+  Einwilligung und Betroffenenrechten. Beide Rechtstexte sind in der Navigation
+  verlinkt, auf Desktop und im mobilen Menü auch ohne Anmeldung.
   Noch unbekannte Hostingangaben werden ausdrücklich als offen bezeichnet.
 - **Datenexport:** angemeldete Nutzer können in den Einstellungen ihre eigenen
   Daten als JSON herunterladen. Tokens, Passwörter und fremde private Inhalte

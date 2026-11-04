@@ -13,6 +13,8 @@ export interface SidebarItem {
   key: string
   label: ReactNode
   to?: string
+  /** Direkter Pfad zu einer appweiten Route außerhalb der Inks. */
+  path?: string
   icon?: ReactNode
   onClick?: () => void
 }
@@ -37,8 +39,6 @@ export interface AppShellProps {
   brand?: ReactNode
   /** Footer unten; ohne Angabe wird ein Platzhalter-Profil angezeigt. */
   footer?: ReactNode
-  /** Seitenweiter Footer unter dem Inhalt, auch ohne Anmeldung sichtbar. */
-  contentFooter?: ReactNode
   /** Profil für den Standard-Footer; Default ist ein Mock-Profil. */
   profile?: ShellProfile
   /**
@@ -98,9 +98,9 @@ function SidebarItemLink({
   onNavigate?: () => void
 }) {
   const pathname = useLocation().pathname
+  const path = item.path ?? (item.to ? resolveInkRoute(item.to) : undefined)
 
-  if (item.to) {
-    const path = resolveInkRoute(item.to)
+  if (path) {
     const active = pathname === path
 
     return (
@@ -176,7 +176,6 @@ export function AppShell({
   groups,
   brand,
   footer,
-  contentFooter,
   profile,
   authenticated = true,
   children,
@@ -265,7 +264,6 @@ export function AppShell({
         </header>
 
         <main className="min-w-0 flex-1">{children}</main>
-        {contentFooter}
       </div>
     </div>
   )
