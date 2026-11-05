@@ -92,7 +92,7 @@ export const privacyContent = {
           'Profil und Kontakte: dein Benutzername, Verbindungsanfragen, Kontaktbeziehungen, Gruppen, Einladungen und Mitgliedschaften. Andere angemeldete Nutzer können dich über die Nutzersuche finden; Beteiligte sehen die für Kontakte und Gruppen vorgesehenen Angaben. Deine E-Mail-Adresse wird dort nicht angezeigt.',
           'Lernstacks: Titel, angegebener Erstellername, Fragen, Antworten, Erklärungen und Einstellungen. Bei angemeldeten Nutzern sind neue Stacks zunächst privat. Wenn du einen Stack veröffentlichst, können seine Inhalte und der Erstellername öffentlich sichtbar werden. Bei einer Zuordnung zu Gruppen können deren berechtigte Mitglieder darauf zugreifen. Ohne Anmeldung erstellte Stacks sind öffentlich.',
           'Ranglisten: Wenn du dich ausdrücklich einträgst, werden dein gewählter Ranglistenname, Punktzahl und Zeit beim jeweiligen Stack gespeichert und für dessen berechtigte Leser angezeigt. Verwende einen frei gewählten Namen, wenn du deinen Klarnamen nicht veröffentlichen möchtest.',
-          'Mindmaps: Titel, Inhalte, Verbindungen, Layout und Änderungszeitpunkt werden deinem Konto zugeordnet und für dich gespeichert.',
+          'Bereits gespeicherte Mindmaps aus der früheren Mindink-Funktion: Titel, Inhalte, Verbindungen, Layout und Änderungszeitpunkt bleiben deinem Konto zugeordnet. Du kannst sie weiterhin über den Datenexport herunterladen oder zusammen mit deinem Konto löschen.',
         ],
       },
       {
@@ -215,7 +215,7 @@ export const privacyContent = {
           'Profile and contacts: your username, connection requests, contact relationships, groups, invitations and memberships. Other signed-in users can find you using the user search; participants see information intended for contact and group functions. Your email address is not shown there.',
           'Learning stacks: title, supplied creator name, questions, answers, explanations and settings. New stacks created by signed-in users are private initially. Publishing a stack can make its content and creator name public. Sharing with groups can give their authorized members access. Stacks created without signing in are public.',
           'Leaderboards: when you explicitly choose to submit an entry, the name you select, score and time are stored with the stack and shown to its authorized readers. Choose a nickname if you do not want to publish your real name.',
-          'Mind maps: titles, content, connections, layout and modification time are stored for you and associated with your account.',
+          'Previously stored mind maps from the former Mindink feature: titles, content, connections, layout and modification time remain associated with your account. You can still download them using the data export or delete them together with your account.',
         ],
       },
       {
