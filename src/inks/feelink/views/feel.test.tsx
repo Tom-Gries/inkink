@@ -27,28 +27,32 @@ function show() {
   )
 }
 
-describe('Feelink consent', () => {
+describe('Feelink entry creation', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
-  it('verlangt vor jedem Speichern eine erneute ausdrückliche Einwilligung', () => {
+  it('speichert ausgewählte Gefühle ohne zusätzliche Checkbox und leert das Formular', () => {
     show()
-    fireEvent.click(screen.getByRole('button', { name: 'Fröhlich' }))
     const save = screen.getByRole('button', { name: 'Feel' })
     expect(save).toHaveProperty('disabled', true)
-    fireEvent.click(screen.getByRole('checkbox'))
+    expect(screen.queryByRole('checkbox')).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: 'Fröhlich' }))
     expect(save).toHaveProperty('disabled', false)
     fireEvent.click(save)
     expect(state.create).toHaveBeenCalledWith(
       {
         moods: ['happy'],
         note: '',
-        consent: { granted: true, version: '2026-10-27' },
       },
       expect.any(Object),
     )
     act(() => state.create.mock.calls[0][1].onSuccess())
-    expect(screen.getByRole('checkbox')).toHaveProperty('checked', false)
+    expect(save).toHaveProperty('disabled', true)
+    expect(
+      screen
+        .getByRole('button', { name: 'Fröhlich' })
+        .getAttribute('aria-pressed'),
+    ).toBe('false')
   })
 })

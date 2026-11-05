@@ -45,7 +45,7 @@ export const privacyContent = {
     settings: 'Einstellungen und eigene Daten',
     contact: 'Fragen zum Datenschutz und Anfragen zu deinen Rechten:',
     hostingNotice:
-      'Angaben zur Aufbewahrung bei den Hostinganbietern und zu internationalen Datenübermittlungen sind noch in Prüfung. Diese Datenschutzhinweise werden hierzu ergänzt.',
+      'Die Rechtsgrundlage für möglicherweise sensible Gefühlseinträge sowie Angaben zur Aufbewahrung bei den Hostinganbietern und zu internationalen Datenübermittlungen sind noch in Prüfung. Diese Datenschutzhinweise werden hierzu ergänzt.',
     sections: [
       {
         id: 'website',
@@ -86,7 +86,7 @@ export const privacyContent = {
         id: 'features',
         title: 'Daten in den App-Funktionen und ihre Sichtbarkeit',
         paragraphs: [
-          'Welche weiteren Daten gespeichert werden, hängt davon ab, welche Funktionen du nutzt. Die folgenden Verarbeitungen dienen der Bereitstellung deiner angefragten Funktionen und beruhen auf Artikel 6 Absatz 1 Buchstabe b DSGVO. Für freiwillige Gefühlseinträge gilt die gesonderte Einwilligung im nächsten Abschnitt.',
+          'Welche weiteren Daten gespeichert werden, hängt davon ab, welche Funktionen du nutzt. Die folgenden Verarbeitungen dienen der Bereitstellung deiner angefragten Funktionen und beruhen auf Artikel 6 Absatz 1 Buchstabe b DSGVO. Freiwillige Gefühlseinträge werden im nächsten Abschnitt gesondert beschrieben.',
         ],
         items: [
           'Profil und Kontakte: dein Benutzername, Verbindungsanfragen, Kontaktbeziehungen, Gruppen, Einladungen und Mitgliedschaften. Andere angemeldete Nutzer können dich über die Nutzersuche finden; Beteiligte sehen die für Kontakte und Gruppen vorgesehenen Angaben. Deine E-Mail-Adresse wird dort nicht angezeigt.',
@@ -100,8 +100,8 @@ export const privacyContent = {
         title: 'Freiwillige Gefühlseinträge',
         paragraphs: [
           'Wenn du als angemeldeter Nutzer einen Eintrag in Feelink speicherst, werden deine ausgewählten Gefühle, eine optionale Notiz und der Zeitpunkt des Eintrags zusammen mit deiner Konto-Kennung gespeichert. Diese Inhalte können sensible Informationen über deine Gesundheit enthalten. Sie werden dir in deinem persönlichen Verlauf angezeigt und nicht für andere Nutzer freigegeben.',
-          'Für jeden neuen Eintrag ist eine eigene ausdrückliche Einwilligung erforderlich. Rechtsgrundlagen sind Artikel 6 Absatz 1 Buchstabe a und, soweit Gesundheitsdaten betroffen sind, Artikel 9 Absatz 2 Buchstabe a DSGVO. Der Zweck ist ausschließlich, dir deinen eigenen Gefühlsverlauf bereitzustellen. Deine Einwilligung wird beim jeweiligen Eintrag dokumentiert.',
-          'Die Einwilligung ist freiwillig. Du kannst sie für einen Eintrag jederzeit durch dessen Löschung widerrufen oder dich für den Widerruf und die Löschung aller Einträge an die oben genannte Kontaktadresse wenden. Andere App-Funktionen kannst du ohne diese Einwilligung nutzen. Die Rechtmäßigkeit der Verarbeitung vor dem Widerruf bleibt unberührt.',
+          'Du erstellst einen Eintrag, indem du Gefühle auswählst, bei Bedarf eine Notiz ergänzt und auf „Feel“ drückst. Der Zweck ist, dir deinen eigenen Gefühlsverlauf bereitzustellen.',
+          'Die Nutzung von Feelink ist freiwillig. Du kannst einzelne Einträge jederzeit löschen oder dich für die Löschung aller Einträge an die oben genannte Kontaktadresse wenden. Andere App-Funktionen kannst du ohne Gefühlseinträge nutzen.',
           'Trage keine sensiblen Angaben über andere Personen ein.',
         ],
       },
@@ -137,7 +137,7 @@ export const privacyContent = {
           'Die Kontolöschung entfernt die deinem Konto zugeordneten Daten aus dem aktiven Anwendungssystem. Dazu gehören auch deine veröffentlichten Stacks samt zugehörigen Ranglisten sowie deine zuordenbaren Ranglisteneinträge in fremden Stacks. Kontaktbeziehungen und deine Gruppenmitgliedschaften werden entfernt. Von dir geleitete Gruppen können an verbleibende berechtigte Mitglieder übergeben werden; fremde Inhalte bleiben erhalten.',
           'Die Löschung erfolgt in mehreren Schritten. Bei einer technischen Unterbrechung kann sie unvollständig bleiben. Ein vorübergehender Löschstatus kann bis zu 24 Stunden gespeichert bleiben und währenddessen die normale Appnutzung sperren. Du kannst einen unterbrochenen Vorgang erneut starten oder dich an die Kontaktadresse wenden.',
           'Bereits von anderen Personen unabhängig gespeicherte Kopien öffentlicher Inhalte können durch die Kontolöschung nicht zurückgerufen werden. Ältere oder anonyme Ranglisteneinträge sowie anonyme Veröffentlichungen ohne eindeutigen Kontobezug können nicht immer automatisch zugeordnet werden. Bitte nenne solche Inhalte in einer ergänzenden Löschanfrage an die Kontaktadresse.',
-          'Gefühlseinträge bleiben bis zur Einzellöschung oder zur Bearbeitung deines Widerrufs beziehungsweise Löschverlangens gespeichert. Kontaktanfragen werden für die Bearbeitung und erforderliche Nachfragen aufbewahrt; danach entfällt dieser Verarbeitungszweck. Soweit eine weitere Aufbewahrung gesetzlich erforderlich oder zur Geltendmachung beziehungsweise Abwehr konkreter Rechtsansprüche notwendig ist, wird sie auf diesen Zweck beschränkt.',
+          'Gefühlseinträge bleiben bis zur Einzellöschung oder zur Bearbeitung deines Löschverlangens gespeichert. Kontaktanfragen werden für die Bearbeitung und erforderliche Nachfragen aufbewahrt; danach entfällt dieser Verarbeitungszweck. Soweit eine weitere Aufbewahrung gesetzlich erforderlich oder zur Geltendmachung beziehungsweise Abwehr konkreter Rechtsansprüche notwendig ist, wird sie auf diesen Zweck beschränkt.',
           'Für technisch erstellte Anbieterprotokolle, Anmeldeinformationen und Sicherungskopien gelten die tatsächlichen Betriebs- und Ablaufbedingungen der eingesetzten Dienste. Die Angaben zu Speicherfristen, Regionen und internationalen Übermittlungen werden nach Bestätigung der Anbieterkonfiguration ergänzt.',
         ],
       },
@@ -168,7 +168,7 @@ export const privacyContent = {
     settings: 'Settings and your data',
     contact: 'For privacy questions and requests concerning your rights:',
     hostingNotice:
-      'Retention by the hosting providers and international data transfers are still being reviewed. This privacy notice will be supplemented with those details.',
+      'The legal basis for potentially sensitive feeling entries, retention by the hosting providers and international data transfers are still being reviewed. This privacy notice will be supplemented with those details.',
     sections: [
       {
         id: 'website',
@@ -209,7 +209,7 @@ export const privacyContent = {
         id: 'features',
         title: 'App data and visibility',
         paragraphs: [
-          'Other data stored depends on the features you use. The following processing provides the functions you request and is based on Article 6(1)(b) GDPR. Voluntary feeling entries are covered by the separate consent described below.',
+          'Other data stored depends on the features you use. The following processing provides the functions you request and is based on Article 6(1)(b) GDPR. Voluntary feeling entries are described separately below.',
         ],
         items: [
           'Profile and contacts: your username, connection requests, contact relationships, groups, invitations and memberships. Other signed-in users can find you using the user search; participants see information intended for contact and group functions. Your email address is not shown there.',
@@ -223,8 +223,8 @@ export const privacyContent = {
         title: 'Voluntary feeling entries',
         paragraphs: [
           'When you save an entry in Feelink while signed in, it stores the feelings you select, an optional note and the time of the entry together with your account identifier. These entries may include sensitive information about your health. They are shown in your personal history and are not shared with other users.',
-          'Each new entry requires separate explicit consent. The legal bases are Article 6(1)(a) GDPR and, where health data is involved, Article 9(2)(a) GDPR. The sole purpose is to provide your own feeling history. Your consent is documented with the relevant entry.',
-          'Consent is voluntary. You can withdraw it for an entry at any time by deleting that entry, or contact the address above to withdraw consent and request deletion of all entries. You can use other app functions without this consent. Withdrawal does not affect the lawfulness of earlier processing.',
+          'You create an entry by selecting feelings, adding an optional note and pressing “Feel”. The purpose is to provide your own feeling history.',
+          'Using Feelink is voluntary. You can delete individual entries at any time or contact the address above to request deletion of all entries. You can use other app functions without creating feeling entries.',
           'Do not enter sensitive information about other people.',
         ],
       },
@@ -260,7 +260,7 @@ export const privacyContent = {
           'Account deletion removes data associated with your account from the active application system. This includes your published stacks and their leaderboards, as well as identifiable leaderboard entries of yours in other stacks. Your contact relationships and group memberships are removed. Groups you lead may be handed over to remaining authorized members; content belonging to others is preserved.',
           'Deletion takes place in several steps. A technical interruption may leave it incomplete. A temporary deletion status may remain stored for up to 24 hours and block normal app use during that time. You can retry an interrupted deletion or contact the address above for assistance.',
           'Account deletion cannot recall copies of public content independently saved by other people. Older or anonymous leaderboard entries and anonymous publications without a clear account connection cannot always be identified automatically. Please identify such content in an additional erasure request to the contact address.',
-          'Feeling entries remain stored until you delete them or your withdrawal or erasure request has been processed. Contact messages are retained to address the request and necessary follow-up questions; that purpose ends afterwards. Where further retention is legally required or necessary for specific legal claims, processing is restricted to that purpose.',
+          'Feeling entries remain stored until you delete them or your erasure request has been processed. Contact messages are retained to address the request and necessary follow-up questions; that purpose ends afterwards. Where further retention is legally required or necessary for specific legal claims, processing is restricted to that purpose.',
           'Provider logs, sign-in information and backups are subject to the actual operation and expiry conditions of the services used. Details of retention periods, regions and international transfers will be added after the provider configuration has been confirmed.',
         ],
       },

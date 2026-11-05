@@ -44,9 +44,9 @@ ein Link auf das DPA allein ersetzt diese Prüfung nicht.
 Außerdem untersagt Schedule 1, Abschnitt 6(a) des DPA besondere Kategorien und
 sensible Daten in Customer Data. Das ist eine konkrete Vertragsklausel, keine
 pauschale rechtliche Einordnung jedes Gefühlswertes. Freitext in Feelink kann
-jedoch Gesundheitsinformationen enthalten. Eine Art.-9-Einwilligung im Produkt
-hebt Anbieterbedingungen nicht auf; ein Upgrade allein beseitigt diese Frage
-ebenfalls nicht.
+jedoch Gesundheitsinformationen enthalten. Die passende Rechtsgrundlage für
+diese möglicherweise sensiblen Inhalte ist noch zu prüfen. Ein Upgrade allein
+beseitigt die Frage nach geeigneten Anbieterbedingungen ebenfalls nicht.
 
 Die [Vercel-Nutzungsbedingungen](https://vercel.com/legal/terms) (§ 3) nennen für
 Hobby/Trial eine standardmäßig aktivierte Möglichkeit zum Modelltraining auf
@@ -62,9 +62,13 @@ tatsächliche Umfang und die Kontoeinstellung müssen geprüft werden.
   Freischaltung über `FEELINGS_ENABLED` wurde am 5. November entfernt. Die
   offenen Fragen zur geeigneten Hosting- und Vertragskonfiguration bleiben
   bestehen.
-- Die ausdrückliche Einwilligung gilt pro Eintrag; Fassung und Zeitpunkt werden
-  beim Eintrag dokumentiert. Diese Produktfunktion ersetzt keine Prüfung der
-  Empfänger, internationalen Übermittlungen und Sicherheitsmaßnahmen.
+- Nutzer wählen Gefühle, ergänzen bei Bedarf eine Notiz und drücken auf
+  „Feel“. Eine separate Einwilligungscheckbox ist nicht vorhanden; neue
+  Einträge erhalten keine Einwilligungsmetadaten. Historische Einträge werden
+  nicht verändert. Der Speichervorgang wird nicht als ausdrückliche Einwilligung
+  für Gesundheitsdaten dokumentiert. Die Rechtsgrundlage für möglicherweise
+  sensible Inhalte sowie Empfänger, internationale Übermittlungen und
+  Sicherheitsmaßnahmen bleiben zu prüfen.
 - In der Datenschutzerklärung bisher keine konkrete Serverregion, keinen
   abgeschlossenen AVV und keinen verifizierten Transfermechanismus behaupten.
   Anbieter und im Code erkennbare Verarbeitungen sind benannt. Der sichtbare

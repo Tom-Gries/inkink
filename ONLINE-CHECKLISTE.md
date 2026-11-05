@@ -23,8 +23,8 @@ isolierten Tests, ohne Produktivdeploy oder Zugriff auf echte Nutzerdaten.
 - **Impressum:** `/impressum`, mit den angegebenen Betreiber- und Kontaktdaten
   nach § 18 Absatz 1 MStV. Ohne Anmeldung, auch vom Loginbildschirm aus erreichbar.
 - **Datenschutzhinweise:** `/datenschutz`, auf Deutsch und Englisch, mit
-  Verantwortlichem, Datenarten, Zwecken, Rechtsgrundlagen, Sichtbarkeit,
-  Einwilligung und Betroffenenrechten. Beide Rechtstexte sind in der Navigation
+  Verantwortlichem, Datenarten, Zwecken, Rechtsgrundlagen, Sichtbarkeit
+  und Betroffenenrechten. Beide Rechtstexte sind in der Navigation
   verlinkt, auf Desktop und im mobilen Menü auch ohne Anmeldung.
   Noch unbekannte Hostingangaben werden ausdrücklich als offen bezeichnet.
 - **Datenexport:** angemeldete Nutzer können in den Einstellungen ihre eigenen
@@ -48,13 +48,13 @@ isolierten Tests, ohne Produktivdeploy oder Zugriff auf echte Nutzerdaten.
   zehn Minuten Gültigkeit. TTL-Indizes entfernen abgelaufene Sitzungs- und
   Zustandsdokumente zeitversetzt. Die Datenbankrolle benötigt die nötigen
   Indexrechte; eine Konvertierung vorhandener Indizes benötigt `collMod`.
-- **Feelink:** angemeldete Nutzer können neue Gefühlseinträge speichern. Jeder
-  neue Eintrag verlangt eine erneute ausdrückliche Einwilligung; deren Fassung
-  und Zeitpunkt werden dokumentiert. Eigene Einträge können gelesen, einzeln
-  gelöscht und exportiert werden. Die zusätzliche Freischaltung über
-  `FEELINGS_ENABLED` wurde am 5. November entfernt. Die offenen Hosting- und
-  Vertragsfragen bleiben zu klären; Einwilligung ersetzt keinen geeigneten
-  Hostingvertrag.
+- **Feelink:** angemeldete Nutzer wählen Gefühle, ergänzen bei Bedarf eine Notiz
+  und speichern den Eintrag. Es gibt keine separate Einwilligungscheckbox und
+  für neue Einträge werden keine Einwilligungsmetadaten gespeichert. Historische
+  Einträge bleiben unverändert. Eigene Einträge können gelesen, einzeln gelöscht
+  und exportiert werden. Die zusätzliche Freischaltung über `FEELINGS_ENABLED`
+  wurde am 5. November entfernt. Die Rechtsgrundlage für möglicherweise sensible
+  Inhalte sowie die offenen Hosting- und Vertragsfragen bleiben zu klären.
 - **Sichtbarkeit:** neue Lernstacks angemeldeter Nutzer bleiben standardmäßig
   privat. Eine Veröffentlichung ist weiterhin ausdrücklich möglich. Anonym
   angelegte Stacks bleiben entsprechend der vorhandenen Funktion öffentlich;

@@ -20,7 +20,6 @@ export interface FeelingDto {
 }
 
 export interface FeelingInputDto {
-  consent: { granted: true; version: '2026-10-27' }
   moods: FeelingMood[]
   note: string
 }

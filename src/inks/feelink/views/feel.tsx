@@ -32,10 +32,9 @@ export function FeelView() {
   const [note, setNote] = useState('')
   const [justSaved, setJustSaved] = useState(false)
   const [deleteTarget, setDeleteTarget] = useState<FeelingDto | null>(null)
-  const [consented, setConsented] = useState(false)
 
   const entries = data ?? []
-  const canSave = consented && selected.length > 0 && !create.isPending
+  const canSave = selected.length > 0 && !create.isPending
 
   function toggleFeeling(mood: FeelingMood) {
     setSelected((current) =>
@@ -52,13 +51,11 @@ export function FeelView() {
       {
         moods: selected,
         note: note.trim(),
-        consent: { granted: true, version: '2026-10-27' },
       },
       {
         onSuccess: () => {
           setSelected([])
           setNote('')
-          setConsented(false)
           setJustSaved(true)
           window.setTimeout(() => setJustSaved(false), 2000)
         },
@@ -84,15 +81,6 @@ export function FeelView() {
           <CardTitle>{t('feelink.question')}</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
-          <label className="flex items-start gap-3 rounded-lg border border-border p-4 text-sm leading-6">
-            <input
-              type="checkbox"
-              checked={consented}
-              onChange={(event) => setConsented(event.target.checked)}
-              className="mt-1 size-4 shrink-0 accent-primary"
-            />
-            <span>{t('feelink.consent')}</span>
-          </label>
           <fieldset className="m-0 grid min-w-0 grid-cols-4 gap-2 border-0 p-0 sm:grid-cols-8">
             <legend className="sr-only">{t('feelink.question')}</legend>
             {FEELINGS.map((feeling) => {
