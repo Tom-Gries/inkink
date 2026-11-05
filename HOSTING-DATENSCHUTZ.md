@@ -1,6 +1,6 @@
 # Hosting und Datenschutz: noch zu bestätigen
 
-Stand: 4. November 2026. Bestätigt sind Vercel im kostenlosen Hobby-Tarif und
+Stand: 5. November 2026. Bestätigt sind Vercel im kostenlosen Hobby-Tarif und
 MongoDB Atlas. Die zugehörigen Kontoeinstellungen und Vertragsunterlagen wurden
 nicht eingesehen. Diese Datei dokumentiert deshalb konkrete offene Angaben,
 keine Zusicherung einer abgeschlossenen Datenschutzprüfung.
@@ -58,11 +58,11 @@ tatsächliche Umfang und die Kontoeinstellung müssen geprüft werden.
 
 ## Konsequenzen für Feelink und die Datenschutzhinweise
 
-- Neue Gefühlseinträge bleiben ohne ausdrückliche Freischaltung standardmäßig
-  in allen Umgebungen ausgeschaltet.
-  `FEELINGS_ENABLED` darf erst nach Klärung einer geeigneten Hosting- und
-  Vertragskonfiguration ausdrücklich aktiviert werden.
-- Die vorbereitete Einwilligung gilt pro Eintrag; Fassung und Zeitpunkt werden
+- Angemeldete Nutzer können neue Gefühlseinträge speichern. Die zusätzliche
+  Freischaltung über `FEELINGS_ENABLED` wurde am 5. November entfernt. Die
+  offenen Fragen zur geeigneten Hosting- und Vertragskonfiguration bleiben
+  bestehen.
+- Die ausdrückliche Einwilligung gilt pro Eintrag; Fassung und Zeitpunkt werden
   beim Eintrag dokumentiert. Diese Produktfunktion ersetzt keine Prüfung der
   Empfänger, internationalen Übermittlungen und Sicherheitsmaßnahmen.
 - In der Datenschutzerklärung bisher keine konkrete Serverregion, keinen

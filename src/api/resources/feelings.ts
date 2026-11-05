@@ -37,19 +37,10 @@ type FeelingIdClient = {
 
 type FeelingsApiClientShape = {
   feelings: {
-    status: { $get: () => Promise<Response> }
     $get: () => Promise<Response>
     $post: (options: { json: FeelingInputDto }) => Promise<Response>
     ':id': FeelingIdClient
   }
-}
-
-export function getFeelingsStatus(client: ApiClient) {
-  return feelingsClient(client)
-    .feelings.status.$get()
-    .then((response) =>
-      assertOk<{ enabled: boolean; consentVersion: string }>(response),
-    )
 }
 
 function feelingsClient(client: ApiClient): FeelingsApiClientShape {

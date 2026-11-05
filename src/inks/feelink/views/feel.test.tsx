@@ -4,16 +4,11 @@ import { I18nProvider } from '../../../i18n/index'
 import { translations } from '../translations'
 
 const state = vi.hoisted(() => ({
-  enabled: true,
   create: vi.fn(),
   remove: vi.fn(),
 }))
 vi.mock('../../../api/index', () => ({
   useFeelings: () => ({ data: [], isLoading: false, isError: false }),
-  useFeelingsStatus: () => ({
-    data: { enabled: state.enabled },
-    isLoading: false,
-  }),
   useCreateFeeling: () => ({
     mutate: state.create,
     isPending: false,
@@ -34,7 +29,6 @@ function show() {
 
 describe('Feelink consent', () => {
   beforeEach(() => {
-    state.enabled = true
     vi.clearAllMocks()
   })
 
@@ -56,18 +50,5 @@ describe('Feelink consent', () => {
     )
     act(() => state.create.mock.calls[0][1].onSuccess())
     expect(screen.getByRole('checkbox')).toHaveProperty('checked', false)
-  })
-
-  it('fordert bei gesperrter Speicherung keine sensiblen Eingaben an', () => {
-    state.enabled = false
-    show()
-    expect(screen.queryByRole('checkbox')).toBeNull()
-    expect(screen.queryByRole('textbox')).toBeNull()
-    expect(
-      screen.getByText(
-        'Neue Gefühlseinträge sind derzeit nicht verfügbar. Vorhandene Einträge kannst du weiterhin ansehen und löschen.',
-      ),
-    ).toBeTruthy()
-    expect(state.create).not.toHaveBeenCalled()
   })
 })

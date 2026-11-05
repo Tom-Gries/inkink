@@ -6,7 +6,6 @@ import {
   useCreateFeeling,
   useDeleteFeeling,
   useFeelings,
-  useFeelingsStatus,
 } from '../../../api/index'
 import { useTranslations } from '../../../i18n/index'
 import {
@@ -28,7 +27,6 @@ export function FeelView() {
   const { data, isLoading, isError } = useFeelings()
   const create = useCreateFeeling()
   const remove = useDeleteFeeling()
-  const storage = useFeelingsStatus()
 
   const [selected, setSelected] = useState<FeelingMood[]>([])
   const [note, setNote] = useState('')
@@ -37,9 +35,7 @@ export function FeelView() {
   const [consented, setConsented] = useState(false)
 
   const entries = data ?? []
-  const storageEnabled = storage.data?.enabled === true
-  const canSave =
-    storageEnabled && consented && selected.length > 0 && !create.isPending
+  const canSave = consented && selected.length > 0 && !create.isPending
 
   function toggleFeeling(mood: FeelingMood) {
     setSelected((current) =>
@@ -83,88 +79,78 @@ export function FeelView() {
         description={t('feelink.feelSubtitle')}
       />
 
-      {!storageEnabled && (
-        <output className="mb-6 block rounded-lg border border-border bg-muted p-4 text-sm leading-6">
-          {storage.isLoading
-            ? t('feelink.loading')
-            : t('feelink.storageUnavailable')}
-        </output>
-      )}
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('feelink.question')}</CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-4">
+          <label className="flex items-start gap-3 rounded-lg border border-border p-4 text-sm leading-6">
+            <input
+              type="checkbox"
+              checked={consented}
+              onChange={(event) => setConsented(event.target.checked)}
+              className="mt-1 size-4 shrink-0 accent-primary"
+            />
+            <span>{t('feelink.consent')}</span>
+          </label>
+          <fieldset className="m-0 grid min-w-0 grid-cols-4 gap-2 border-0 p-0 sm:grid-cols-8">
+            <legend className="sr-only">{t('feelink.question')}</legend>
+            {FEELINGS.map((feeling) => {
+              const isSelected = selected.includes(feeling.id)
+              return (
+                <button
+                  key={feeling.id}
+                  type="button"
+                  aria-pressed={isSelected}
+                  onClick={() => toggleFeeling(feeling.id)}
+                  className={cn(
+                    'flex cursor-pointer flex-col items-center gap-1.5 rounded-xl border px-2 py-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
+                    isSelected
+                      ? 'border-primary bg-accent text-accent-foreground'
+                      : 'border-border bg-background text-muted-foreground hover:bg-muted/50 hover:text-foreground',
+                  )}
+                >
+                  <feeling.icon className="size-6" aria-hidden="true" />
+                  {t(`feelink.mood.${feeling.id}`)}
+                </button>
+              )
+            })}
+          </fieldset>
 
-      {storageEnabled && (
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('feelink.question')}</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-4">
-            <label className="flex items-start gap-3 rounded-lg border border-border p-4 text-sm leading-6">
-              <input
-                type="checkbox"
-                checked={consented}
-                onChange={(event) => setConsented(event.target.checked)}
-                className="mt-1 size-4 shrink-0 accent-primary"
-              />
-              <span>{t('feelink.consent')}</span>
-            </label>
-            <fieldset className="m-0 grid min-w-0 grid-cols-4 gap-2 border-0 p-0 sm:grid-cols-8">
-              <legend className="sr-only">{t('feelink.question')}</legend>
-              {FEELINGS.map((feeling) => {
-                const isSelected = selected.includes(feeling.id)
-                return (
-                  <button
-                    key={feeling.id}
-                    type="button"
-                    aria-pressed={isSelected}
-                    onClick={() => toggleFeeling(feeling.id)}
-                    className={cn(
-                      'flex cursor-pointer flex-col items-center gap-1.5 rounded-xl border px-2 py-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
-                      isSelected
-                        ? 'border-primary bg-accent text-accent-foreground'
-                        : 'border-border bg-background text-muted-foreground hover:bg-muted/50 hover:text-foreground',
-                    )}
-                  >
-                    <feeling.icon className="size-6" aria-hidden="true" />
-                    {t(`feelink.mood.${feeling.id}`)}
-                  </button>
-                )
-              })}
-            </fieldset>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+            <TextareaField
+              label={t('feelink.note.label')}
+              placeholder={t('feelink.note.placeholder')}
+              value={note}
+              maxLength={280}
+              rows={2}
+              onChange={(event) => setNote(event.target.value)}
+              className="flex-1"
+            />
+            <Button
+              type="button"
+              onClick={handleSave}
+              disabled={!canSave}
+              className="w-fit"
+            >
+              {justSaved ? (
+                <Check className="size-4" />
+              ) : (
+                <Heart className="size-4" />
+              )}
+              {justSaved ? t('feelink.saved') : t('feelink.save')}
+            </Button>
+          </div>
 
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-              <TextareaField
-                label={t('feelink.note.label')}
-                placeholder={t('feelink.note.placeholder')}
-                value={note}
-                maxLength={280}
-                rows={2}
-                onChange={(event) => setNote(event.target.value)}
-                className="flex-1"
-              />
-              <Button
-                type="button"
-                onClick={handleSave}
-                disabled={!canSave}
-                className="w-fit"
-              >
-                {justSaved ? (
-                  <Check className="size-4" />
-                ) : (
-                  <Heart className="size-4" />
-                )}
-                {justSaved ? t('feelink.saved') : t('feelink.save')}
-              </Button>
-            </div>
-
-            {create.isError && (
-              <p className="text-sm text-destructive">
-                {create.error instanceof Error
-                  ? create.error.message
-                  : t('feelink.saveError')}
-              </p>
-            )}
-          </CardContent>
-        </Card>
-      )}
+          {create.isError && (
+            <p className="text-sm text-destructive">
+              {create.error instanceof Error
+                ? create.error.message
+                : t('feelink.saveError')}
+            </p>
+          )}
+        </CardContent>
+      </Card>
 
       <Card className="mt-6">
         <CardHeader>

@@ -38,7 +38,7 @@ export const privacyContent = {
   de: {
     title: 'Datenschutz',
     description: 'Wie InkInk mit deinen personenbezogenen Daten umgeht.',
-    updated: 'Stand: 4. November 2026',
+    updated: 'Stand: 5. November 2026',
     controller: 'Verantwortlicher und Kontakt',
     country: 'Deutschland',
     contents: 'Inhalt der Datenschutzhinweise',
@@ -99,10 +99,10 @@ export const privacyContent = {
         id: 'feelings',
         title: 'Freiwillige Gefühlseinträge',
         paragraphs: [
-          'Soweit Feelink für die Speicherung freigeschaltet ist, werden deine ausgewählten Gefühle, eine optionale Notiz und der Zeitpunkt des Eintrags zusammen mit deiner Konto-Kennung gespeichert. Diese Inhalte können sensible Informationen über deine Gesundheit enthalten. Sie werden dir in deinem persönlichen Verlauf angezeigt und nicht für andere Nutzer freigegeben.',
+          'Wenn du als angemeldeter Nutzer einen Eintrag in Feelink speicherst, werden deine ausgewählten Gefühle, eine optionale Notiz und der Zeitpunkt des Eintrags zusammen mit deiner Konto-Kennung gespeichert. Diese Inhalte können sensible Informationen über deine Gesundheit enthalten. Sie werden dir in deinem persönlichen Verlauf angezeigt und nicht für andere Nutzer freigegeben.',
           'Für jeden neuen Eintrag ist eine eigene ausdrückliche Einwilligung erforderlich. Rechtsgrundlagen sind Artikel 6 Absatz 1 Buchstabe a und, soweit Gesundheitsdaten betroffen sind, Artikel 9 Absatz 2 Buchstabe a DSGVO. Der Zweck ist ausschließlich, dir deinen eigenen Gefühlsverlauf bereitzustellen. Deine Einwilligung wird beim jeweiligen Eintrag dokumentiert.',
           'Die Einwilligung ist freiwillig. Du kannst sie für einen Eintrag jederzeit durch dessen Löschung widerrufen oder dich für den Widerruf und die Löschung aller Einträge an die oben genannte Kontaktadresse wenden. Andere App-Funktionen kannst du ohne diese Einwilligung nutzen. Die Rechtmäßigkeit der Verarbeitung vor dem Widerruf bleibt unberührt.',
-          'Die Speicherung ist standardmäßig ausgeschaltet und muss vom Betreiber ausdrücklich freigeschaltet werden. Eine Einwilligung allein ersetzt keine geeignete Hosting- und Datenschutzkonfiguration. Trage keine sensiblen Angaben über andere Personen ein.',
+          'Trage keine sensiblen Angaben über andere Personen ein.',
         ],
       },
       {
@@ -161,7 +161,7 @@ export const privacyContent = {
   en: {
     title: 'Privacy',
     description: 'How InkInk processes your personal data.',
-    updated: 'Last updated: 4 November 2026',
+    updated: 'Last updated: 5 November 2026',
     controller: 'Controller and contact',
     country: 'Germany',
     contents: 'Contents of this privacy notice',
@@ -222,10 +222,10 @@ export const privacyContent = {
         id: 'feelings',
         title: 'Voluntary feeling entries',
         paragraphs: [
-          'Where Feelink storage is enabled, it stores the feelings you select, an optional note and the time of the entry together with your account identifier. These entries may include sensitive information about your health. They are shown in your personal history and are not shared with other users.',
+          'When you save an entry in Feelink while signed in, it stores the feelings you select, an optional note and the time of the entry together with your account identifier. These entries may include sensitive information about your health. They are shown in your personal history and are not shared with other users.',
           'Each new entry requires separate explicit consent. The legal bases are Article 6(1)(a) GDPR and, where health data is involved, Article 9(2)(a) GDPR. The sole purpose is to provide your own feeling history. Your consent is documented with the relevant entry.',
           'Consent is voluntary. You can withdraw it for an entry at any time by deleting that entry, or contact the address above to withdraw consent and request deletion of all entries. You can use other app functions without this consent. Withdrawal does not affect the lawfulness of earlier processing.',
-          'Storage is disabled by default and must be explicitly enabled by the operator. Consent alone does not replace suitable hosting and privacy arrangements. Do not enter sensitive information about other people.',
+          'Do not enter sensitive information about other people.',
         ],
       },
       {

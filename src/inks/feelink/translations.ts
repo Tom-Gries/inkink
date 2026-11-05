@@ -17,8 +17,6 @@ export const translations = {
     'feelink.note.placeholder': 'Was ist los? (optional) …',
     'feelink.save': 'Feel',
     'feelink.saved': 'Gespeichert',
-    'feelink.storageUnavailable':
-      'Neue Gefühlseinträge sind derzeit nicht verfügbar. Vorhandene Einträge kannst du weiterhin ansehen und löschen.',
     'feelink.consent':
       'Ich willige ausdrücklich ein, dass Tom Gries meine ausgewählten Gefühle und diese Notiz für mein privates Gefühlstagebuch mit meinem Konto und dem Zeitpunkt speichert, auch wenn sie Gesundheitsangaben enthalten. Die Einwilligung ist freiwillig und gilt nur für diesen Eintrag. Ich kann sie durch Löschen des Eintrags oder eine Nachricht an Kontakt.tomgries@gmail.com widerrufen. Die übrige App kann ich ohne Einwilligung nutzen. Einzelheiten stehen unter Datenschutz.',
     'feelink.saveError': 'Speichern fehlgeschlagen. Bitte erneut versuchen.',
@@ -54,8 +52,6 @@ export const translations = {
     'feelink.note.placeholder': "What's going on? (optional) …",
     'feelink.save': 'Feel',
     'feelink.saved': 'Saved',
-    'feelink.storageUnavailable':
-      'New mood entries are currently unavailable. You can still view and delete existing entries.',
     'feelink.consent':
       'I explicitly consent to Tom Gries storing my selected moods and this note with my account and the time for my private mood journal, including any health information they contain. Consent is voluntary and applies only to this entry. I can withdraw it by deleting the entry or contacting Kontakt.tomgries@gmail.com. I can use the rest of the app without consent. See Privacy for details.',
     'feelink.saveError': 'Saving failed. Please try again.',

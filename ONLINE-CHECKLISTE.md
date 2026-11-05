@@ -1,6 +1,6 @@
 # InkInk: Datenschutz und öffentlicher Betrieb
 
-Stand: 4. November 2026. Die Abschlussprüfung erfolgte am Quellcode mit
+Stand: 5. November 2026. Die Abschlussprüfung vom 4. November erfolgte am Quellcode mit
 isolierten Tests, ohne Produktivdeploy oder Zugriff auf echte Nutzerdaten.
 
 ## Technische Abschlussprüfung am 4. November 2026
@@ -48,12 +48,13 @@ isolierten Tests, ohne Produktivdeploy oder Zugriff auf echte Nutzerdaten.
   zehn Minuten Gültigkeit. TTL-Indizes entfernen abgelaufene Sitzungs- und
   Zustandsdokumente zeitversetzt. Die Datenbankrolle benötigt die nötigen
   Indexrechte; eine Konvertierung vorhandener Indizes benötigt `collMod`.
-- **Feelink:** neue Gefühlseinträge sind ohne ausdrückliche Konfiguration
-  standardmäßig ausgeschaltet. Vorhandene eigene Einträge können weiter gelesen,
-  einzeln gelöscht und exportiert werden. Der vorbereitete Speicherablauf verlangt
-  für jeden neuen Eintrag eine erneute ausdrückliche Einwilligung und dokumentiert
-  deren Fassung und Zeitpunkt. Einwilligung ersetzt keinen geeigneten
-  Hostingvertrag. `FEELINGS_ENABLED=true` erst nach Klärung dieses Rahmens setzen.
+- **Feelink:** angemeldete Nutzer können neue Gefühlseinträge speichern. Jeder
+  neue Eintrag verlangt eine erneute ausdrückliche Einwilligung; deren Fassung
+  und Zeitpunkt werden dokumentiert. Eigene Einträge können gelesen, einzeln
+  gelöscht und exportiert werden. Die zusätzliche Freischaltung über
+  `FEELINGS_ENABLED` wurde am 5. November entfernt. Die offenen Hosting- und
+  Vertragsfragen bleiben zu klären; Einwilligung ersetzt keinen geeigneten
+  Hostingvertrag.
 - **Sichtbarkeit:** neue Lernstacks angemeldeter Nutzer bleiben standardmäßig
   privat. Eine Veröffentlichung ist weiterhin ausdrücklich möglich. Anonym
   angelegte Stacks bleiben entsprechend der vorhandenen Funktion öffentlich;
